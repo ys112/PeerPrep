@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.post('/', async (req, res) => {
   try {
-    const questionData = req.body
+    const questionData: Question = req.body
     const docRef = await db.add(questionData)
     res.status(201).json({ id: docRef.id, ...questionData })
   } catch (error) {
@@ -58,8 +58,9 @@ router.get('/:id', async (req, res) => {
 })
 
 router.put('/:id', async (req, res) => {
+  const questionData: Partial<Question> = req.body
   try {
-    await db.doc(req.params.id).update(req.body)
+    await db.doc(req.params.id).update(questionData)
     res.status(200).json({ message: 'Question updated successfully' })
   } catch (error) {
     res.status(500).json({ error: 'Failed to update question' })

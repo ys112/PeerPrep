@@ -6,7 +6,6 @@ if (process.env.NODE_ENV) {
 }
 
 import express from 'express'
-import { db } from './db/clients'
 import logger from './utils/logger'
 import router from './routes/questions'
 
