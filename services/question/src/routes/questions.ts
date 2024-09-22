@@ -1,6 +1,7 @@
 import express from 'express'
-import { getFirestore } from 'firebase-admin/firestore'
+import { getFirestore, Query } from 'firebase-admin/firestore'
 import { db } from '../db/clients'
+import { Question } from '../model'
 
 const router = express.Router()
 
@@ -15,10 +16,30 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
+  const { complexity, categories } = req.body
+
   try {
-    const snapshot = await db.get()
-    const questions = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-    res.status(200).json(questions)
+    let query: Query = db
+
+    if (complexity) {
+      query = query.where('complexity', '==', complexity)
+    }
+
+    const snapshot = await query.get()
+    const questions: Question[] = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as Question),
+    }))
+
+    let filteredQuestions = questions
+
+    if (categories && Array.isArray(categories)) {
+      filteredQuestions = questions.filter((question) => {
+        return categories.every((value) => question.categories.includes(value))
+      })
+    }
+
+    res.status(200).json(filteredQuestions)
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch questions' })
   }
