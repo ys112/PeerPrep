@@ -2,9 +2,12 @@ export interface Question {
   id: number;
   title: string;
   description: string;
-  categories: string;
-  complexity: string;
-  link: string;
+  categories: string[];
+  complexity: "Easy" | "Medium" | "Hard";
 }
 
-export type QuestionWithOptionalId = Omit<Question, "id"> & { id?: number };
+// This type is used in the form to allow id to be optional when creating a new question
+export type QuestionWithOptional = Omit<Question, "id" | "complexity"> & {
+  id?: number;
+  complexity?: "" | "Easy" | "Medium" | "Hard";
+};

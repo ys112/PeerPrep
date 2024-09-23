@@ -3,52 +3,76 @@ import {
   Modal,
   Select,
   Stack,
+  TagsInput,
   Textarea,
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect, useState } from "react";
-import { Question, QuestionWithOptionalId } from "../types/question";
+import { useEffect } from "react";
+import { Question, QuestionWithOptional } from "../types/question";
 
 export function QuestionsForm({
   opened,
-  existingQuestion,
+  selectedQuestion,
+  questions,
   onClose,
   submitForm,
 }: {
   opened: boolean;
-  existingQuestion?: Question;
+  selectedQuestion?: Question;
+  questions: Question[];
   onClose: () => void;
-  submitForm: (question: QuestionWithOptionalId) => void;
+  submitForm: (question: QuestionWithOptional) => void;
 }) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
       title: "",
       description: "",
-      categories: "",
-      complexity: "",
+      categories: [] as string[],
+      complexity: "" as "" | "Easy" | "Medium" | "Hard",
       link: "",
+    },
+    validate: {
+      title: (value: string) =>
+        value.trim().length < 2
+          ? "Title is required"
+          : questions.some(
+                (q) =>
+                  q.title === value && q.id !== (selectedQuestion?.id ?? q.id)
+              ) // Check if title already exists and not the selected question being edited
+            ? "Title already exists, possible duplicate question"
+            : null,
+      description: (value: string) =>
+        value.trim().length < 2 ? "Description is required" : null,
+      categories: (value: string[]) =>
+        value.length < 1 ? "Categories are required" : null,
+      complexity: (value: string) =>
+        !(value == "Easy" || value == "Medium" || value == "Hard")
+          ? "Complexity is required"
+          : null,
     },
   });
 
+  // Set form values when editing a question
   useEffect(() => {
-    if (existingQuestion) {
+    if (selectedQuestion) {
       form.setValues({
-        title: existingQuestion.title,
-        description: existingQuestion.description,
-        categories: existingQuestion.categories,
-        complexity: existingQuestion.complexity,
-        link: existingQuestion.link,
+        title: selectedQuestion.title,
+        description: selectedQuestion.description,
+        categories: selectedQuestion.categories,
+        complexity: selectedQuestion.complexity,
       });
     }
-  }, [existingQuestion]);
+  }, [selectedQuestion]);
 
-  const handleSubmit = (values: QuestionWithOptionalId) => {
-    if (existingQuestion) {
-      values.id = existingQuestion.id;
+  // Handle form submission and adds existing id if editing a question
+  const handleSubmit = (values: QuestionWithOptional) => {
+    if (selectedQuestion) {
+      values.id = selectedQuestion.id;
     }
     submitForm(values);
+    form.reset();
   };
 
   const handleClose = () => {
@@ -59,7 +83,7 @@ export function QuestionsForm({
   return (
     <Modal
       size="lg"
-      title={existingQuestion ? "Edit question" : "Create question"}
+      title={selectedQuestion ? "Edit question" : "Create question"}
       styles={{ title: { fontWeight: "bold", fontSize: "1.5rem" } }}
       opened={opened}
       onClose={handleClose}
@@ -81,9 +105,10 @@ export function QuestionsForm({
             key={form.key("description")}
             {...form.getInputProps("description")}
           />
-          <TextInput
+          <TagsInput
             label="Categories"
-            placeholder="Enter the categories involved"
+            description="Press Enter to submit a category"
+            placeholder="Enter categories"
             key={form.key("categories")}
             {...form.getInputProps("categories")}
           />
@@ -94,12 +119,7 @@ export function QuestionsForm({
             key={form.key("complexity")}
             {...form.getInputProps("complexity")}
           />
-          <TextInput
-            label="Link"
-            placeholder="Enter the link"
-            key={form.key("link")}
-            {...form.getInputProps("link")}
-          />
+
           <Button mt="md" type="submit">
             Submit
           </Button>
