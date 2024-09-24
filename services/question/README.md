@@ -21,6 +21,14 @@ if (process.env.NODE_ENV) {
 }
 ```
 
+## Routes
+All routes start with `/questions` as the base route.
+- `POST /questions`: Create a new question.
+- `GET /questions`: Get all questions. If `complexity` or `categories` are stated in the request body, questions returned will be filtered according to the fields specified.
+- `GET /questions/:id`: Get a question by ID.
+- `PUT /questions/:id`: Update a question by ID.
+- `DELETE /questions/:id`: Delete a question by ID
+
 ## Database schema
 `src/model.ts`
 ```typescript
