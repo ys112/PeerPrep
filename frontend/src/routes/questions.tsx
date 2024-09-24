@@ -215,7 +215,7 @@ function QuestionComponent() {
         onClose={handleCloseForm}
         submitForm={submitForm}
       />
-
+      {/* Adapted from mantine components: https://ui.mantine.dev/category/tables/ */}
       <ScrollArea
         h="80dvh"
         onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
