@@ -10,6 +10,7 @@ Question service for PeerPrep.
 - `PORT`: Port to run the service on.
 - `COLLECTION_NAME`: Name of the collection in Firestore to use.
 - `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
+- `CORS_ORIGINS`: Allow list for CORS, as an JSON array. (e.g. `'["http://localhost:3000", "http://localhost:3001"]'`)
 
 To use `.env.development` or `.env.production`, set the `NODE_ENV` to `development` or `production` and put this code on top of the entry file:
 ```typescript
