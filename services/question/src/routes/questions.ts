@@ -1,15 +1,19 @@
-import express from 'express'
-import { getFirestore, Query } from 'firebase-admin/firestore'
+import { Request, Response, Router } from 'express'
+import { Query } from 'firebase-admin/firestore'
 import { db } from '../db/clients'
-import { Question } from '../model'
+import { Question, questionSchema } from '../model'
 
-const router = express.Router()
+const router = Router()
 
 router.post('/', async (req, res) => {
   try {
-    const questionData: Question = req.body
-    const docRef = await db.add(questionData)
-    res.status(201).json({ id: docRef.id, ...questionData })
+    const parsedRequest = questionSchema.safeParse(req.body)
+    if (!parsedRequest.success) {
+      return res.status(400).json({ error: parsedRequest.error })
+    }
+    const { data } = parsedRequest
+    const newQuestionRef = await db.add(data)
+    res.status(201).json({ id: newQuestionRef.id, ...data })
   } catch (error) {
     res.status(500).json({ error: 'Failed to create question' })
   }
@@ -58,9 +62,13 @@ router.get('/:id', async (req, res) => {
 })
 
 router.put('/:id', async (req, res) => {
-  const questionData: Partial<Question> = req.body
+  const parsedRequestBody = questionSchema.partial().safeParse(req.body)
+  if (!parsedRequestBody.success) {
+    return res.status(400).json({ error: parsedRequestBody.error })
+  }
+  const { data } = parsedRequestBody
   try {
-    await db.doc(req.params.id).update(questionData)
+    await db.doc(req.params.id).update(data)
     res.status(200).json({ message: 'Question updated successfully' })
   } catch (error) {
     res.status(500).json({ error: 'Failed to update question' })
