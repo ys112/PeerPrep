@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { Question, QuestionWithOptional } from "../types/question";
+import { Question, QuestionWithOptional } from "../../types/question";
 
 export function QuestionsForm({
   opened,
@@ -30,8 +30,7 @@ export function QuestionsForm({
       title: "",
       description: "",
       categories: [] as string[],
-      complexity: "" as "" | "Easy" | "Medium" | "Hard",
-      link: "",
+      complexity: "" as "Easy" | "Medium" | "Hard",
     },
     validate: {
       title: (value: string) =>

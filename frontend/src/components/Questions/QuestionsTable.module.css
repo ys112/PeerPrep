@@ -16,6 +16,10 @@
   }
 }
 
-.scrolled {
+.whitespace {
+  white-space: pre-wrap;
+}
+
+Table.tr .scrolled {
   box-shadow: var(--mantine-shadow-sm);
 }
