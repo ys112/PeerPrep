@@ -62,7 +62,12 @@ router.get('/:id', async (req, res) => {
 })
 
 router.put('/:id', async (req, res) => {
-  const parsedRequestBody = questionSchema.partial().safeParse(req.body)
+  const parsedRequestBody = questionSchema
+    .partial()
+    .refine((val) => Object.keys(val).map(key => val[key as keyof typeof val] !== null), {
+      message: "One of the fields must be defined"
+    })
+    .safeParse(req.body)
   if (!parsedRequestBody.success) {
     return res.status(400).json({ error: parsedRequestBody.error })
   }
