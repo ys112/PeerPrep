@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { Query } from 'firebase-admin/firestore'
+import { } from 'firebase-admin'
 import { db } from '../db/clients'
 import { Question, questionSchema } from '../model'
 
@@ -64,8 +65,8 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const parsedRequestBody = questionSchema
     .partial()
-    .refine((val) => Object.keys(val).map(key => val[key as keyof typeof val] !== null), {
-      message: "One of the fields must be defined"
+    .refine((val) => Object.keys(val).map(key => val[key as keyof typeof val] !== undefined), {
+      message: "Please provide at least one field"
     })
     .safeParse(req.body)
   if (!parsedRequestBody.success) {
