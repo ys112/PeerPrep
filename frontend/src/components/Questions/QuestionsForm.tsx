@@ -14,13 +14,11 @@ import { Question, QuestionWithOptional } from "../../types/question";
 export function QuestionsForm({
   opened,
   selectedQuestion,
-  questions,
   onClose,
   submitForm,
 }: {
   opened: boolean;
   selectedQuestion?: Question;
-  questions: Question[];
   onClose: () => void;
   submitForm: (question: QuestionWithOptional) => void;
 }) {
@@ -34,14 +32,7 @@ export function QuestionsForm({
     },
     validate: {
       title: (value: string) =>
-        value.trim().length < 2
-          ? "Title is required"
-          : questions.some(
-                (q) =>
-                  q.title === value && q.id !== (selectedQuestion?.id ?? q.id)
-              ) // Check if title already exists and not the selected question being edited
-            ? "Title already exists, possible duplicate question"
-            : null,
+        value.trim().length < 2 ? "Title is required" : null,
       description: (value: string) =>
         value.trim().length < 2 ? "Description is required" : null,
       categories: (value: string[]) =>

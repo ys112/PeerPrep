@@ -123,7 +123,6 @@ export function QuestionsPage() {
       <QuestionsForm
         opened={opened}
         selectedQuestion={selectedQuestion}
-        questions={questions}
         onClose={handleCloseForm}
         submitForm={submitForm}
       />
