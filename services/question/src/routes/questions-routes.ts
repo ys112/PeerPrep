@@ -5,7 +5,7 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
-} from '../controller/questions'
+} from '../controller/questions-controller'
 
 const router = Router()
 
