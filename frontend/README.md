@@ -1,7 +1,8 @@
 ## Getting Started
 
 ### Prerequisites
-* npm
+
+- npm
   ```sh
   npm install npm@latest -g
   ```
@@ -20,3 +21,12 @@
    ```sh
    npm run dev
    ```
+
+### Environment Variables
+
+Set variables in .env.development for development and .env.prod for production.
+
+- `VITE_API_URL`: The backend API url (e.g. http://localhost:3000)
+
+For more details on how .env in VITE works:
+https://vitejs.dev/guide/env-and-mode
