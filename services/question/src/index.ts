@@ -7,7 +7,7 @@ if (process.env.NODE_ENV) {
 
 import express from 'express'
 import logger from './utils/logger'
-import router from './routes/questions'
+import router from './routes/questions-routes'
 import cors from 'cors'
 
 const app = express()
