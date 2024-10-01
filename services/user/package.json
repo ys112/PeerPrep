@@ -2,7 +2,6 @@
   "name": "user-service",
   "version": "1.0.0",
   "main": "src/index.ts",
-  "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "rm -f package-lock.json && npm install && tsc --project . && NODE_ENV=production npm install --production",
