@@ -38,14 +38,6 @@ app.use(
 app.use('/users', userRoutes)
 app.use('/auth', authRoutes)
 
-// Root route
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-  console.log('Sending Greetings!')
-  res.json({
-    message: 'Hello World from user-service',
-  })
-})
-
 // Handle when no route matches
 app.use((req: Request, res: Response, next: NextFunction) => {
   const error: CustomError = new Error('Route Not Found')

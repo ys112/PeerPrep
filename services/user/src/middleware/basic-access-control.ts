@@ -7,16 +7,7 @@ if (process.env.NODE_ENV) {
 import { Request, Response, NextFunction } from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { db } from '../db/clients'
-import { User } from '../model'
-
-interface CustomRequest extends Request {
-  user?: {
-    id: string
-    username: string
-    email: string
-    isAdmin: boolean
-  }
-}
+import { User, CustomRequest } from '../model'
 
 export function verifyAccessToken(
   req: CustomRequest,
@@ -51,7 +42,6 @@ export function verifyAccessToken(
   })
 }
 
-// Middleware to verify if the user is an admin
 export function verifyIsAdmin(req: CustomRequest, res: Response, next: NextFunction) {
   if (req.user?.isAdmin) {
     next()
@@ -60,7 +50,6 @@ export function verifyIsAdmin(req: CustomRequest, res: Response, next: NextFunct
   }
 }
 
-// Middleware to verify if the user is the owner or an admin
 export function verifyIsOwnerOrAdmin(
   req: CustomRequest,
   res: Response,

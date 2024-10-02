@@ -2,12 +2,12 @@
 
 ## Setting-up
 
-1. Database client
+### Database client
 - The database client is defined in `./src/db/clients.ts`. It connects to Google Cloud Datastore (Firestore).
 - Connecting to Firestore requires service account credentials file. The path to the file must be set in the environment variable `GOOGLE_APPLICATION_CREDENTIALS`.
 - The client looks for the `COLLECTION_NAME` environment variable to determine the collection name to use in Firestore.
 
-2. Environment variables
+### Environment variables
 - `PORT`: Port to run the service on.
 - `COLLECTION_NAME`: Name of the collection in Firestore to use.
 - `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
@@ -31,7 +31,7 @@ if (process.env.NODE_ENV) {
 
 ## Running User Service
 
-1. Open Command Line/Terminal and navigate into the `user-service` directory.
+1. Open Command Line/Terminal and navigate into the `services/user` directory.
 
 2. Run the command: `npm install`. This will install all the necessary dependencies.
 
