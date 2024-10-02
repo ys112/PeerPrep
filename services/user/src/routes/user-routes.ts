@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express'
 
 import {
   createUser,
@@ -7,30 +7,25 @@ import {
   getUser,
   updateUser,
   updateUserPrivilege,
-} from "../controller/user-controller";
+} from '../controller/user-controller'
 import {
   verifyAccessToken,
   verifyIsAdmin,
   verifyIsOwnerOrAdmin,
-} from "../middleware/basic-access-control";
+} from '../middleware/basic-access-control'
 
-const router = express.Router();
+const router = express.Router()
 
-router.get("/", verifyAccessToken, verifyIsAdmin, getAllUsers);
+router.post('/', createUser)
 
-router.patch(
-  "/:id/privilege",
-  verifyAccessToken,
-  verifyIsAdmin,
-  updateUserPrivilege
-);
+router.get('/', verifyAccessToken, verifyIsAdmin, getAllUsers)
 
-router.post("/", createUser);
+router.get('/:id', verifyAccessToken, verifyIsOwnerOrAdmin, getUser)
 
-router.get("/:id", verifyAccessToken, verifyIsOwnerOrAdmin, getUser);
+router.patch('/:id/privilege', verifyAccessToken, verifyIsAdmin, updateUserPrivilege)
 
-router.patch("/:id", verifyAccessToken, verifyIsOwnerOrAdmin, updateUser);
+router.patch('/:id', verifyAccessToken, verifyIsOwnerOrAdmin, updateUser)
 
-router.delete("/:id", verifyAccessToken, verifyIsOwnerOrAdmin, deleteUser);
+router.delete('/:id', verifyAccessToken, verifyIsOwnerOrAdmin, deleteUser)
 
-export default router;
+export default router

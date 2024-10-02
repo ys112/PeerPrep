@@ -1,3 +1,9 @@
+import dotenv from 'dotenv'
+if (process.env.NODE_ENV) {
+  dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
+} else {
+  dotenv.config({ path: '.env' })
+}
 import { Request, Response, NextFunction } from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { db } from '../db/clients'
@@ -29,13 +35,11 @@ export function verifyAccessToken(
     }
 
     const user = decoded as JwtPayload & { id: string }
-    const userSnapshot = await db.where('id', '==', user.id).get()
-    if (!userSnapshot) {
+    const userDoc = await db.doc(user.id).get()
+    if (!userDoc.exists) {
       return res.status(401).json({ message: 'Authentication failed' })
     }
-    const userDoc = userSnapshot.docs[0]
     const userData = userDoc.data() as User
-
     req.user = {
       id: userDoc.id,
       username: userData.username,
@@ -43,7 +47,7 @@ export function verifyAccessToken(
       isAdmin: userData.isAdmin,
     }
 
-    next() // Proceed to the next middleware
+    next()
   })
 }
 

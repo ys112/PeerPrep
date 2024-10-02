@@ -4,9 +4,6 @@ import { Query } from 'firebase-admin/firestore'
 import { db } from '../db/clients'
 import { User } from '../model'
 
-// Type for the formatUserResponse function parameter
-type UserResponse = Omit<User, 'password'> // Exclude password for response
-
 export async function createUser(req: Request, res: Response): Promise<Response> {
   try {
     const {
@@ -33,9 +30,12 @@ export async function createUser(req: Request, res: Response): Promise<Response>
       }
 
       const userDoc = await db.add(createdUser)
+
+      const { password: _, ...userResponse } = createdUser
+
       return res.status(201).json({
         message: `Created new user ${username} successfully`,
-        data: { id: userDoc.id, ...createdUser },
+        data: { id: userDoc.id, ...userResponse },
       })
     } else {
       return res
@@ -56,9 +56,12 @@ export async function getUser(req: Request, res: Response): Promise<Response> {
     if (!userDoc.exists) {
       return res.status(404).json({ message: `User ${userId} not found` })
     } else {
+      const userData = userDoc.data() as User
+      const { password, ...userResponse } = userData
+
       return res.status(200).json({
         message: `Found user`,
-        data: { id: userDoc.id, ...(userDoc.data() as User) },
+        data: { id: userDoc.id, ...userResponse },
       })
     }
   } catch (err) {
@@ -70,10 +73,11 @@ export async function getUser(req: Request, res: Response): Promise<Response> {
 export async function getAllUsers(req: Request, res: Response): Promise<Response> {
   try {
     const usersSnapshot = await db.get()
-    const users: UserResponse[] = usersSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as User),
-    }))
+    const users = usersSnapshot.docs.map((doc) => {
+      const userData = doc.data() as User
+      const { password, ...userResponse } = userData
+      return { id: doc.id, ...userResponse }
+    })
 
     return res.status(200).json({ message: `Found users`, data: users })
   } catch (err) {
@@ -98,7 +102,6 @@ export async function updateUser(req: Request, res: Response): Promise<Response>
       }
 
       const userData = userDoc.data() as User
-
       if (username || email) {
         const existingUser = await findUserByUsernameOrEmail(username, email)
         if (existingUser && existingUser.id !== userId) {
@@ -118,9 +121,13 @@ export async function updateUser(req: Request, res: Response): Promise<Response>
         password: hashedPassword || userData.password,
       })
 
+      const updatedUserDoc = await db.doc(userId).get()
+      const updatedUserData = updatedUserDoc.data() as User
+      const { password: _, ...updatedUserResponse } = updatedUserData
+
       return res.status(200).json({
         message: `Updated data for user ${userId}`,
-        data: { id: userDoc.id, ...userData },
+        data: { id: updatedUserDoc.id, ...updatedUserResponse },
       })
     } else {
       return res.status(400).json({
@@ -149,11 +156,13 @@ export async function updateUserPrivilege(
 
       await db.doc(userId).update({ isAdmin })
 
-      const updatedUser = userDoc.data() as User
+      const updatedUserDoc = await db.doc(userId).get()
+      const updatedUserData = updatedUserDoc.data() as User
+      const { password, ...updatedUserResponse } = updatedUserData
 
       return res.status(200).json({
         message: `Updated privilege for user ${userId}`,
-        data: { id: userDoc.id, ...updatedUser },
+        data: { id: userDoc.id, ...updatedUserResponse },
       })
     } else {
       return res.status(400).json({ message: 'isAdmin is missing!' })
@@ -174,6 +183,10 @@ export async function deleteUser(req: Request, res: Response): Promise<Response>
       return res.status(404).json({ message: `User ${userId} not found` })
     }
 
+    const userData = userDoc.data() as User
+    const { password, ...deletedUserResponse } = userData
+    console.log(`Deleting user:`, deletedUserResponse)
+
     await db.doc(userId).delete()
     return res.status(200).json({ message: `Deleted user ${userId} successfully` })
   } catch (err) {
@@ -182,28 +195,29 @@ export async function deleteUser(req: Request, res: Response): Promise<Response>
   }
 }
 
-// Helper function to find a user by username or email
 async function findUserByUsernameOrEmail(
   username: string | undefined,
   email: string | undefined
 ) {
-  // Build the query to search for users based on username and email
-  let query: Query = db
-
-  // Add filters to the query only if username or email is defined
+  let usernameQuery: Query = db
+  let emailQuery: Query = db
   if (username) {
-    query = query.where('username', '==', username)
+    usernameQuery = usernameQuery.where('username', '==', username)
+    const usernameSnapshot = await usernameQuery.get()
+    if (!usernameSnapshot.empty) {
+      const userDoc = usernameSnapshot.docs[0]
+      return { id: userDoc.id, ...(userDoc.data() as User) }
+    }
   }
   if (email) {
-    query = query.where('email', '==', email)
-  }
+    emailQuery = emailQuery.where('email', '==', email)
 
-  const snapshot = await query.get()
+    const emailSnapshot = await emailQuery.get()
 
-  // Check if the snapshot is not empty
-  if (!snapshot.empty) {
-    const userDoc = snapshot.docs[0]
-    return { id: userDoc.id, ...(userDoc.data() as User) } // Return user data without id
+    if (!emailSnapshot.empty) {
+      const userDoc = emailSnapshot.docs[0]
+      return { id: userDoc.id, ...(userDoc.data() as User) }
+    }
   }
-  return null // Return null if no user is found
+  return null
 }

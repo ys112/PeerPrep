@@ -7,7 +7,7 @@
     "build": "rm -f package-lock.json && npm install && tsc --project . && NODE_ENV=production npm install --production",
     "test": "cross-env NODE_ENV=test jest",
     "start": "NODE_ENV=production node dist/index.js",
-    "upload": "cross-env NODE_ENV=development ts-node src/scripts/upload.ts"
+    "create-admin": "cross-env NODE_ENV=development ts-node src/scripts/create-admin.ts"
   },
   "keywords": [],
   "author": "",

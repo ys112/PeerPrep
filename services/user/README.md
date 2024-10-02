@@ -2,27 +2,32 @@
 
 ## Setting-up
 
-> :notebook: If you are familiar to MongoDB and wish to use a local instance, please feel free to do so. This guide utilizes MongoDB Cloud Services.
+1. Database client
+- The database client is defined in `./src/db/clients.ts`. It connects to Google Cloud Datastore (Firestore).
+- Connecting to Firestore requires service account credentials file. The path to the file must be set in the environment variable `GOOGLE_APPLICATION_CREDENTIALS`.
+- The client looks for the `COLLECTION_NAME` environment variable to determine the collection name to use in Firestore.
 
-1. Set up a MongoDB Shared Cluster by following the steps in this [Guide](./MongoDBSetup.md).
+2. Environment variables
+- `PORT`: Port to run the service on.
+- `COLLECTION_NAME`: Name of the collection in Firestore to use.
+- `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
+- `CORS_ORIGINS`: Allow list for CORS, as an JSON array. (e.g. `'["http://localhost:3000", "http://localhost:3001"]'`)
+- `JWT_SECRET`: Secret for creating JWT signature
+- `ADMIN_USERNAME`: Admin username if you need to create a new admin user in a new database 
+- `ADMIN_EMAIL`: Admin email if you need to create a new admin user in a new database 
+- `ADMIN_PASSWORD`: Admin password if you need to create a new admin user in a new database 
 
-2. After setting up, go to the Database Deployment Page. You would see a list of the Databases you have set up. Select `Connect` on the cluster you just created earlier on for User Service.
+To use `.env.development` or `.env.production`, set the `NODE_ENV` to `development` or `production` and put this code on top of the entry file:
+```typescript
+import dotenv from 'dotenv'
+if (process.env.NODE_ENV) {
+  dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
+} else {
+  dotenv.config({ path: '.env' })
+}
+```
+`ADMIN_USERNAME`, `ADMIN_EMAIL` and `ADMIN_PASSWORD` are only needed if there is no admin user in the database and you need to create a new admin user.
 
-    ![alt text](./GuideAssets/ConnectCluster.png)
-
-3. Select the `Drivers` option, as we have to link to a Node.js App (User Service).
-
-    ![alt text](./GuideAssets/DriverSelection.png)
-
-4. Select `Node.js` in the `Driver` pull-down menu, and copy the connection string.
-
-    Notice, you may see `<password>` in this connection string. We will be replacing this with the admin account password that we created earlier on when setting up the Shared Cluster.
-
-    ![alt text](./GuideAssets/ConnectionString.png)
-
-5. In the `user-service` directory, create a copy of the `.env.sample` file and name it `.env`.
-
-6. Update the `DB_CLOUD_URI` of the `.env` file, and paste the string we copied earlier in step 4. Also remember to replace the `<password>` placeholder with the actual password.
 
 ## Running User Service
 
@@ -33,6 +38,8 @@
 3. Run the command `npm start` to start the User Service in production mode, or use `npm run dev` for development mode, which includes features like automatic server restart when you make code changes.
 
 4. Using applications like Postman, you can interact with the User Service on port 3001. If you wish to change this, please update the `.env` file.
+
+5. If there is no admin user in the database, run the command `npm run create-admin` to create a new admin user. Make sure the necessary environment variables are present.
 
 ## User Service API Guide
 
