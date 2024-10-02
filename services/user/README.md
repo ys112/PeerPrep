@@ -13,9 +13,9 @@
 - `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
 - `CORS_ORIGINS`: Allow list for CORS, as an JSON array. (e.g. `'["http://localhost:3000", "http://localhost:3001"]'`)
 - `JWT_SECRET`: Secret for creating JWT signature
-- `ADMIN_USERNAME`: Admin username if you need to create a new admin user in a new database 
-- `ADMIN_EMAIL`: Admin email if you need to create a new admin user in a new database 
-- `ADMIN_PASSWORD`: Admin password if you need to create a new admin user in a new database 
+- `ADMIN_USERNAME`: Admin username if you need to create a new admin user 
+- `ADMIN_EMAIL`: Admin email if you need to create a new admin user 
+- `ADMIN_PASSWORD`: Admin password if you need to create a new admin user
 
 To use `.env.development` or `.env.production`, set the `NODE_ENV` to `development` or `production` and put this code on top of the entry file:
 ```typescript
@@ -26,7 +26,7 @@ if (process.env.NODE_ENV) {
   dotenv.config({ path: '.env' })
 }
 ```
-`ADMIN_USERNAME`, `ADMIN_EMAIL` and `ADMIN_PASSWORD` are only needed if there is no admin user in the database and you need to create a new admin user.
+`ADMIN_USERNAME`, `ADMIN_EMAIL` and `ADMIN_PASSWORD` are only needed if you need to create a new admin user and should be stored only in `.env.production`.
 
 
 ## Running User Service
@@ -35,11 +35,13 @@ if (process.env.NODE_ENV) {
 
 2. Run the command: `npm install`. This will install all the necessary dependencies.
 
-3. Run the command `npm start` to start the User Service in production mode, or use `npm run dev` for development mode, which includes features like automatic server restart when you make code changes.
+3. Run the command `npm run create-admin` to create a new admin user. Make sure the necessary environment variables are present.
 
-4. Using applications like Postman, you can interact with the User Service on port 3001. If you wish to change this, please update the `.env` file.
+4. Run the command `npm start` to start the User Service in production mode, or use `npm run dev` for development mode, which includes features like automatic server restart when you make code changes.
 
-5. If there is no admin user in the database, run the command `npm run create-admin` to create a new admin user. Make sure the necessary environment variables are present.
+5. Using applications like Postman, you can interact with the User Service on port 3001. If you wish to change this, please update the `.env` file.
+
+
 
 ## User Service API Guide
 

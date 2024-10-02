@@ -21,15 +21,8 @@ const createAdminUser = async () => {
   }
 
   try {
-    const adminUserRef = db.where('isAdmin', '==', true)
-    const snapshot = await adminUserRef.get()
-
-    if (snapshot.empty) {
-      await db.add(adminUser)
-      console.log('Admin user created successfully:', adminUser)
-    } else {
-      console.log('Admin user already exists.')
-    }
+    await db.add(adminUser)
+    console.log('Admin user created successfully:', adminUser)
   } catch (error) {
     console.error('Error creating admin user:', error)
   }
