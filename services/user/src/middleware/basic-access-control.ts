@@ -4,13 +4,13 @@ if (process.env.NODE_ENV) {
 } else {
   dotenv.config({ path: '.env' })
 }
-import { Request, Response, NextFunction } from 'express'
+import { Response, NextFunction } from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { db } from '../db/clients'
-import { User, CustomRequest } from '../model'
+import { User, VerifyRequest } from '../model'
 
 export function verifyAccessToken(
-  req: CustomRequest,
+  req: VerifyRequest,
   res: Response,
   next: NextFunction
 ): void | Response {
@@ -42,7 +42,7 @@ export function verifyAccessToken(
   })
 }
 
-export function verifyIsAdmin(req: CustomRequest, res: Response, next: NextFunction) {
+export function verifyIsAdmin(req: VerifyRequest, res: Response, next: NextFunction) {
   if (req.user?.isAdmin) {
     next()
   } else {
@@ -51,7 +51,7 @@ export function verifyIsAdmin(req: CustomRequest, res: Response, next: NextFunct
 }
 
 export function verifyIsOwnerOrAdmin(
-  req: CustomRequest,
+  req: VerifyRequest,
   res: Response,
   next: NextFunction
 ) {

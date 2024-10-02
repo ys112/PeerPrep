@@ -8,7 +8,7 @@ import { Request, Response } from 'express'
 import { db } from '../db/clients'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { User, loginRequestSchema } from '../model'
+import { User, loginRequestSchema, VerifyRequest } from '../model'
 
 interface UserRequest extends Request {
   user?: User
@@ -55,7 +55,7 @@ export async function handleLogin(req: Request, res: Response) {
 }
 
 export async function handleVerifyToken(
-  req: UserRequest,
+  req: VerifyRequest,
   res: Response
 ): Promise<Response> {
   try {
