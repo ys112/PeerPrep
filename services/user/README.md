@@ -41,8 +41,6 @@ if (process.env.NODE_ENV) {
 
 5. Using applications like Postman, you can interact with the User Service on port 3001. If you wish to change this, please update the `.env` file.
 
-
-
 ## User Service API Guide
 
 ### Create User
