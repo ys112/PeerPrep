@@ -68,7 +68,7 @@ export async function getDuplicate(title: string, ignoreId?: string): Promise<Qu
   return questions[0];
 }
 
-export async function create(questionDoc: QuestionDoc): Promise<Question> {
+export async function add(questionDoc: QuestionDoc): Promise<Question> {
   let docReference: DocumentReference = await collection.add(questionDoc);
 
   return (await docReferenceToQuestion(docReference)) as Question;
@@ -81,4 +81,13 @@ export async function set(id: string, questionDoc: QuestionDoc): Promise<Questio
   await docReference.set(questionDoc);
 
   return (await docReferenceToQuestion(docReference)) as Question;
+}
+
+export async function destroy(id: string): Promise<void> {
+  let docReference: DocumentReference = collection.doc(id);
+
+  // Wait for delete before proceeding
+  await docReference.delete();
+
+  return Promise.resolve();
 }

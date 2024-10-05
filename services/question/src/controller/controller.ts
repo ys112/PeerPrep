@@ -1,6 +1,4 @@
 import { Question, QuestionDoc } from '@common/shared-types';
-import { Request, Response } from 'express';
-import { collection } from "../model/collection";
 import * as model from '../model/model';
 import { DuplicateQuestionError } from "../utils/errors";
 
@@ -12,7 +10,7 @@ export async function get(id: string): Promise<Question | null> {
   return model.get(id);
 }
 
-export async function create(questionDoc: QuestionDoc): Promise<Question> {
+export async function add(questionDoc: QuestionDoc): Promise<Question> {
   // Guard against duplicates
   let duplicateQuestion: Question | null = await model.getDuplicate(questionDoc.title);
   if (duplicateQuestion !== null) {
@@ -20,7 +18,7 @@ export async function create(questionDoc: QuestionDoc): Promise<Question> {
   }
 
   // Create new question
-  return model.create(questionDoc);
+  return model.add(questionDoc);
 }
 
 export async function set(id: string, questionDoc: QuestionDoc): Promise<Question> {
@@ -34,11 +32,6 @@ export async function set(id: string, questionDoc: QuestionDoc): Promise<Questio
   return model.set(id, questionDoc);
 }
 
-export async function deleteQuestion(req: Request, res: Response) {
-  try {
-    await collection.doc(req.params.id).delete()
-    res.status(204).send()
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete question' })
-  }
+export async function destroy(id: string): Promise<void> {
+  return model.destroy(id);
 }

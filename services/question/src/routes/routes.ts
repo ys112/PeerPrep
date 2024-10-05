@@ -32,6 +32,7 @@ export default router;
 // GET all questions
 router.get('/', async (req: Request, res: Response) => {
   let { complexity, categories } = req.body;
+
   let questions: Question[] = await controller.getAll(complexity, categories);
 
   res.status(StatusCodes.OK);
@@ -40,12 +41,13 @@ router.get('/', async (req: Request, res: Response) => {
 
 // GET question with specified ID
 router.get('/:id', async (req: Request, res: Response) => {
-  let { params: { id } } = req;
+  let id = req.params.id;
+
   let question: Question | null = await controller.get(id);
 
   if (question === null) {
     res.status(StatusCodes.NOT_FOUND);
-    res.json({ error: 'Question not found.' });
+    res.send();
     return;
   }
 
@@ -58,7 +60,7 @@ router.post('/', parseQuestionDoc, async (req: Request, res: Response) => {
   let questionDoc: QuestionDoc = res.locals.questionDoc;
 
   try {
-    let question: Question = await controller.create(questionDoc);
+    let question: Question = await controller.add(questionDoc);
 
     res.status(StatusCodes.CREATED);
     res.json(question);
@@ -75,7 +77,7 @@ router.post('/', parseQuestionDoc, async (req: Request, res: Response) => {
 
 // Overwrite specified question
 router.put('/:id', parseQuestionDoc, async (req: Request, res: Response) => {
-  let { params: { id } } = req;
+  let id = req.params.id;
   let questionDoc: QuestionDoc = res.locals.questionDoc;
 
   try {
@@ -95,4 +97,11 @@ router.put('/:id', parseQuestionDoc, async (req: Request, res: Response) => {
 });
 
 // DELETE specified question
-router.delete('/:id', controller.deleteQuestion);
+router.delete('/:id', async (req: Request, res: Response) => {
+  let id = req.params.id;
+
+  await controller.destroy(id);
+
+  res.status(StatusCodes.NO_CONTENT);
+  res.send();
+});
