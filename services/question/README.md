@@ -57,17 +57,16 @@ e.g. the tests for `src/controller/questions-controller.ts` are in `src/__tests_
 
 ## First-time setup
 
-1. Open a command line and navigate to the root folder of `services/question/`.
-1. Run `npm i` to install dependencies.
+1. If you haven't yet installed the monorepo's dependencies, open a command line in the root folder and run `pnpm i`. If you don't have `pnpm`, on Windows, first run `npm i -g pnpm` to install it.
 1. Ensure you have a copy of the provided Firebase service account credentials JSON file. Place it in a location of your choosing.\
-  Developers may opt to place it outside the cloned monorepo folder to ensure it never gets accidentally checked in.
+  Developers may opt to place it outside the cloned monorepo's folder to ensure it never gets accidentally checked in.
 1. Make a copy of `.env.development.example` and name it `.env.development`. Edit the contents as necessary, such as specifying the actual path to your Firebase JSON file.
 
 If the database has yet to be initialised and is thus empty, additionally run `npm run upload` to populate it.
 
 ## Running the service (development)
 
-1. Open a command line and navigate to the root folder of `services/question/`.
+1. Open a command line and navigate to the root folder of `services/question/` (e.g. `cd services/question`).
 1. Run `npm run dev` to run the dev script.
 1. Open your browser at <http://localhost:3000> (assuming your `.env.development` file has `PORT=3000`).\
   Edit the URL to work with different routes. For example, you can open <http://localhost:3000/questions> to get all questions.
