@@ -1,22 +1,28 @@
-import { Router } from 'express'
-import {
-  createQuestion,
-  deleteQuestion,
-  getAllQuestionsWithConditions,
-  getQuestion,
-  updateQuestion,
-} from '../controller/controller'
+/* [Imports] */
 
-const router = Router()
+import { Question } from "@common/shared-types";
+import { Request, Response, Router } from 'express';
+import { StatusCodes } from "http-status-codes";
+import * as controller from '../controller/controller';
 
-router.get('/', getAllQuestionsWithConditions)
+/* [Main] */
 
-router.get('/:id', getQuestion)
+let router: Router = Router();
+export default router;
 
-router.post('/', createQuestion)
+router.get('/', async (req: Request, res: Response) => {
+  let { complexity, categories } = req.body;
+  let questions: Question[] = await controller.getAll(complexity, categories);
 
-router.put('/:id', updateQuestion)
+  res.status(StatusCodes.OK);
+  res.json(questions);
+});
 
-router.delete('/:id', deleteQuestion)
+//TODO
+router.get('/:id', controller.getQuestion);
 
-export default router
+router.post('/', controller.createQuestion);
+
+router.put('/:id', controller.updateQuestion);
+
+router.delete('/:id', controller.deleteQuestion);

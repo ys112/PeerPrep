@@ -6,4 +6,4 @@ initializeApp({
   credential: applicationDefault(),
 })
 
-export const db = getFirestore().collection(process.env.COLLECTION_NAME || 'questions')
+export const collection = getFirestore().collection(process.env.COLLECTION_NAME || 'questions')
