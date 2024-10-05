@@ -81,7 +81,7 @@ export async function updateQuestion(req: Request, res: Response) {
     }
 
     await db.doc(req.params.id).set(data)
-    res.status(200).json({ message: 'Question updated successfully' })
+    res.status(200).json({ id: req.params.id, ...data })
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Failed to update question' })
