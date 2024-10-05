@@ -14,6 +14,6 @@ export async function getAll(complexity?: string, categories?: string[]): Promis
     query = query.where("categories", "array-contains-any", categories);
   }
 
-  let querySnapshot = await collection.get();
+  let querySnapshot = await query.get();
   return querySnapshot.docs.map(docToQuestion);
 }
