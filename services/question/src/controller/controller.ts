@@ -7,16 +7,8 @@ export async function getAll(complexity?: string, categories?: string[]): Promis
   return model.getAll(complexity, categories);
 }
 
-export async function getQuestion(req: Request, res: Response) {
-  try {
-    const doc = await collection.doc(req.params.id).get()
-    if (!doc.exists) {
-      return res.status(404).json({ error: 'Question not found' })
-    }
-    res.status(200).json({ id: doc.id, ...doc.data() })
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch question' })
-  }
+export async function get(id: string): Promise<Question | null> {
+  return model.get(id);
 }
 
 export async function createQuestion(req: Request, res: Response) {
