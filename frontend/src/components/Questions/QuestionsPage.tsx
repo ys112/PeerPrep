@@ -1,16 +1,6 @@
-import {
-  Stack,
-  Title,
-  Button,
-  Group,
-  Affix,
-  Transition,
-  rem,
-  Text,
-} from '@mantine/core';
+import { Stack, Title, Button, Group, Text } from '@mantine/core';
 
-import { useWindowScroll } from '@mantine/hooks';
-import { IconArrowUp, IconPlus } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import { QuestionsForm } from './QuestionsForm';
 import { QuestionTable } from './QuestionsTable';
 import { modals } from '@mantine/modals';
