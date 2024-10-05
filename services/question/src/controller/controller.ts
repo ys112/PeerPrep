@@ -1,4 +1,4 @@
-import { Question, questionSchema } from '@common/shared-types';
+import { Question, QuestionDoc, questionSchema } from '@common/shared-types';
 import { Request, Response } from 'express';
 import { collection } from "../model/collection";
 import * as model from '../model/model';
@@ -11,25 +11,12 @@ export async function get(id: string): Promise<Question | null> {
   return model.get(id);
 }
 
-export async function createQuestion(req: Request, res: Response) {
-  try {
-    const parsedRequest = questionSchema.omit({ id: true }).safeParse(req.body)
-    if (!parsedRequest.success) {
-      return res.status(400).json({ error: parsedRequest.error })
-    }
-    const { data } = parsedRequest
-
-    const existingQuestionSnapshot = await collection.where('title', '==', data.title).get()
-
-    if (!existingQuestionSnapshot.empty) {
-      return res.status(409).json({ error: 'A question with this title already exists' })
-    }
-
-    const newQuestionRef = await collection.add(data)
-    res.status(201).json({ id: newQuestionRef.id, ...data })
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create question' })
-  }
+//TODO DuplicateQuestionError
+export async function getByTitle(title: string): Promise<Question | null> {
+  return model.getByTitle(title);
+}
+export async function create(questionDoc: QuestionDoc): Promise<Question> {
+  return model.create(questionDoc);
 }
 
 export async function updateQuestion(req: Request, res: Response) {
