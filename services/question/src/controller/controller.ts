@@ -2,6 +2,7 @@ import { Question, QuestionDoc, questionSchema } from '@common/shared-types';
 import { Request, Response } from 'express';
 import { collection } from "../model/collection";
 import * as model from '../model/model';
+import { DuplicateQuestionError } from "../utils/errors";
 
 export async function getAll(complexity?: string, categories?: string[]): Promise<Question[]> {
   return model.getAll(complexity, categories);
@@ -11,11 +12,14 @@ export async function get(id: string): Promise<Question | null> {
   return model.get(id);
 }
 
-//TODO DuplicateQuestionError
-export async function getByTitle(title: string): Promise<Question | null> {
-  return model.getByTitle(title);
-}
 export async function create(questionDoc: QuestionDoc): Promise<Question> {
+  // Guard against duplicates
+  let existingQuestion: Question | null = await model.getByTitle(questionDoc.title);
+  if (existingQuestion !== null) {
+    throw new DuplicateQuestionError(existingQuestion);
+  }
+
+  // Create new question
   return model.create(questionDoc);
 }
 

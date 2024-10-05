@@ -3,6 +3,12 @@ import { Request, Response, Router } from 'express';
 import { StatusCodes } from "http-status-codes";
 import { SafeParseReturnType } from "zod";
 import * as controller from '../controller/controller';
+import { DuplicateQuestionError } from "../utils/errors";
+
+function genericServerError(res: Response, e: unknown) {
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+  res.json({ error: e});
+}
 
 let router: Router = Router();
 export default router;
@@ -45,19 +51,21 @@ router.post('/', async (req: Request, res: Response) => {
   }
   let questionDoc: QuestionDoc = result.data;
 
-  // Guard against duplicates
-  let existingQuestion: Question | null = await controller.getByTitle(questionDoc.title);
-  if (existingQuestion !== null) {
-    res.status(StatusCodes.CONFLICT);
-    res.json(existingQuestion);
-    return;
-  }
-
   // Create question
-  let question: Question = await controller.create(questionDoc);
+  try {
+    let question: Question = await controller.create(questionDoc);
 
-  res.status(StatusCodes.CREATED);
-  res.json(question);
+    res.status(StatusCodes.CREATED);
+    res.json(question);
+  } catch (e) {
+    if (e instanceof DuplicateQuestionError) {
+      res.status(StatusCodes.CONFLICT);
+      res.json(e.existingQuestion);
+      return;
+    }
+
+    genericServerError(res, e);
+  }
 });
 
 //TODO

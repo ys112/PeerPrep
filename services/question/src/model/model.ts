@@ -1,6 +1,6 @@
 import { Question, QuestionDoc } from '@common/shared-types';
 import { DocumentReference, DocumentSnapshot, Query, QueryDocumentSnapshot, QuerySnapshot } from 'firebase-admin/firestore';
-import logger from "../utils/logger";
+import logger from '../utils/logger';
 import { collection } from './collection';
 
 /* [Main] */
@@ -58,7 +58,7 @@ export async function getByTitle(title: string): Promise<Question | null> {
   }
 
   if (questions.length > 1) {
-    logger.warn("Potential duplicates found! Multiple questions have the same title.");
+    logger.warn('Potential duplicate questions found! Multiple questions have the same title.');
     logger.warn(JSON.stringify(questions));
   }
   return questions[0];
