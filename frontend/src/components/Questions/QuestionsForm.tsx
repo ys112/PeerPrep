@@ -1,120 +1,157 @@
 import {
   Button,
-  Modal,
   Select,
   Stack,
   TagsInput,
+  Text,
   Textarea,
   TextInput,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useEffect } from "react";
-import { Question, QuestionWithOptional } from "../../types/question";
+} from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
+import z from 'zod';
+import { Question } from '@common/shared-types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { IconCheck, IconPlus } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import { api } from '../../api/client';
 
-export function QuestionsForm({
-  opened,
-  selectedQuestion,
-  onClose,
-  submitForm,
-}: {
-  opened: boolean;
-  selectedQuestion?: Question;
-  onClose: () => void;
-  submitForm: (question: QuestionWithOptional) => void;
-}) {
-  const form = useForm({
-    mode: "uncontrolled",
+const questionFormSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().min(1, { message: 'Title is required' }),
+  description: z.string().min(1, { message: 'Description is required' }),
+  categories: z
+    .string()
+    .min(1)
+    .array()
+    .min(1, { message: 'At least 1 category required' }),
+  complexity: z.enum(['Easy', 'Medium', 'Hard'], {
+    message: 'Complexity is required',
+  }),
+});
+
+type FormValues = z.infer<typeof questionFormSchema>;
+
+interface Props {
+  initialValues?: FormValues;
+}
+
+export function QuestionsForm({ initialValues }: Props) {
+  const queryClient = useQueryClient();
+
+  const form = useForm<FormValues>({
     initialValues: {
-      title: "",
-      description: "",
-      categories: [] as string[],
-      complexity: "" as "Easy" | "Medium" | "Hard",
+      id: initialValues?.id ?? undefined,
+      title: initialValues?.title ?? '',
+      description: initialValues?.description ?? '',
+      categories: initialValues?.categories ?? [],
+      complexity: initialValues?.complexity ?? 'Easy',
     },
-    validate: {
-      title: (value: string) =>
-        value.trim().length < 2 ? "Title is required" : null,
-      description: (value: string) =>
-        value.trim().length < 2 ? "Description is required" : null,
-      categories: (value: string[]) =>
-        value.length < 1 ? "Categories are required" : null,
-      complexity: (value: string) =>
-        !(value == "Easy" || value == "Medium" || value == "Hard")
-          ? "Complexity is required"
-          : null,
+    validate: zodResolver(questionFormSchema),
+  });
+
+  const mode = !form.values.id ? 'create' : 'edit';
+
+  const { mutateAsync: createOrUpdateQuestionMutation } = useMutation({
+    mutationFn: async (values: FormValues) => {
+      try {
+        if (mode === 'create') {
+          return await api.questionClient.addQuestion(values);
+        } else {
+          return await api.questionClient.updateQuestion({
+            ...values,
+            id: values.id!,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    onSuccess: (data) => {
+      notifications.show({
+        color: 'green',
+        message: `Successfully ${mode === 'create' ? 'added' : 'updated'} question`,
+      });
+      if (mode === 'create') {
+        queryClient.setQueryData<Question[]>(['questions'], (prev) => [
+          ...(prev ?? []),
+          { ...data },
+        ]);
+        form.reset();
+      } else {
+        queryClient.setQueryData<Question[]>(['questions'], (prev) =>
+          prev?.map((qn) => (qn.id === data.id ? data : qn))
+        );
+        form.resetDirty();
+      }
+    },
+    onError: (error) => {
+      notifications.show({
+        color: 'red',
+        title: <Text fw='bold'>Error occured</Text>,
+        message: error.message,
+      });
     },
   });
 
-  // Set form values when editing a question
-  useEffect(() => {
-    if (selectedQuestion) {
-      form.setValues({
-        title: selectedQuestion.title,
-        description: selectedQuestion.description,
-        categories: selectedQuestion.categories,
-        complexity: selectedQuestion.complexity,
-      });
-    }
-  }, [selectedQuestion]);
-
-  // Handle form submission and adds existing id if editing a question
-  const handleSubmit = (values: QuestionWithOptional) => {
-    if (selectedQuestion) {
-      values.id = selectedQuestion.id;
-    }
-    submitForm(values);
-    form.reset();
-  };
-
-  const handleClose = () => {
-    form.reset();
-    onClose();
-  };
-
   return (
-    <Modal
-      size="lg"
-      title={selectedQuestion ? "Edit question" : "Create question"}
-      styles={{ title: { fontWeight: "bold", fontSize: "1.5rem" } }}
-      opened={opened}
-      onClose={handleClose}
-      centered
+    <form
+      onSubmit={form.onSubmit(
+        async (values) => await createOrUpdateQuestionMutation(values)
+      )}
     >
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack>
+      <Stack>
+        {form.values.id && (
           <TextInput
-            label="Title"
-            placeholder="Enter the title of the question"
-            key={form.key("title")}
-            {...form.getInputProps("title")}
+            disabled
+            readOnly
+            label='ID'
+            {...form.getInputProps('id')}
           />
-          <Textarea
-            label="Description"
-            placeholder="Enter the question description"
-            autosize
-            minRows={3}
-            key={form.key("description")}
-            {...form.getInputProps("description")}
-          />
-          <TagsInput
-            label="Categories"
-            description="Press Enter to submit a category"
-            placeholder="Enter categories"
-            key={form.key("categories")}
-            {...form.getInputProps("categories")}
-          />
-          <Select
-            label="Complexity"
-            placeholder="Select the complexity"
-            data={["Easy", "Medium", "Hard"]}
-            key={form.key("complexity")}
-            {...form.getInputProps("complexity")}
-          />
+        )}
+        <TextInput
+          label='Title'
+          required
+          placeholder='Enter the title of the question'
+          key={form.key('title')}
+          {...form.getInputProps('title')}
+        />
+        <Textarea
+          label='Description'
+          required
+          placeholder='Enter the question description'
+          autosize
+          minRows={3}
+          key={form.key('description')}
+          {...form.getInputProps('description')}
+        />
+        <TagsInput
+          label='Categories'
+          required
+          description='Press Enter to submit a category'
+          placeholder='Enter categories'
+          key={form.key('categories')}
+          {...form.getInputProps('categories')}
+        />
+        <Select
+          label='Complexity'
+          required
+          allowDeselect={false}
+          placeholder='Select the complexity'
+          data={['Easy', 'Medium', 'Hard']}
+          key={form.key('complexity')}
+          {...form.getInputProps('complexity')}
+        />
 
-          <Button mt="md" type="submit">
-            Submit
-          </Button>
-        </Stack>
-      </form>
-    </Modal>
+        <Button
+          mt='md'
+          type='submit'
+          disabled={!form.isDirty() || Object.keys(form.errors).length > 1}
+          leftSection={mode === 'create' ? <IconPlus /> : <IconCheck />}
+        >
+          {mode === 'create' ? 'Add' : 'Update'}
+        </Button>
+      </Stack>
+    </form>
   );
 }
