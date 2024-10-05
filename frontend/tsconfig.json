@@ -6,6 +6,8 @@
     "jsx": "react-jsx",
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "declaration": false,
+    "declarationMap": false
   }
 }
