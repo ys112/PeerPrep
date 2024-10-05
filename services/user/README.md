@@ -26,7 +26,7 @@ if (process.env.NODE_ENV) {
   dotenv.config({ path: '.env' })
 }
 ```
-`ADMIN_USERNAME`, `ADMIN_EMAIL` and `ADMIN_PASSWORD` are only needed if you need to create a new admin user and should be stored only in `.env.production`.
+`ADMIN_USERNAME`, `ADMIN_EMAIL` and `ADMIN_PASSWORD` are only needed if you need to create a new admin user and should be stored only in `.env.development`.
 
 
 ## Running User Service
