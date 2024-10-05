@@ -4,7 +4,6 @@ if (process.env.NODE_ENV) {
 } else {
   dotenv.config({ path: '.env' })
 }
-
 import express from 'express'
 import logger from './utils/logger'
 import router from './routes/questions-routes'
