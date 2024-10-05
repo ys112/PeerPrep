@@ -4,7 +4,6 @@
 *.log*
 
 # Dist
-dist/
 .vinxi
 .output
 .vercel
