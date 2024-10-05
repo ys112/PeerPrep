@@ -1,7 +1,7 @@
 /* [Imports] */
 
+import { Question } from "@common/shared-types";
 import fs from 'fs/promises';
-import { Question } from "../../model";
 import logger from "../../utils/logger";
 
 /* [Setup] */

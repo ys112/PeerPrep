@@ -1,7 +1,7 @@
+import { Question, questionSchema } from "@common/shared-types"
 import { Request, Response } from 'express'
 import { Query } from 'firebase-admin/firestore'
-import { db } from '../db/clients'
-import { questionSchema, Question } from '@common/shared-types'
+import { db } from "../model/db"
 
 export async function getAllQuestionsWithConditions(req: Request, res: Response) {
   try {

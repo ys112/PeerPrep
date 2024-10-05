@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import {
+  createQuestion,
+  deleteQuestion,
   getAllQuestionsWithConditions,
   getQuestion,
-  createQuestion,
   updateQuestion,
-  deleteQuestion,
-} from '../controller/questions-controller'
+} from '../controller/controller'
 
 const router = Router()
 

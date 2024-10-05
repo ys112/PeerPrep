@@ -5,18 +5,12 @@ if (process.env.NODE_ENV) {
   dotenv.config({ path: '.env' })
 }
 
-import { db } from '../db/clients'
+import { Question } from "@common/shared-types"
 import fs from 'fs/promises'
+import { db } from "../model/db"
 import logger from '../utils/logger'
 
 const dataPath = './data/questions.json'
-
-type Question = {
-  title: string
-  description: string
-  categories: string[]
-  complexity: "Easy" | "Medium" | "Hard"
-}
 
 fs.readFile(dataPath, 'utf-8').then(
   (raw) => {
