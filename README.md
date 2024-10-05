@@ -8,6 +8,8 @@ This is the monorepo for our PeerPrep implementation.
 
 ## Development Instructions
 
+Unless otherwise specified, commands should be run in the monorepo's root folder.
+
 ### Pre-requisites
 
 - Node.js
@@ -18,3 +20,8 @@ This is the monorepo for our PeerPrep implementation.
 
 1. Open a command line in the monorepo's root folder and run `pnpm i` to install all dependencies.
     - You do not need to install dependencies individually within subfolders.
+
+### Running the project (development)
+
+1. Run `pnpm dev` to run the dev script.
+1. Open your browser at <http://localhost:3001>.
