@@ -25,7 +25,7 @@ export const extractedUserSchema = z.object({
 
 export type ExtractedUser = z.infer<typeof extractedUserSchema>
 
-export interface CustomRequest extends Request {
+export interface VerifyRequest extends Request {
   user?: ExtractedUser
 }
 
