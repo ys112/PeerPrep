@@ -1,0 +1,60 @@
+import { Question } from "@common/shared-types";
+import axios from "axios"
+
+const questionsAxios = axios.create({
+  baseURL: import.meta.env.VITE_QUESTIONS_SERVICE_API_URL,
+})
+
+const QUESTION_API_URL = "/questions";
+
+const getQuestions = async () => {
+  try {
+    const response = await questionsAxios.get(QUESTION_API_URL)
+    return response.data as Question[];
+  } catch (error) {
+    console.error("Error fetching questions: ", error)
+    throw error
+  }
+}
+
+const addQuestion = async (question: Omit<Question, 'id'>) => {
+  try {
+    const response = await questionsAxios.post(QUESTION_API_URL, question)
+    return response.data as Question
+  } catch (error) {
+    console.error("Error adding question: ", error)
+    throw error
+  }
+}
+
+const updateQuestion = async (question: Question) => {
+  try {
+    const response = await questionsAxios.put(
+      `${QUESTION_API_URL}/${question.id}`,
+      question
+    )
+    return response.data as Question
+  } catch (error) {
+    console.error("Error updating question: ", error)
+    throw error
+  }
+}
+
+const deleteQuestion = async (questionId: string) => {
+  try {
+    await questionsAxios.delete(
+      `${QUESTION_API_URL}/${questionId}`
+    )
+    return { id: questionId }
+  } catch (error) {
+    console.error("Error deleting question: ", error)
+    throw error
+  }
+}
+
+export const questionClient = {
+  getQuestions,
+  addQuestion,
+  updateQuestion,
+  deleteQuestion
+}

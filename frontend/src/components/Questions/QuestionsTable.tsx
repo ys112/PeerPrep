@@ -1,91 +1,189 @@
-import { Table, Pill, Badge, ActionIcon, ScrollArea } from "@mantine/core";
-import { IconPencil, IconTrash } from "@tabler/icons-react";
-import { Question } from "../../types/question";
-import classes from "./QuestionsTable.module.css";
-import { QuestionsForm } from "./QuestionsForm";
-import { useState } from "react";
-import cx from "clsx";
+import { Question } from '@common/shared-types';
 
-interface QuestionTableProps {
-  questions: Question[];
-  onEdit: (question: Question) => void;
-  onDelete: (question: Question) => void;
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { notifications } from '@mantine/notifications';
+import {
+  ActionIcon,
+  Badge,
+  Group,
+  Loader,
+  Paper,
+  Spoiler,
+  Stack,
+  Table,
+  Text,
+} from '@mantine/core';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { modals } from '@mantine/modals';
+import { QuestionsForm } from './QuestionsForm';
+import { api } from '../../api/client';
+
+const COMPLEXITY_COLOR_MAP: Record<Question['complexity'], string> = {
+  Easy: 'green',
+  Medium: 'orange',
+  Hard: 'red',
+};
+
+function stringToHexColor(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  // Generate the RGB values and form the color
+  let color = '#';
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += value.toString(16).padStart(2, '0');
+  }
+
+  return color;
 }
 
-export function QuestionTable({
-  questions,
-  onEdit,
-  onDelete,
-}: QuestionTableProps) {
-  const [scrolled, setScrolled] = useState<boolean>(false);
+export function QuestionTable() {
+  const queryClient = useQueryClient();
 
-  const rows = questions.map((row, index) => (
-    <Table.Tr key={row.id}>
-      <Table.Td>{index + 1}</Table.Td>
-      <Table.Td>{row.title}</Table.Td>
-      <Table.Td className={classes.whitespace}>{row.description}</Table.Td>
-      <Table.Td>
-        <Pill.Group size="md" bd="2">
-          {row.categories.map((category, index) => (
-            <Pill
-              styles={{
-                root: {
-                  border: "1px solid black",
-                },
+  const { data: questions, isLoading } = useQuery({
+    queryKey: ['questions'],
+    queryFn: async () => {
+      try {
+        return await api.questionClient.getQuestions();
+      } catch (error) {
+        notifications.show({
+          color: 'red',
+          title: 'Error fetching questions',
+          message: `${(error as Error).message}`,
+        });
+        console.error(error);
+        throw error;
+      }
+    },
+    initialData: [],
+  });
+
+  const { mutateAsync: deleteQuestionMutation } = useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        return await api.questionClient.deleteQuestion(id);
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    onSuccess: ({ id }) => {
+      notifications.show({
+        color: 'green',
+        message: 'Successfully deleted question',
+      });
+      queryClient.setQueryData<Question[]>(['questions'], (prev) =>
+        prev?.filter((question) => question.id !== id)
+      );
+    },
+    onError: (error) => {
+      notifications.show({
+        color: 'red',
+        title: 'Error deleteing questions',
+        message: `${(error as Error).message}`,
+      });
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <Stack>
+        <Loader mx='auto' />
+        <Text ta='center'>Loading questions...</Text>
+      </Stack>
+    );
+  } else {
+    const rows = questions.map((question, index) => (
+      <Table.Tr>
+        <Table.Td>{index + 1}</Table.Td>
+        <Table.Td maw={100} fw='bold'>
+          {question.title}
+        </Table.Td>
+        <Table.Td maw={540}>
+          <Spoiler
+            fz='sm'
+            className='whitespace-pre-wrap'
+            maxHeight={110}
+            showLabel='...'
+            hideLabel='Hide'
+          >
+            {question.description}
+          </Spoiler>
+        </Table.Td>
+        <Table.Td>
+          <Stack gap={2} align='flex-start'>
+            {question.categories.map((category) => (
+              <Badge size='sm' autoContrast bg={stringToHexColor(category)}>
+                {category}
+              </Badge>
+            ))}
+          </Stack>
+        </Table.Td>
+        <Table.Td>
+          <Text c={COMPLEXITY_COLOR_MAP[question.complexity]}>
+            {question.complexity}
+          </Text>
+        </Table.Td>
+        <Table.Td>
+          <Group wrap='nowrap'>
+            <ActionIcon
+              variant='light'
+              onClick={() => {
+                modals.open({
+                  title: <Text fw='bold'>Editing Question</Text>,
+                  children: (
+                    <QuestionsForm
+                      initialValues={{
+                        ...question,
+                      }}
+                    />
+                  ),
+                });
               }}
-              key={index}
             >
-              {category}
-            </Pill>
-          ))}
-        </Pill.Group>
-      </Table.Td>
-      <Table.Td>
-        <Badge
-          color={
-            row.complexity == "Easy"
-              ? "green"
-              : row.complexity == "Medium"
-                ? "orange"
-                : "red"
-          }
-        >
-          {row.complexity}
-        </Badge>
-      </Table.Td>
-      <Table.Td>
-        {/* Edit and delete buttons */}
-        <ActionIcon onClick={() => onEdit(row)}>
-          <IconPencil />
-        </ActionIcon>
-        <ActionIcon color="red" onClick={() => onDelete(row)}>
-          <IconTrash />
-        </ActionIcon>
-      </Table.Td>
-    </Table.Tr>
-  ));
+              <IconEdit />
+            </ActionIcon>
+            <ActionIcon
+              variant='light'
+              color='red'
+              onClick={() => {
+                modals.openConfirmModal({
+                  title: `Please confirm your action`,
+                  children: (
+                    <Text>You are about to delete "{question.title}"</Text>
+                  ),
+                  labels: { confirm: 'Delete', cancel: 'Cancel' },
+                  confirmProps: { color: 'red' },
+                  onConfirm: async () => {
+                    await deleteQuestionMutation(question.id);
+                  },
+                });
+              }}
+            >
+              <IconTrash />
+            </ActionIcon>
+          </Group>
+        </Table.Td>
+      </Table.Tr>
+    ));
 
-  return (
-    /* Adapted from mantine components: https://ui.mantine.dev/category/tables/ */
-    <ScrollArea
-      h="80dvh"
-      onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-    >
-      <Table bgcolor="#f3f3fe" miw="50dvw">
-        <Table.Thead
-          className={cx(classes.header, { [classes.scrolled]: scrolled })}
-        >
-          <Table.Tr>
-            <Table.Th>No.</Table.Th>
+    return (
+      <Paper shadow='md' p='lg' withBorder>
+        <Table highlightOnHover stickyHeader stickyHeaderOffset={60}>
+          <Table.Thead>
+            <Table.Th>#</Table.Th>
             <Table.Th>Title</Table.Th>
             <Table.Th>Description</Table.Th>
-            <Table.Th>Topic</Table.Th>
+            <Table.Th>Category</Table.Th>
             <Table.Th>Complexity</Table.Th>
-            <Table.Th>Actions</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>{rows}</Table.Tbody>
-      </Table>
-    </ScrollArea>
-  );
+            <Table.Th></Table.Th>
+          </Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>
+      </Paper>
+    );
+  }
 }
