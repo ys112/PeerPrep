@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Query } from 'firebase-admin/firestore'
 import { db } from '../db/clients'
-import { Question, questionSchema } from '../model'
+import { questionSchema, Question } from '@common/shared-types'
 
 export async function getAllQuestionsWithConditions(req: Request, res: Response) {
   try {
@@ -16,7 +16,7 @@ export async function getAllQuestionsWithConditions(req: Request, res: Response)
     const snapshot = await query.get()
     const questions: Question[] = snapshot.docs.map((doc) => ({
       id: doc.id,
-      ...(doc.data() as Question),
+      ...(doc.data() as Omit<Question, 'id'>),
     }))
 
     let filteredQuestions = questions
@@ -47,7 +47,7 @@ export async function getQuestion(req: Request, res: Response) {
 
 export async function createQuestion(req: Request, res: Response) {
   try {
-    const parsedRequest = questionSchema.safeParse(req.body)
+    const parsedRequest = questionSchema.omit({ id: true }).safeParse(req.body)
     if (!parsedRequest.success) {
       return res.status(400).json({ error: parsedRequest.error })
     }
@@ -68,16 +68,7 @@ export async function createQuestion(req: Request, res: Response) {
 
 export async function updateQuestion(req: Request, res: Response) {
   try {
-    const parsedRequestBody = questionSchema
-      .partial()
-      .refine(
-        (val) =>
-          Object.keys(val).map((key) => val[key as keyof typeof val] !== undefined),
-        {
-          message: 'Please provide at least one field',
-        }
-      )
-      .safeParse(req.body)
+    const parsedRequestBody = questionSchema.omit({ id: true }).safeParse(req.body)
     if (!parsedRequestBody.success) {
       return res.status(400).json({ error: parsedRequestBody.error })
     }
@@ -85,13 +76,14 @@ export async function updateQuestion(req: Request, res: Response) {
 
     const existingQuestionSnapshot = await db.where('title', '==', data.title).get()
 
-    if (!existingQuestionSnapshot.empty) {
+    if (!existingQuestionSnapshot.empty && existingQuestionSnapshot.docs.some(doc => doc.id !== req.params.id)) {
       return res.status(409).json({ error: 'A question with this title already exists' })
     }
 
-    await db.doc(req.params.id).update(data)
+    await db.doc(req.params.id).set(data)
     res.status(200).json({ message: 'Question updated successfully' })
   } catch (error) {
+    console.error(error)
     res.status(500).json({ error: 'Failed to update question' })
   }
 }

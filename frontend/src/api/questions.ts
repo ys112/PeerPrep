@@ -29,9 +29,10 @@ const addQuestion = async (question: Omit<Question, 'id'>) => {
 
 const updateQuestion = async (question: Question) => {
   try {
+    const { id, ...data } = question
     const response = await questionsAxios.put(
-      `${QUESTION_API_URL}/${question.id}`,
-      question
+      `${QUESTION_API_URL}/${id}`,
+      data
     )
     return response.data as Question
   } catch (error) {
