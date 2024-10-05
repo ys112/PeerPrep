@@ -51,7 +51,7 @@ Sample data can be found in `data/questions.json`.
 **Jest** is used for testing.
 
 Tests are stored in the `src/__tests__/` folder. Its hierarchy mirrors that of `src/`, with `.test` prepended before the file extension.\
-e.g. the tests for `src/controller/questions-controller.ts` are in `src/__tests__/controller/questions-controller.test.ts`.
+e.g. the tests for `src/controller/controller.ts` are in `src/__tests__/controller/controller.test.ts`.
 
 ## Development Instructions
 
