@@ -54,11 +54,12 @@ const format = winston.format.combine(
     })
     // winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
 );
+
 // Define which transports the logger must use to print out messages.
-// In this example, we are using three different transports
 const transports = [
-    // Allow the use the console to print the messages
+    // Allow the use of the console to print messages
     new winston.transports.Console(),
+
     // Allow to print all the error level messages inside the error.log file
     // new winston.transports.File({
     //     filename: 'logs/error.log',
@@ -68,6 +69,7 @@ const transports = [
     // (also the error log that are also printed inside the error.log(
     // new winston.transports.File({ filename: 'logs/all.log' }),
 ];
+
 // Create the logger instance that has to be exported
 // and used to log messages.
 const logger = winston.createLogger({
