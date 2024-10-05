@@ -1,9 +1,25 @@
 import { Question, QuestionDoc, questionDocSchema } from "@common/shared-types";
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import { StatusCodes } from "http-status-codes";
 import { SafeParseReturnType } from "zod";
 import * as controller from '../controller/controller';
 import { DuplicateQuestionError } from "../utils/errors";
+
+function parseQuestionDoc(req: Request, res: Response, next: NextFunction) {
+  // Attempt to parse data
+  let rawQuestionDoc: any = req.body;
+  let result: SafeParseReturnType<QuestionDoc, QuestionDoc> =
+    questionDocSchema.safeParse(rawQuestionDoc);
+
+  if (!result.success) {
+    res.status(StatusCodes.BAD_REQUEST);
+    res.json({ error: result.error });
+    return;
+  }
+
+  res.locals.questionDoc = result.data;
+  next();
+}
 
 function genericServerError(res: Response, e: unknown) {
   res.status(StatusCodes.INTERNAL_SERVER_ERROR);
@@ -38,20 +54,9 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // Create new specified question
-router.post('/', async (req: Request, res: Response) => {
-  // Attempt to parse data
-  let rawQuestionDoc: any = req.body;
-  let result: SafeParseReturnType<QuestionDoc, QuestionDoc> =
-    questionDocSchema.safeParse(rawQuestionDoc);
+router.post('/', parseQuestionDoc, async (req: Request, res: Response) => {
+  let questionDoc: QuestionDoc = res.locals.questionDoc;
 
-  if (!result.success) {
-    res.status(StatusCodes.BAD_REQUEST);
-    res.json({ error: result.error });
-    return;
-  }
-  let questionDoc: QuestionDoc = result.data;
-
-  // Create question
   try {
     let question: Question = await controller.create(questionDoc);
 
@@ -60,7 +65,7 @@ router.post('/', async (req: Request, res: Response) => {
   } catch (e) {
     if (e instanceof DuplicateQuestionError) {
       res.status(StatusCodes.CONFLICT);
-      res.json(e.existingQuestion);
+      res.json(e.duplicateQuestion);
       return;
     }
 
@@ -68,7 +73,26 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-//TODO
-router.put('/:id', controller.updateQuestion);
+// Overwrite specified question
+router.put('/:id', parseQuestionDoc, async (req: Request, res: Response) => {
+  let { params: { id } } = req;
+  let questionDoc: QuestionDoc = res.locals.questionDoc;
 
+  try {
+    let question: Question = await controller.set(id, questionDoc);
+
+    res.status(StatusCodes.OK);
+    res.json(question);
+  } catch (e) {
+    if (e instanceof DuplicateQuestionError) {
+      res.status(StatusCodes.CONFLICT);
+      res.json(e.duplicateQuestion);
+      return;
+    }
+
+    genericServerError(res, e);
+  }
+});
+
+// DELETE specified question
 router.delete('/:id', controller.deleteQuestion);

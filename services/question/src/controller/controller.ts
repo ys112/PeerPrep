@@ -1,4 +1,4 @@
-import { Question, QuestionDoc, questionSchema } from '@common/shared-types';
+import { Question, QuestionDoc } from '@common/shared-types';
 import { Request, Response } from 'express';
 import { collection } from "../model/collection";
 import * as model from '../model/model';
@@ -14,35 +14,24 @@ export async function get(id: string): Promise<Question | null> {
 
 export async function create(questionDoc: QuestionDoc): Promise<Question> {
   // Guard against duplicates
-  let existingQuestion: Question | null = await model.getByTitle(questionDoc.title);
-  if (existingQuestion !== null) {
-    throw new DuplicateQuestionError(existingQuestion);
+  let duplicateQuestion: Question | null = await model.getDuplicate(questionDoc.title);
+  if (duplicateQuestion !== null) {
+    throw new DuplicateQuestionError(duplicateQuestion);
   }
 
   // Create new question
   return model.create(questionDoc);
 }
 
-export async function updateQuestion(req: Request, res: Response) {
-  try {
-    const parsedRequestBody = questionSchema.omit({ id: true }).safeParse(req.body)
-    if (!parsedRequestBody.success) {
-      return res.status(400).json({ error: parsedRequestBody.error })
-    }
-    const { data } = parsedRequestBody
-
-    const existingQuestionSnapshot = await collection.where('title', '==', data.title).get()
-
-    if (!existingQuestionSnapshot.empty && existingQuestionSnapshot.docs.some(doc => doc.id !== req.params.id)) {
-      return res.status(409).json({ error: 'A question with this title already exists' })
-    }
-
-    await collection.doc(req.params.id).set(data)
-    res.status(200).json({ id: req.params.id, ...data })
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Failed to update question' })
+export async function set(id: string, questionDoc: QuestionDoc): Promise<Question> {
+  // Guard against duplicates, don't consider itself a duplicate
+  let duplicateQuestion: Question | null = await model.getDuplicate(questionDoc.title, id);
+  if (duplicateQuestion !== null) {
+    throw new DuplicateQuestionError(duplicateQuestion);
   }
+
+  // Ovewrite question
+  return model.set(id, questionDoc);
 }
 
 export async function deleteQuestion(req: Request, res: Response) {

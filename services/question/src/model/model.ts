@@ -1,5 +1,5 @@
 import { Question, QuestionDoc } from '@common/shared-types';
-import { DocumentReference, DocumentSnapshot, Query, QueryDocumentSnapshot, QuerySnapshot } from 'firebase-admin/firestore';
+import { DocumentReference, DocumentSnapshot, FieldPath, Query, QueryDocumentSnapshot, QuerySnapshot } from 'firebase-admin/firestore';
 import logger from '../utils/logger';
 import { collection } from './collection';
 
@@ -48,8 +48,12 @@ export async function get(id: string): Promise<Question | null> {
   return docReferenceToQuestion(docReference);
 }
 
-export async function getByTitle(title: string): Promise<Question | null> {
-  let query: Query = collection.where('title', '==', title);
+export async function getDuplicate(title: string, ignoreId?: string): Promise<Question | null> {
+  let query: Query = collection;
+  query = query.where('title', '==', title);
+  if (ignoreId !== undefined) {
+    query = query.where(FieldPath.documentId(), '!=', ignoreId);
+  }
 
   let questions: Question[] = await queryToQuestions(query);
 
@@ -58,7 +62,7 @@ export async function getByTitle(title: string): Promise<Question | null> {
   }
 
   if (questions.length > 1) {
-    logger.warn('Potential duplicate questions found! Multiple questions have the same title.');
+    logger.warn('Duplicate questions found in Firestore! Multiple questions have the same title.');
     logger.warn(JSON.stringify(questions));
   }
   return questions[0];
@@ -66,6 +70,15 @@ export async function getByTitle(title: string): Promise<Question | null> {
 
 export async function create(questionDoc: QuestionDoc): Promise<Question> {
   let docReference: DocumentReference = await collection.add(questionDoc);
+
+  return (await docReferenceToQuestion(docReference)) as Question;
+}
+
+export async function set(id: string, questionDoc: QuestionDoc): Promise<Question> {
+  let docReference: DocumentReference = collection.doc(id);
+
+  // Wait for write before proceeding
+  await docReference.set(questionDoc);
 
   return (await docReferenceToQuestion(docReference)) as Question;
 }
