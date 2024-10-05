@@ -1,11 +1,7 @@
-/* [Imports] */
-
 import { Question } from "@common/shared-types";
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from "http-status-codes";
 import * as controller from '../controller/controller';
-
-/* [Main] */
 
 let router: Router = Router();
 export default router;

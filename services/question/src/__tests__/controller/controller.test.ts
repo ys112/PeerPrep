@@ -1,5 +1,3 @@
-/* [Imports] */
-
 import { Question } from "@common/shared-types";
 import fs from 'fs/promises';
 import logger from "../../utils/logger";

@@ -1,11 +1,7 @@
-/* [Imports] */
-
 import { Question, questionSchema } from '@common/shared-types';
 import { Request, Response } from 'express';
 import { collection } from "../model/collection";
 import * as model from '../model/model';
-
-/* [Main] */
 
 export async function getAll(complexity?: string, categories?: string[]): Promise<Question[]> {
   return model.getAll(complexity, categories);
