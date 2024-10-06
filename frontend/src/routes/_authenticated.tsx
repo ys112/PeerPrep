@@ -1,4 +1,13 @@
-import { AppShell, Burger, Button, Group, NavLink, Text } from '@mantine/core';
+import {
+  AppShell,
+  Avatar,
+  Burger,
+  Button,
+  Group,
+  NavLink,
+  Stack,
+  Text,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconDashboard,
@@ -11,17 +20,22 @@ import {
   Link,
   Outlet,
   redirect,
+  useRouteContext,
   useRouter,
 } from '@tanstack/react-router';
-import { tokenStorage } from '../utils/tokenStorage';
 import { userStorage } from '../utils/userStorage';
 import { api } from '../api';
+import { accessTokenStorage } from '../utils/accessTokenStorage';
 
 export const Route = createFileRoute('/_authenticated')({
   component: Auth,
   loader: async () => {
     try {
       await api.userClient.verifyToken();
+
+      const user = userStorage.getUser()!;
+
+      return { user };
     } catch (error) {
       throw redirect({ to: '/login' });
     }
@@ -31,10 +45,8 @@ export const Route = createFileRoute('/_authenticated')({
 function Auth() {
   const [opened, { toggle }] = useDisclosure();
   const router = useRouter();
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: () => userStorage.getUser(),
-  });
+
+  const user = userStorage.getUser()!;
 
   return (
     <AppShell
@@ -47,11 +59,6 @@ function Auth() {
           <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
           {/* Change this to logo when we have one */}
           <Text fw='bold'>PeerPrep</Text>
-          {user?.username && (
-            <Text fw='bold' fs='italic'>
-              Hi, {user?.username}
-            </Text>
-          )}
         </Group>
       </AppShell.Header>
 
@@ -73,18 +80,28 @@ function Auth() {
           )}
         </AppShell.Section>
         <AppShell.Section mt='auto'>
-          <Button
-            w='100%'
-            variant='light'
-            color='red'
-            leftSection={<IconLogout />}
-            onClick={() => {
-              localStorage.removeItem('access_token');
-              router.navigate({ to: '/login' });
-            }}
-          >
-            Log Out
-          </Button>
+          <Stack>
+            <Group>
+              <Avatar radius='xl' size='md' />
+              <Stack gap={0}>
+                <Text fw='bold'>{user?.username}</Text>
+                <Text>{user?.email}</Text>
+              </Stack>
+            </Group>
+            <Button
+              w='100%'
+              variant='light'
+              color='red'
+              leftSection={<IconLogout />}
+              onClick={() => {
+                accessTokenStorage.removeAccessToken();
+                userStorage.removeUser();
+                router.navigate({ to: '/login' });
+              }}
+            >
+              Log Out
+            </Button>
+          </Stack>
         </AppShell.Section>
       </AppShell.Navbar>
 

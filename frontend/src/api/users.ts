@@ -1,5 +1,5 @@
 import { SensitiveUser, User } from "@common/shared-types";
-import { tokenStorage } from "../utils/tokenStorage";
+import { accessTokenStorage } from "../utils/accessTokenStorage";
 import { userStorage } from "../utils/userStorage";
 import { createAuthAxiosInstance } from "./axios";
 
@@ -15,7 +15,7 @@ const loginUser = async (
   try {
     const response = await usersAxios.post(`${AUTH_API_URL}/login`, user);
     const { accessToken, ...userData } = response.data.data;
-    localStorage.setItem('access_token', accessToken)
+    accessTokenStorage.setAccessToken(accessToken);
     userStorage.setUser(userData);
     return userData as User;
   } catch (error) {
@@ -29,8 +29,8 @@ const registerUser = async (
 ) => {
   try {
     const response = await usersAxios.post(USER_API_URL, user);
-    const { accessToken: token, ...userData } = response.data.data;
-    tokenStorage.setToken(token);
+    const { accessToken, ...userData } = response.data.data;
+    accessTokenStorage.setAccessToken(accessToken);
     userStorage.setUser(userData);
     return userData as User;
   } catch (error) {

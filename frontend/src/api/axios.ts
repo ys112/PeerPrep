@@ -1,4 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
+import { accessTokenStorage } from "../utils/accessTokenStorage";
 
 export const createAuthAxiosInstance = (baseURL: string) => {
   const authAxios = axios.create({
@@ -7,7 +8,7 @@ export const createAuthAxiosInstance = (baseURL: string) => {
 
   authAxios.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-      const accessToken = localStorage.getItem('access_token')
+      const accessToken = accessTokenStorage.getAccessToken()
       if (accessToken) {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
       }
