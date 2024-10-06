@@ -11,10 +11,10 @@
 - `PORT`: Port to run the service on.
 - `COLLECTION_NAME`: Name of the collection in Firestore to use.
 - `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
-- `CORS_ORIGINS`: Allow list for CORS, as an JSON array. (e.g. `'["http://localhost:3000", "http://localhost:3001"]'`)
+- `CORS_ORIGINS`: Allow list for CORS, as a JSON array.
 - `JWT_SECRET`: Secret for creating JWT signature
-- `ADMIN_USERNAME`: Admin username if you need to create a new admin user 
-- `ADMIN_EMAIL`: Admin email if you need to create a new admin user 
+- `ADMIN_USERNAME`: Admin username if you need to create a new admin user
+- `ADMIN_EMAIL`: Admin email if you need to create a new admin user
 - `ADMIN_PASSWORD`: Admin password if you need to create a new admin user
 
 To use `.env.development` or `.env.production`, set the `NODE_ENV` to `development` or `production` and put this code on top of the entry file:
@@ -33,13 +33,13 @@ if (process.env.NODE_ENV) {
 
 1. Open Command Line/Terminal and navigate into the `services/user` directory.
 
-2. Run the command: `npm install`. This will install all the necessary dependencies.
+2. Run the command: `pnpm i`. This will install all the necessary dependencies.
 
 3. Run the command `npm run create-admin` to create a new admin user. Make sure the necessary environment variables are present.
 
 4. Run the command `npm start` to start the User Service in production mode, or use `npm run dev` for development mode, which includes features like automatic server restart when you make code changes.
 
-5. Using applications like Postman, you can interact with the User Service on port 3001. If you wish to change this, please update the `.env` file.
+5. Using applications like Postman, you can interact with the User Service on port 3002. If you wish to change this, please update the `.env` file.
 
 ## User Service API Guide
 
@@ -49,7 +49,7 @@ if (process.env.NODE_ENV) {
 
 - HTTP Method: `POST`
 
-- Endpoint: http://localhost:3001/users
+- Endpoint: http://localhost:3002/users
 
 - Body
   - Required: `username` (string), `email` (string), `password` (string)
@@ -79,24 +79,24 @@ if (process.env.NODE_ENV) {
 
 - HTTP Method: `GET`
 
-- Endpoint: http://localhost:3001/users/{userId}
+- Endpoint: http://localhost:3002/users/{userId}
 
 - Parameters
     - Required: `userId` path parameter
-    - Example: `http://localhost:3001/users/60c72b2f9b1d4c3a2e5f8b4c`
+    - Example: `http://localhost:3002/users/60c72b2f9b1d4c3a2e5f8b4c`
 
 - <a name="auth-header">Headers</a>
-  
+
     - Required: `Authorization: Bearer <JWT_ACCESS_TOKEN>`
-    
+
     - Explanation: This endpoint requires the client to include a JWT (JSON Web Token) in the HTTP request header for authentication and authorization. This token is generated during the authentication process (i.e., login) and contains information about the user's identity. The server verifies this token to ensure that the client is authorized to access the data.
-    
+
     - Auth Rules:
-    
+
         - Admin users: Can retrieve any user's data. The server verifies the user associated with the JWT token is an admin user and allows access to the requested user's data.
-          
+
         - Non-admin users: Can only retrieve their own data. The server checks if the user ID in the request URL matches the ID of the user associated with the JWT token. If it matches, the server returns the user's own data.
-    
+
 - Responses:
 
     | Response Code               | Explanation                                              |
@@ -111,13 +111,13 @@ if (process.env.NODE_ENV) {
 
 - This endpoint allows retrieval of all users' data from the database.
 - HTTP Method: `GET`
-- Endpoint: http://localhost:3001/users
+- Endpoint: http://localhost:3002/users
 - Headers
     - Required: `Authorization: Bearer <JWT_ACCESS_TOKEN>`
     - Auth Rules:
 
         - Admin users: Can retrieve all users' data. The server verifies the user associated with the JWT token is an admin user and allows access to all users' data.
-          
+
         - Non-admin users: Not allowed access.
 
 - Responses:
@@ -135,7 +135,7 @@ if (process.env.NODE_ENV) {
 
 - HTTP Method: `PATCH`
 
-- Endpoint: http://localhost:3001/users/{userId}
+- Endpoint: http://localhost:3002/users/{userId}
 
 - Parameters
   - Required: `userId` path parameter
@@ -156,7 +156,7 @@ if (process.env.NODE_ENV) {
     - Auth Rules:
 
         - Admin users: Can update any user's data. The server verifies the user associated with the JWT token is an admin user and allows the update of requested user's data.
-          
+
         - Non-admin users: Can only update their own data. The server checks if the user ID in the request URL matches the ID of the user associated with the JWT token. If it matches, the server updates the user's own data.
 
 - Responses:
@@ -177,7 +177,7 @@ if (process.env.NODE_ENV) {
 
 - HTTP Method: `PATCH`
 
-- Endpoint: http://localhost:3001/users/{userId}
+- Endpoint: http://localhost:3002/users/{userId}
 
 - Parameters
   - Required: `userId` path parameter
@@ -215,7 +215,7 @@ if (process.env.NODE_ENV) {
 
 - This endpoint allows deletion of a user and their related data from the database using the user's ID.
 - HTTP Method: `DELETE`
-- Endpoint: http://localhost:3001/users/{userId}
+- Endpoint: http://localhost:3002/users/{userId}
 - Parameters
 
   - Required: `userId` path parameter
@@ -242,7 +242,7 @@ if (process.env.NODE_ENV) {
 
 - This endpoint allows a user to authenticate with an email and password and returns a JWT access token. The token is valid for 1 day and can be used subsequently to access protected resources. For example usage, refer to the [Authorization header section in the Get User endpoint](#auth-header).
 - HTTP Method: `POST`
-- Endpoint: http://localhost:3001/auth/login
+- Endpoint: http://localhost:3002/auth/login
 - Body
   - Required: `email` (string), `password` (string)
 
@@ -266,7 +266,7 @@ if (process.env.NODE_ENV) {
 
 - This endpoint allows one to verify a JWT access token to authenticate and retrieve the user's data associated with the token.
 - HTTP Method: `GET`
-- Endpoint: http://localhost:3001/auth/verify-token
+- Endpoint: http://localhost:3002/auth/verify-token
 - Headers
   - Required: `Authorization: Bearer <JWT_ACCESS_TOKEN>`
 

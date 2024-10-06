@@ -1,14 +1,14 @@
+import cors from 'cors'
 import dotenv from 'dotenv'
+import express, { NextFunction, Request, Response } from 'express'
+import authRoutes from './routes/auth-routes'
+import userRoutes from './routes/user-routes'
+import logger from './utils/logger'
 if (process.env.NODE_ENV) {
   dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 } else {
   dotenv.config({ path: '.env' })
 }
-import express, { Request, Response, NextFunction } from 'express'
-import cors from 'cors'
-import userRoutes from './routes/user-routes'
-import authRoutes from './routes/auth-routes'
-import logger from './utils/logger'
 
 // Custom Error Interface to add status property
 interface CustomError extends Error {
@@ -16,7 +16,7 @@ interface CustomError extends Error {
 }
 
 const app = express()
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3002
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
