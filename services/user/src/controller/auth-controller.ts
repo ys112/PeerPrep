@@ -23,7 +23,7 @@ export async function handleLogin(req: Request, res: Response) {
     const { data } = parsedRequest
 
     const userSnapshot = await db.where('email', '==', data.email).get()
-    if (!userSnapshot) {
+    if (!userSnapshot || userSnapshot.empty) {
       return res.status(401).json({ message: 'Wrong email and/or password' })
     }
 
@@ -50,7 +50,7 @@ export async function handleLogin(req: Request, res: Response) {
       },
     })
   } catch (err) {
-    return res.status(500).json({ messge: 'Unknown error when handling log in' })
+    return res.status(500).json({ message: 'Unknown error when handling log in' })
   }
 }
 
