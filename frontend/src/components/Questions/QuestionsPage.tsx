@@ -1,21 +1,22 @@
-import { Stack, Title, Button, Group, Text } from '@mantine/core';
+import { Button, Group, Stack, Text, Title } from "@mantine/core";
 
-import { IconPlus } from '@tabler/icons-react';
-import { QuestionsForm } from './QuestionsForm';
-import { QuestionTable } from './QuestionsTable';
-import { modals } from '@mantine/modals';
+import { modals } from "@mantine/modals";
+import { IconPlus } from "@tabler/icons-react";
+import { QuestionsForm } from "./QuestionsForm";
+import { QuestionTable } from "./QuestionsTable";
 
 export function QuestionsPage() {
   return (
     <Stack>
       <Group>
         <Title order={1}>Questions</Title>
+
         <Button
-          variant='gradient'
-          ml='auto'
+          variant="gradient"
+          ml="auto"
           onClick={() => {
             modals.open({
-              title: <Text fw='bold'>Add New Question</Text>,
+              title: <Text fw="bold">Add New Question</Text>,
               children: <QuestionsForm />,
             });
           }}

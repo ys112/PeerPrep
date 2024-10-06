@@ -1,7 +1,5 @@
-import { Question } from '@common/shared-types';
+import { Question } from "@common/shared-types";
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
 import {
   ActionIcon,
   Badge,
@@ -12,16 +10,19 @@ import {
   Stack,
   Table,
   Text,
-} from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { modals } from '@mantine/modals';
-import { QuestionsForm } from './QuestionsForm';
-import { api } from '../../api/client';
+} from "@mantine/core";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { api } from "../../api/client";
+import { QuestionsForm } from "./QuestionsForm";
 
-const COMPLEXITY_COLOR_MAP: Record<Question['complexity'], string> = {
-  Easy: 'green',
-  Medium: 'orange',
-  Hard: 'red',
+const COMPLEXITY_COLOR_MAP: Record<Question["complexity"], string> = {
+  Easy: "green",
+  Medium: "orange",
+  Hard: "red",
 };
 
 function stringToHexColor(str: string) {
@@ -31,10 +32,10 @@ function stringToHexColor(str: string) {
   }
 
   // Generate the RGB values and form the color
-  let color = '#';
+  let color = "#";
   for (let i = 0; i < 3; i++) {
     const value = (hash >> (i * 8)) & 0xff;
-    color += value.toString(16).padStart(2, '0');
+    color += value.toString(16).padStart(2, "0");
   }
 
   return color;
@@ -42,16 +43,15 @@ function stringToHexColor(str: string) {
 
 export function QuestionTable() {
   const queryClient = useQueryClient();
-
   const { data: questions, isLoading } = useQuery({
-    queryKey: ['questions'],
+    queryKey: ["questions"],
     queryFn: async () => {
       try {
         return await api.questionClient.getQuestions();
       } catch (error) {
         notifications.show({
-          color: 'red',
-          title: 'Error fetching questions',
+          color: "red",
+          title: "Error fetching questions",
           message: `${(error as Error).message}`,
         });
         console.error(error);
@@ -72,17 +72,28 @@ export function QuestionTable() {
     },
     onSuccess: ({ id }) => {
       notifications.show({
-        color: 'green',
-        message: 'Successfully deleted question',
+        color: "green",
+        message: "Successfully deleted question",
       });
-      queryClient.setQueryData<Question[]>(['questions'], (prev) =>
+      queryClient.setQueryData<Question[]>(["questions"], (prev) =>
         prev?.filter((question) => question.id !== id)
       );
     },
     onError: (error) => {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 403) {
+          notifications.show({
+            color: "red",
+            title: "Unauthorized",
+            message: "You are not authorized to delete this question",
+          });
+        }
+        return;
+      }
+
       notifications.show({
-        color: 'red',
-        title: 'Error deleteing questions',
+        color: "red",
+        title: "Error deleting questions",
         message: `${(error as Error).message}`,
       });
     },
@@ -91,32 +102,32 @@ export function QuestionTable() {
   if (isLoading) {
     return (
       <Stack>
-        <Loader mx='auto' />
-        <Text ta='center'>Loading questions...</Text>
+        <Loader mx="auto" />
+        <Text ta="center">Loading questions...</Text>
       </Stack>
     );
   } else {
     const rows = questions.map((question, index) => (
-      <Table.Tr>
+      <Table.Tr key={index}>
         <Table.Td>{index + 1}</Table.Td>
-        <Table.Td maw={100} fw='bold'>
+        <Table.Td maw={100} fw="bold">
           {question.title}
         </Table.Td>
         <Table.Td maw={540}>
           <Spoiler
-            fz='sm'
-            className='whitespace-pre-wrap'
+            fz="sm"
+            className="whitespace-pre-wrap"
             maxHeight={110}
-            showLabel='...'
-            hideLabel='Hide'
+            showLabel="..."
+            hideLabel="Hide"
           >
             {question.description}
           </Spoiler>
         </Table.Td>
         <Table.Td>
-          <Stack gap={2} align='flex-start'>
+          <Stack gap={2} align="flex-start">
             {question.categories.map((category) => (
-              <Badge size='sm' autoContrast bg={stringToHexColor(category)}>
+              <Badge size="sm" autoContrast bg={stringToHexColor(category)}>
                 {category}
               </Badge>
             ))}
@@ -128,12 +139,12 @@ export function QuestionTable() {
           </Text>
         </Table.Td>
         <Table.Td>
-          <Group wrap='nowrap'>
+          <Group wrap="nowrap">
             <ActionIcon
-              variant='light'
+              variant="light"
               onClick={() => {
                 modals.open({
-                  title: <Text fw='bold'>Editing Question</Text>,
+                  title: <Text fw="bold">Editing Question</Text>,
                   children: (
                     <QuestionsForm
                       initialValues={{
@@ -147,16 +158,16 @@ export function QuestionTable() {
               <IconEdit />
             </ActionIcon>
             <ActionIcon
-              variant='light'
-              color='red'
+              variant="light"
+              color="red"
               onClick={() => {
                 modals.openConfirmModal({
                   title: `Please confirm your action`,
                   children: (
                     <Text>You are about to delete "{question.title}"</Text>
                   ),
-                  labels: { confirm: 'Delete', cancel: 'Cancel' },
-                  confirmProps: { color: 'red' },
+                  labels: { confirm: "Delete", cancel: "Cancel" },
+                  confirmProps: { color: "red" },
                   onConfirm: async () => {
                     await deleteQuestionMutation(question.id);
                   },
@@ -171,7 +182,7 @@ export function QuestionTable() {
     ));
 
     return (
-      <Paper shadow='md' p='lg' withBorder>
+      <Paper shadow="md" p="lg" withBorder>
         <Table highlightOnHover stickyHeader stickyHeaderOffset={60}>
           <Table.Thead>
             <Table.Th>#</Table.Th>
