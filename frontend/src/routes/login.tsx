@@ -1,16 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { api } from '../api';
-import {
-  Anchor,
-  Button,
-  Container,
-  Paper,
-  PasswordInput,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
+import { Anchor, Paper, Stack, Text, Title } from '@mantine/core';
 import { LoginForm } from '../components/Auth/LoginForm';
 
 export const Route = createFileRoute('/login')({

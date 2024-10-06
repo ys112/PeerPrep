@@ -21,8 +21,7 @@ export const Route = createFileRoute('/_authenticated')({
   component: Auth,
   loader: async () => {
     try {
-      const response = await api.userClient.verifyToken();
-      console.log(response);
+      await api.userClient.verifyToken();
     } catch (error) {
       throw redirect({ to: '/login' });
     }
@@ -80,7 +79,7 @@ function Auth() {
             color='red'
             leftSection={<IconLogout />}
             onClick={() => {
-              tokenStorage.removeToken();
+              localStorage.removeItem('access_token');
               router.navigate({ to: '/login' });
             }}
           >

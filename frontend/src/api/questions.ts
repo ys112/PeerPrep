@@ -1,6 +1,5 @@
 import { Question } from "@common/shared-types";
-import axios from "axios";
-import createAuthAxiosInstance from "./auth";
+import { createAuthAxiosInstance } from "./axios";
 
 const questionsAxios = createAuthAxiosInstance(
   import.meta.env.VITE_QUESTION_SERVICE_API_URL

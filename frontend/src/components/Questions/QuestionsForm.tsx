@@ -14,7 +14,7 @@ import { IconCheck, IconPlus } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import z from "zod";
-import { api } from "../../api/client";
+import { api } from "../../api";
 
 const questionFormSchema = z.object({
   id: z.string().optional(),
