@@ -17,8 +17,9 @@ async function verifyUser(token: string): Promise<User | null> {
   if (verificationResponse.status !== StatusCodes.OK) {
     return null;
   }
-  let rawUser: unknown = verificationResponse.data;
 
+  let jsonBody: any = verificationResponse.data; // Expect object containing message, data
+  let rawUser: unknown = jsonBody.data;
   let result: SafeParseReturnType<User, User> =
     userSchema.safeParse(rawUser);
   if (!result.success) {
