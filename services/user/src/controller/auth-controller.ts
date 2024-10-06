@@ -8,7 +8,7 @@ import { Request, Response } from 'express'
 import { db } from '../db/clients'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { User, loginFormSchema, ExtractedUser } from '../model'
+import { SensitiveUser, loginFormSchema, ExtractedUser } from '../model'
 
 interface VerifyRequest extends Request {
   user?: ExtractedUser
@@ -29,7 +29,7 @@ export async function handleLogin(req: Request, res: Response) {
     }
 
     const userDoc = userSnapshot.docs[0]
-    const userData = userDoc.data() as User
+    const userData = userDoc.data() as SensitiveUser
 
     const match = await bcrypt.compare(data.password, userData.password)
     if (!match) {
