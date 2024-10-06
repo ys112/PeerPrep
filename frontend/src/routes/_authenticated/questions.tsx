@@ -1,8 +1,6 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { QuestionsPage } from "../../components/Questions/QuestionsPage";
-import { userStorage } from "../../utils/userStorage";
-import { notifications } from "@mantine/notifications";
+import { createFileRoute } from '@tanstack/react-router';
+import { QuestionsPage } from '../../components/Questions/QuestionsPage';
 
-export const Route = createFileRoute("/_authenticated/questions")({
+export const Route = createFileRoute('/_authenticated/questions')({
   component: QuestionsPage,
 });

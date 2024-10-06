@@ -14,13 +14,11 @@ import {
   IconLogout,
   IconQuestionMark,
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
 import {
   createFileRoute,
   Link,
   Outlet,
   redirect,
-  useRouteContext,
   useRouter,
 } from '@tanstack/react-router';
 import { userStorage } from '../utils/userStorage';
@@ -70,14 +68,12 @@ function Auth() {
             component={Link}
             to='/'
           />
-          {user?.isAdmin && (
-            <NavLink
-              label='Questions'
-              leftSection={<IconQuestionMark />}
-              component={Link}
-              to='/questions'
-            />
-          )}
+          <NavLink
+            label='Questions'
+            leftSection={<IconQuestionMark />}
+            component={Link}
+            to='/questions'
+          />
         </AppShell.Section>
         <AppShell.Section mt='auto'>
           <Stack>
