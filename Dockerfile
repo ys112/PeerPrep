@@ -15,11 +15,11 @@ RUN pnpm deploy --filter=@services/question-service --prod /prod/question-servic
 FROM base AS question-service
 COPY --from=build /prod/question-service /prod/question-service
 WORKDIR /prod/question-service
-EXPOSE 3000
+EXPOSE 3001
 CMD ["pnpm", "start"]
 
 FROM base AS user-service
 COPY --from=build /prod/user-service /prod/user-service
 WORKDIR /prod/user-service
-EXPOSE 3001
+EXPOSE 3002
 CMD ["pnpm", "start"]
