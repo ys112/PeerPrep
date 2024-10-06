@@ -4,7 +4,9 @@ import { StatusCodes } from "http-status-codes";
 import { SafeParseReturnType } from "zod";
 import * as controller from '../controller/controller';
 import { DuplicateQuestionError } from "../utils/errors";
+import { requireAdmin, requireLogin } from "./auth";
 
+// Provides the parsed QuestionDoc to subsequent middleware
 function parseQuestionDoc(req: Request, res: Response, next: NextFunction) {
   // Attempt to parse data
   let rawQuestionDoc: any = req.body;
@@ -28,6 +30,9 @@ function genericServerError(res: Response, e: unknown) {
 
 let router: Router = Router();
 export default router;
+
+// All routes require login
+router.use(requireLogin);
 
 // GET all questions
 router.get('/', async (req: Request, res: Response) => {
@@ -56,7 +61,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // Create new specified question
-router.post('/', parseQuestionDoc, async (req: Request, res: Response) => {
+router.post('/', requireAdmin, parseQuestionDoc, async (req: Request, res: Response) => {
   let questionDoc: QuestionDoc = res.locals.questionDoc;
 
   try {
@@ -76,7 +81,7 @@ router.post('/', parseQuestionDoc, async (req: Request, res: Response) => {
 });
 
 // Overwrite specified question
-router.put('/:id', parseQuestionDoc, async (req: Request, res: Response) => {
+router.put('/:id', requireAdmin, parseQuestionDoc, async (req: Request, res: Response) => {
   let id = req.params.id;
   let questionDoc: QuestionDoc = res.locals.questionDoc;
 
@@ -97,7 +102,7 @@ router.put('/:id', parseQuestionDoc, async (req: Request, res: Response) => {
 });
 
 // DELETE specified question
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
   let id = req.params.id;
 
   await controller.destroy(id);
