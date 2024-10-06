@@ -12,10 +12,11 @@ Question service for PeerPrep.
 
 ### Environment variables
 
+- `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
+- `USER_SERVICE_URL`: The URL to the user service.
 - `PORT` (optional): Port to run the service on. Defaults to `3000` as per `index.ts`.
 - `COLLECTION_NAME` (optional): Name of the collection in Firestore to use. Defaults to `questions` as per `clients.ts`.
-- `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
-- `CORS_ORIGINS` (optional): Allow list for CORS, as parseable JSON, e.g. `'["http://localhost:3000", "http://localhost:3001"]'`. Defaults to `'*'` as per `index.ts`.
+- `CORS_ORIGINS` (optional): Allow list for CORS, as parseable JSON. Defaults to `'*'` as per `index.ts`.
 
 To use `.env.development` or `.env.production`, set the `NODE_ENV` to `development` or `production` and put this code on top of the entry file:
 
