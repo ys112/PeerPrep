@@ -2,7 +2,7 @@ import { Button, Group, Stack, Text, Title } from '@mantine/core';
 
 import { modals } from '@mantine/modals';
 import { IconPlus } from '@tabler/icons-react';
-import { QuestionsForm } from './QuestionsForm';
+import { QuestionForm } from './QuestionForm';
 import { QuestionTable } from './QuestionsTable';
 import { userStorage } from '../../utils/userStorage';
 
@@ -20,7 +20,7 @@ export function QuestionsPage() {
             onClick={() => {
               modals.open({
                 title: <Text fw='bold'>Add New Question</Text>,
-                children: <QuestionsForm />,
+                children: <QuestionForm />,
               });
             }}
             leftSection={<IconPlus />}

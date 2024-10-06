@@ -17,7 +17,8 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { api } from '../../api';
-import { QuestionsForm } from './QuestionsForm';
+import { QuestionForm } from './QuestionForm';
+import { userStorage } from '../../utils/userStorage';
 
 const COMPLEXITY_COLOR_MAP: Record<Question['complexity'], string> = {
   Easy: 'green',
@@ -43,6 +44,9 @@ function stringToHexColor(str: string) {
 
 export function QuestionTable() {
   const queryClient = useQueryClient();
+
+  const user = userStorage.getUser()!;
+
   const { data: questions, isLoading } = useQuery({
     queryKey: ['questions'],
     queryFn: async () => {
@@ -108,7 +112,7 @@ export function QuestionTable() {
     );
   } else {
     const rows = questions.map((question, index) => (
-      <Table.Tr key={index}>
+      <Table.Tr key={question.id}>
         <Table.Td>{index + 1}</Table.Td>
         <Table.Td maw={100} fw='bold'>
           {question.title}
@@ -127,7 +131,12 @@ export function QuestionTable() {
         <Table.Td>
           <Stack gap={2} align='flex-start'>
             {question.categories.map((category) => (
-              <Badge size='sm' autoContrast bg={stringToHexColor(category)}>
+              <Badge
+                key={category}
+                size='sm'
+                autoContrast
+                bg={stringToHexColor(category)}
+              >
                 {category}
               </Badge>
             ))}
@@ -138,46 +147,48 @@ export function QuestionTable() {
             {question.complexity}
           </Text>
         </Table.Td>
-        <Table.Td>
-          <Group wrap='nowrap'>
-            <ActionIcon
-              variant='light'
-              onClick={() => {
-                modals.open({
-                  title: <Text fw='bold'>Editing Question</Text>,
-                  children: (
-                    <QuestionsForm
-                      initialValues={{
-                        ...question,
-                      }}
-                    />
-                  ),
-                });
-              }}
-            >
-              <IconEdit />
-            </ActionIcon>
-            <ActionIcon
-              variant='light'
-              color='red'
-              onClick={() => {
-                modals.openConfirmModal({
-                  title: `Please confirm your action`,
-                  children: (
-                    <Text>You are about to delete "{question.title}"</Text>
-                  ),
-                  labels: { confirm: 'Delete', cancel: 'Cancel' },
-                  confirmProps: { color: 'red' },
-                  onConfirm: async () => {
-                    await deleteQuestionMutation(question.id);
-                  },
-                });
-              }}
-            >
-              <IconTrash />
-            </ActionIcon>
-          </Group>
-        </Table.Td>
+        {user.isAdmin && (
+          <Table.Td>
+            <Group wrap='nowrap'>
+              <ActionIcon
+                variant='light'
+                onClick={() => {
+                  modals.open({
+                    title: <Text fw='bold'>Editing Question</Text>,
+                    children: (
+                      <QuestionForm
+                        initialValues={{
+                          ...question,
+                        }}
+                      />
+                    ),
+                  });
+                }}
+              >
+                <IconEdit />
+              </ActionIcon>
+              <ActionIcon
+                variant='light'
+                color='red'
+                onClick={() => {
+                  modals.openConfirmModal({
+                    title: `Please confirm your action`,
+                    children: (
+                      <Text>You are about to delete "{question.title}"</Text>
+                    ),
+                    labels: { confirm: 'Delete', cancel: 'Cancel' },
+                    confirmProps: { color: 'red' },
+                    onConfirm: async () => {
+                      await deleteQuestionMutation(question.id);
+                    },
+                  });
+                }}
+              >
+                <IconTrash />
+              </ActionIcon>
+            </Group>
+          </Table.Td>
+        )}
       </Table.Tr>
     ));
 
@@ -185,12 +196,14 @@ export function QuestionTable() {
       <Paper shadow='md' p='lg' withBorder>
         <Table highlightOnHover stickyHeader stickyHeaderOffset={60}>
           <Table.Thead>
-            <Table.Th>#</Table.Th>
-            <Table.Th>Title</Table.Th>
-            <Table.Th>Description</Table.Th>
-            <Table.Th>Category</Table.Th>
-            <Table.Th>Complexity</Table.Th>
-            <Table.Th></Table.Th>
+            <Table.Tr>
+              <Table.Th>#</Table.Th>
+              <Table.Th>Title</Table.Th>
+              <Table.Th>Description</Table.Th>
+              <Table.Th>Categories</Table.Th>
+              <Table.Th>Complexity</Table.Th>
+              {user.isAdmin && <Table.Th></Table.Th>}
+            </Table.Tr>
           </Table.Thead>
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
