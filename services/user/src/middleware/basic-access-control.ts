@@ -4,11 +4,14 @@ if (process.env.NODE_ENV) {
 } else {
   dotenv.config({ path: '.env' })
 }
-import { Response, NextFunction } from 'express'
+import { Response, Request, NextFunction } from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { db } from '../db/clients'
-import { User, VerifyRequest } from '../model'
-import { auth } from 'firebase-admin'
+import { User, ExtractedUser } from '../model'
+
+interface VerifyRequest extends Request {
+  user?: ExtractedUser
+}
 
 export function verifyAccessToken(
   req: VerifyRequest,

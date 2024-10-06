@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import { Query } from 'firebase-admin/firestore'
 import { db } from '../db/clients'
-import { User, userRequestSchema, isAdminSchema } from '../model'
+import { User, registerFormRequestSchema, isAdminSchema } from '../model'
 
 export async function getAllUsers(req: Request, res: Response): Promise<Response> {
   try {
@@ -44,7 +44,7 @@ export async function getUser(req: Request, res: Response): Promise<Response> {
 
 export async function createUser(req: Request, res: Response): Promise<Response> {
   try {
-    const parsedRequest = userRequestSchema.safeParse(req.body)
+    const parsedRequest = registerFormRequestSchema.safeParse(req.body)
     if (!parsedRequest.success) {
       return res
         .status(400)
@@ -84,7 +84,7 @@ export async function createUser(req: Request, res: Response): Promise<Response>
 
 export async function updateUser(req: Request, res: Response): Promise<Response> {
   try {
-    const parsedRequest = userRequestSchema
+    const parsedRequest = registerFormRequestSchema
       .partial()
       .refine(
         (val) =>
