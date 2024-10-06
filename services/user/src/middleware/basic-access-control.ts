@@ -8,6 +8,7 @@ import { Response, Request, NextFunction } from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { db } from '../db/clients'
 import { User, ExtractedUser } from '../model'
+import { jwtSecret } from '../utils/jwt-secret'
 
 interface VerifyRequest extends Request {
   user?: ExtractedUser
@@ -24,7 +25,7 @@ export function verifyAccessToken(
   }
 
   const token = authHeader.split(' ')[1]
-  jwt.verify(token, process.env.JWT_SECRET as string, async (err, decoded) => {
+  jwt.verify(token, jwtSecret, async (err, decoded) => {
     if (err) {
       return res.status(401).json({ message: 'Authentication failed' })
     }
