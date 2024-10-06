@@ -15,11 +15,18 @@ import {
 } from "@tanstack/react-router";
 import { tokenStorage } from "../utils/tokenStorage";
 import { userStorage } from "../utils/userStorage";
+import { notifications } from "@mantine/notifications";
 
 export const Route = createFileRoute("/_authenticated")({
   component: Auth,
   beforeLoad: () => {
     if (tokenStorage.getToken() === null) {
+      notifications.show({
+        title: "Not logged in",
+        message: "You must be logged in to access this page.",
+        color: "red",
+      });
+
       throw redirect({
         to: "/login",
         search: {
