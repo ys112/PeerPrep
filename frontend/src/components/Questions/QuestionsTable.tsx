@@ -97,7 +97,7 @@ export function QuestionTable() {
     );
   } else {
     const rows = questions.map((question, index) => (
-      <Table.Tr>
+      <Table.Tr key={index}>
         <Table.Td>{index + 1}</Table.Td>
         <Table.Td maw={100} fw='bold'>
           {question.title}
