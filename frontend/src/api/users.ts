@@ -5,7 +5,7 @@ import { userStorage } from "../utils/userStorage";
 
 // for public routes
 const defaultAxios = axios.create({
-  baseURL: import.meta.env.VITE_USERS_SERVICE_API_URL,
+  baseURL: import.meta.env.VITE_USER_SERVICE_API_URL,
 });
 
 const USER_API_URL = "/users";

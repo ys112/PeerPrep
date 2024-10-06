@@ -3,7 +3,7 @@ import axios from "axios";
 import createAuthAxiosInstance from "./auth";
 
 const questionsAxios = createAuthAxiosInstance(
-  import.meta.env.VITE_QUESTIONS_SERVICE_API_URL
+  import.meta.env.VITE_QUESTION_SERVICE_API_URL
 );
 
 const QUESTION_API_URL = "/questions";
