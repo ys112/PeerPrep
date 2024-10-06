@@ -1,4 +1,4 @@
-import { sensitiveUserSchema, User } from "@common/shared-types";
+import { User } from "@common/shared-types";
 import {
   ActionIcon,
   Button,
@@ -18,6 +18,17 @@ import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { api } from "../../api/client";
+
+export const userSchema = z.object({
+  username: z.string().min(1),
+  email: z.string().email(),
+  isAdmin: z.boolean(),
+  createdAt: z.date(),
+});
+
+export const sensitiveUserSchema = userSchema.extend({
+  password: z.string().min(1),
+});
 
 // Use shared zod object to validate form
 const loginFormSchema = sensitiveUserSchema.pick({
