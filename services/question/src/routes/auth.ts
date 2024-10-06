@@ -17,9 +17,10 @@ async function verifyUser(token: string): Promise<User | null> {
   if (verificationResponse.status !== StatusCodes.OK) {
     return null;
   }
+  let rawUser: unknown = verificationResponse.data;
 
   let result: SafeParseReturnType<User, User> =
-    userSchema.safeParse(verificationResponse.data);
+    userSchema.safeParse(rawUser);
   if (!result.success) {
     // StatusCodes.SERVICE_UNAVAILABLE
     return null;

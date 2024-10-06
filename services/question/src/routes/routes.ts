@@ -9,7 +9,7 @@ import { requireAdmin, requireLogin } from "./auth";
 // Provides the parsed QuestionDoc to subsequent middleware
 function parseQuestionDoc(req: Request, res: Response, next: NextFunction) {
   // Attempt to parse data
-  let rawQuestionDoc: any = req.body;
+  let rawQuestionDoc: unknown = req.body.questionDoc;
   let result: SafeParseReturnType<QuestionDoc, QuestionDoc> =
     questionDocSchema.safeParse(rawQuestionDoc);
 
