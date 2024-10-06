@@ -1,13 +1,13 @@
+import cors from 'cors'
 import dotenv from 'dotenv'
+import express from 'express'
+import router from './routes/routes'
+import logger from './utils/logger'
 if (process.env.NODE_ENV) {
   dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 } else {
   dotenv.config({ path: '.env' })
 }
-import express from 'express'
-import logger from './utils/logger'
-import router from './routes/questions-routes'
-import cors from 'cors'
 
 const app = express()
 const port = process.env.PORT || 3000
