@@ -2,15 +2,14 @@ import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import { Query } from 'firebase-admin/firestore'
 import { db } from '../db/clients'
-import { User, userRequestSchema, isAdminSchema } from '../model'
+import { User, SensitiveUser, registerFormSchema, updatePrivilegeSchema } from '../model'
 
 export async function getAllUsers(req: Request, res: Response): Promise<Response> {
   try {
     const usersSnapshot = await db.get()
     const users = usersSnapshot.docs.map((doc) => {
       const userData = doc.data() as User
-      const { password, ...userResponse } = userData
-      return { id: doc.id, ...userResponse }
+      return { id: doc.id, ...userData }
     })
 
     return res.status(200).json({ message: `Found users`, data: users })
@@ -29,11 +28,10 @@ export async function getUser(req: Request, res: Response): Promise<Response> {
       return res.status(404).json({ message: `User ${userId} not found` })
     } else {
       const userData = userDoc.data() as User
-      const { password, ...userResponse } = userData
 
       return res.status(200).json({
         message: `Found user`,
-        data: { id: userDoc.id, ...userResponse },
+        data: { id: userDoc.id, ...userData },
       })
     }
   } catch (err) {
@@ -44,7 +42,7 @@ export async function getUser(req: Request, res: Response): Promise<Response> {
 
 export async function createUser(req: Request, res: Response): Promise<Response> {
   try {
-    const parsedRequest = userRequestSchema.safeParse(req.body)
+    const parsedRequest = registerFormSchema.safeParse(req.body)
     if (!parsedRequest.success) {
       return res
         .status(400)
@@ -60,7 +58,7 @@ export async function createUser(req: Request, res: Response): Promise<Response>
     const salt = bcrypt.genSaltSync(10)
     const hashedPassword = bcrypt.hashSync(data.password, salt)
 
-    const createdUser: User = {
+    const createdUser: SensitiveUser = {
       username: data.username,
       email: data.email,
       password: hashedPassword,
@@ -84,7 +82,7 @@ export async function createUser(req: Request, res: Response): Promise<Response>
 
 export async function updateUser(req: Request, res: Response): Promise<Response> {
   try {
-    const parsedRequest = userRequestSchema
+    const parsedRequest = registerFormSchema
       .partial()
       .refine(
         (val) =>
@@ -108,7 +106,7 @@ export async function updateUser(req: Request, res: Response): Promise<Response>
       return res.status(404).json({ message: `User ${userId} not found` })
     }
 
-    const userData = userDoc.data() as User
+    const userData = userDoc.data() as SensitiveUser
     if (data.username || data.email) {
       const existingUser = await findUserByUsernameOrEmail(data.username, data.email)
       if (existingUser && existingUser.id !== userId) {
@@ -130,11 +128,10 @@ export async function updateUser(req: Request, res: Response): Promise<Response>
 
     const updatedUserDoc = await db.doc(userId).get()
     const updatedUserData = updatedUserDoc.data() as User
-    const { password: _, ...updatedUserResponse } = updatedUserData
 
     return res.status(200).json({
       message: `Updated data for user ${userId}`,
-      data: { id: updatedUserDoc.id, ...updatedUserResponse },
+      data: { id: updatedUserDoc.id, ...updatedUserData },
     })
   } catch (err) {
     console.error(err)
@@ -147,7 +144,7 @@ export async function updateUserPrivilege(
   res: Response
 ): Promise<Response> {
   try {
-    const parsedRequest = isAdminSchema.safeParse(req.body)
+    const parsedRequest = updatePrivilegeSchema.safeParse(req.body)
     if (!parsedRequest.success) {
       return res.status(400).json({ message: 'isAdmin is missing!' })
     }
@@ -164,11 +161,10 @@ export async function updateUserPrivilege(
 
     const updatedUserDoc = await db.doc(userId).get()
     const updatedUserData = updatedUserDoc.data() as User
-    const { password, ...updatedUserResponse } = updatedUserData
 
     return res.status(200).json({
       message: `Updated privilege for user ${userId}`,
-      data: { id: userDoc.id, ...updatedUserResponse },
+      data: { id: userDoc.id, ...updatedUserData },
     })
   } catch (err) {
     console.error(err)

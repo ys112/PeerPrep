@@ -9,7 +9,6 @@ import bcrypt from 'bcrypt'
 
 const createAdminUser = async () => {
   const salt = bcrypt.genSaltSync(10)
-  console.log(process.env.ADMIN_PASSWORD)
   const hashedPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD!, salt)
 
   const adminUser = {
