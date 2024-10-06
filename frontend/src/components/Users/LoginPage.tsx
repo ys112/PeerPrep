@@ -1,7 +1,7 @@
+import { sensitiveUserSchema, User } from "@common/shared-types";
 import {
   ActionIcon,
   Button,
-  Container,
   Group,
   Paper,
   PasswordInput,
@@ -10,24 +10,22 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { Link, useRouter } from "@tanstack/react-router";
 import { useForm, zodResolver } from "@mantine/form";
-import { userSchema } from "@common/shared-types";
-import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../api/client";
-import { User } from "@common/shared-types";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
 import { IconArrowLeft } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import { z } from "zod";
+import { api } from "../../api/client";
 
 // Use shared zod object to validate form
-const loginFormSchema = userSchema.pick({
+const loginFormSchema = sensitiveUserSchema.pick({
   email: true,
   password: true,
 });
 
-const registerFormSchema = userSchema.pick({
+const registerFormSchema = sensitiveUserSchema.pick({
   email: true,
   username: true,
   password: true,
@@ -41,7 +39,6 @@ export function LoginPage() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
 
-  //TODO create custom hooks later
   const { mutateAsync: loginUserMutation } = useMutation({
     mutationFn: async (values: LoginFormValues) => {
       try {

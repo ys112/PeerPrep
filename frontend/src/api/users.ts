@@ -1,4 +1,4 @@
-import { User } from "@common/shared-types";
+import { SensitiveUser, User } from "@common/shared-types";
 import axios from "axios";
 import { tokenStorage } from "../utils/tokenStorage";
 import { userStorage } from "../utils/userStorage";
@@ -12,7 +12,7 @@ const USER_API_URL = "/users";
 const AUTH_API_URL = "/auth";
 
 const loginUser = async (
-  user: Omit<User, "isAdmin" | "username" | "createdAt">
+  user: Omit<SensitiveUser, "isAdmin" | "username" | "createdAt">
 ) => {
   try {
     const response = await defaultAxios.post(`${AUTH_API_URL}/login`, user);
@@ -26,7 +26,9 @@ const loginUser = async (
   }
 };
 
-const registerUser = async (user: Omit<User, "isAdmin" | "createdAt">) => {
+const registerUser = async (
+  user: Omit<SensitiveUser, "isAdmin" | "createdAt">
+) => {
   try {
     const response = await defaultAxios.post(USER_API_URL, user);
     const { accessToken: token, ...userData } = response.data.data;

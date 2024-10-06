@@ -1,5 +1,4 @@
-import z from 'zod';
-
+import z from "zod";
 
 export const questionDocSchema = z.object({
   title: z.string().min(1),
@@ -12,14 +11,19 @@ export const questionSchema = questionDocSchema.extend({
   id: z.string().min(1),
 });
 
-export type QuestionDoc = z.infer<typeof questionDocSchema>
-export type Question = z.infer<typeof questionSchema>
+export type QuestionDoc = z.infer<typeof questionDocSchema>;
+export type Question = z.infer<typeof questionSchema>;
 
 export const userSchema = z.object({
   username: z.string().min(1),
   email: z.string().email(),
-  password: z.string().min(1),
   isAdmin: z.boolean(),
   createdAt: z.date(),
 });
+
+export const sensitiveUserSchema = userSchema.extend({
+  password: z.string().min(1),
+});
+
 export type User = z.infer<typeof userSchema>;
+export type SensitiveUser = z.infer<typeof sensitiveUserSchema>;
