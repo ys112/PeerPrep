@@ -37,7 +37,7 @@ export function SignUpForm() {
         color: 'green',
         message: 'Successfully signed up',
       });
-      navigate({ to: '/' });
+      navigate({ to: '/login' });
     },
     onError: (error) => {
       notifications.show({
