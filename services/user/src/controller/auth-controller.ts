@@ -8,21 +8,22 @@ import { Request, Response } from 'express'
 import { db } from '../db/clients'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { User, loginRequestSchema, VerifyRequest } from '../model'
+import { User, loginFormSchema, ExtractedUser } from '../model'
 
-interface UserRequest extends Request {
-  user?: User
+interface VerifyRequest extends Request {
+  user?: ExtractedUser
 }
 
 export async function handleLogin(req: Request, res: Response) {
   try {
-    const parsedRequest = loginRequestSchema.safeParse(req.body)
+    const parsedRequest = loginFormSchema.safeParse(req.body)
     if (!parsedRequest.success) {
       return res.status(400).json({ message: 'Email and/or password are missing' })
     }
     const { data } = parsedRequest
 
     const userSnapshot = await db.where('email', '==', data.email).get()
+
     if (!userSnapshot) {
       return res.status(401).json({ message: 'Wrong email and/or password' })
     }
