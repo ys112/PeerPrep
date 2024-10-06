@@ -30,7 +30,7 @@ const createAuthAxiosInstance = (baseURL: string) => {
     }
   );
 
-  axios.interceptors.response.use(
+  authAxios.interceptors.response.use(
     (response: AxiosResponse) => {
       return response;
     },
