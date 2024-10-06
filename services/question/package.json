@@ -4,12 +4,15 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "rm -f package-lock.json && npm install && tsc --project . && NODE_ENV=production npm install --production",
+    "build": "tsc --project .",
     "test": "cross-env NODE_ENV=test jest",
     "start": "NODE_ENV=production node dist/index.js",
     "upload": "cross-env NODE_ENV=development ts-node src/scripts/upload.ts"
   },
   "keywords": [],
+  "files": [
+    "dist"
+  ],
   "author": "",
   "license": "ISC",
   "description": "",

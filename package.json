@@ -10,7 +10,11 @@
   "scripts": {
     "dev:frontend": "pnpm -F frontend dev",
     "dev:question-service": "pnpm -F @services/question-service dev",
-    "dev": "pnpm run --stream /dev:.*/"
+    "dev": "pnpm run --stream /dev:.*/",
+    "build:frontend": "pnpm -F frontend build",
+    "build:question-service": "pnpm -F @services/question-service build",
+    "build": "pnpm run --stream /build:.*/",
+    "build:services": "pnpm run -F @services/* build"
   },
   "keywords": [],
   "author": "",
