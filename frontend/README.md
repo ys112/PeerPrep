@@ -26,7 +26,7 @@
 
 Set variables in .env.development for development and .env.prod for production.
 
-- `VITE_QUESTIONS_SERVICE_API_URL`: The backend API url (e.g. http://localhost:3000) -`VITE_USER_SERVICE_API_URL`: The backend API url (e.g. http://localhost:3002)
+-`VITE_QUESTION_SERVICE_API_URL`: The backend API url (e.g. http://localhost:3001) -`VITE_USER_SERVICE_API_URL`: The backend API url (e.g. http://localhost:3002)
 
 For more details on how .env in VITE works:
 https://vitejs.dev/guide/env-and-mode
