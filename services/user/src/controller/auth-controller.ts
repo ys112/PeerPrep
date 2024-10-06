@@ -23,6 +23,7 @@ export async function handleLogin(req: Request, res: Response) {
     const { data } = parsedRequest
 
     const userSnapshot = await db.where('email', '==', data.email).get()
+
     if (!userSnapshot) {
       return res.status(401).json({ message: 'Wrong email and/or password' })
     }

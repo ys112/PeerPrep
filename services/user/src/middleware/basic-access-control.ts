@@ -8,6 +8,7 @@ import { Response, NextFunction } from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { db } from '../db/clients'
 import { User, VerifyRequest } from '../model'
+import { auth } from 'firebase-admin'
 
 export function verifyAccessToken(
   req: VerifyRequest,
