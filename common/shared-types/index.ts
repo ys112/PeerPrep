@@ -1,5 +1,6 @@
 import z from "zod";
 
+// [Question]
 export const questionDocSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
@@ -14,6 +15,8 @@ export const questionSchema = questionDocSchema.extend({
 export type QuestionDoc = z.infer<typeof questionDocSchema>;
 export type Question = z.infer<typeof questionSchema>;
 
+// [User]
+//TODO #48 retire dupes in services\user\src\model.ts
 export const userSchema = z.object({
   username: z.string().min(1),
   email: z.string().email(),
