@@ -1,4 +1,8 @@
-node_modules
-dist
+**/node_modules
+**/dist
+
+**/.vscode/*
+!**/.vscode/extensions.json
+
 .env
 .firebase/*.json
