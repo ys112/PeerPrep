@@ -1,7 +1,8 @@
-import { User } from '@common/shared-types';
+import { User, userSchema } from '@common/shared-types';
 import axios, { AxiosResponse } from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { SafeParseReturnType } from 'zod';
 
 /* [Main] */
 
@@ -17,8 +18,14 @@ async function verifyUser(token: string): Promise<User | null> {
     return null;
   }
 
-  let user: User = verificationResponse.data;
-  return user;
+  let result: SafeParseReturnType<User, User> =
+    userSchema.safeParse(verificationResponse.data);
+  if (!result.success) {
+    // StatusCodes.SERVICE_UNAVAILABLE
+    return null;
+  }
+
+  return result.data;
 }
 
 /* [Exports] */
@@ -31,7 +38,6 @@ export async function requireLogin(req: Request, res: Response, next: NextFuncti
     res.send();
     return;
   }
-  //TODO update all req.body's to nest questionDoc
 
   let user: User | null = await verifyUser(userToken);
   if (user === null) {
