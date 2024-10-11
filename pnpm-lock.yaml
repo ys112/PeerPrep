@@ -39,8 +39,8 @@ importers:
         specifier: ^7.12.2
         version: 7.13.2(@mantine/core@7.13.2(@mantine/hooks@7.13.2(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.13.2(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tabler/icons-react':
-        specifier: ^3.17.0
-        version: 3.19.0(react@18.3.1)
+        specifier: 3.17.0
+        version: 3.17.0(react@18.3.1)
       '@tanstack/react-query':
         specifier: ^5.59.0
         version: 5.59.0(react@18.3.1)
@@ -1516,13 +1516,13 @@ packages:
   '@sinonjs/fake-timers@10.3.0':
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
 
-  '@tabler/icons-react@3.19.0':
-    resolution: {integrity: sha512-AqEWGI0tQWgqo6ZjMO5yJ9sYT8oXLuAM/up0hN9iENS6IdtNZryKrkNSiMgpwweNTpl8wFFG/dAZ959S91A/uQ==}
+  '@tabler/icons-react@3.17.0':
+    resolution: {integrity: sha512-Ndm9Htv7KpIU1PYYrzs5EMhyA3aZGcgaxUp9Q1XOxcRZ+I0X+Ub2WS5f4bkRyDdL1s0++k2T9XRgmg2pG113sw==}
     peerDependencies:
       react: '>= 16'
 
-  '@tabler/icons@3.19.0':
-    resolution: {integrity: sha512-A4WEWqpdbTfnpFEtwXqwAe9qf9sp1yRPvzppqAuwcoF0q5YInqB+JkJtSFToCyBpPVeLxJUxxkapLvt2qQgnag==}
+  '@tabler/icons@3.17.0':
+    resolution: {integrity: sha512-sCSfAQ0w93KSnSL7tS08n73CdIKpuHP8foeLMWgDKiZaCs8ZE//N3ytazCk651ZtruTtByI3b+ZDj7nRf+hHvA==}
 
   '@tanstack/history@1.58.15':
     resolution: {integrity: sha512-M36Ke2Q2v8Iv4Cx0xw04iVkixuOligiFLOifH35DqGnzXe9PAtTHIooieQowqYkAjC09KuLo5j6sgvwKTZ+U5Q==}
@@ -5459,12 +5459,12 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 3.0.1
 
-  '@tabler/icons-react@3.19.0(react@18.3.1)':
+  '@tabler/icons-react@3.17.0(react@18.3.1)':
     dependencies:
-      '@tabler/icons': 3.19.0
+      '@tabler/icons': 3.17.0
       react: 18.3.1
 
-  '@tabler/icons@3.19.0': {}
+  '@tabler/icons@3.17.0': {}
 
   '@tanstack/history@1.58.15': {}
 
