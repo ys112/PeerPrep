@@ -7,7 +7,7 @@ if (process.env.NODE_ENV) {
 import { Response, Request, NextFunction } from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { db } from '../db/clients'
-import { User, ExtractedUser } from '../model'
+import { User, ExtractedUser } from '@common/shared-types'
 import { jwtSecret } from '../utils/jwt-secret'
 
 interface VerifyRequest extends Request {

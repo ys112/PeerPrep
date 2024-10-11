@@ -8,7 +8,7 @@ import { Request, Response } from 'express'
 import { db } from '../db/clients'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { SensitiveUser, loginFormSchema, ExtractedUser } from '../model'
+import { SensitiveUser, loginFormSchema, ExtractedUser } from '@common/shared-types'
 import { jwtSecret } from '../utils/jwt-secret'
 
 interface VerifyRequest extends Request {
