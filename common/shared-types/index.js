@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePrivilegeSchema = exports.extractedUserSchema = exports.registerFormSchema = exports.loginFormSchema = exports.sensitiveUserSchema = exports.userSchema = exports.questionSchema = exports.questionDocSchema = void 0;
+exports.updatePrivilegeSchema = exports.extractedUserSchema = exports.registerFormSchema = exports.loginFormSchema = exports.sensitiveUserSchema = exports.userSchema = exports.questionFormSchema = exports.questionSchema = exports.questionDocSchema = void 0;
 const zod_1 = __importDefault(require("zod"));
 // [Question]
 exports.questionDocSchema = zod_1.default.object({
@@ -15,8 +15,10 @@ exports.questionDocSchema = zod_1.default.object({
 exports.questionSchema = exports.questionDocSchema.extend({
     id: zod_1.default.string().min(1),
 });
+exports.questionFormSchema = exports.questionDocSchema.extend({
+    id: zod_1.default.string().min(1).optional(),
+});
 // [User]
-//TODO #48 retire dupes in services\user\src\model.ts
 exports.userSchema = zod_1.default.object({
     username: zod_1.default.string().min(1),
     email: zod_1.default.string().email(),
