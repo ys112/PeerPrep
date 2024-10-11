@@ -7,7 +7,6 @@ FROM base AS build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run build:common
 RUN pnpm run build:services
 RUN pnpm deploy --filter=@services/user-service --prod /prod/user-service
 RUN pnpm deploy --filter=@services/question-service --prod /prod/question-service
