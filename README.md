@@ -21,6 +21,17 @@ Unless otherwise specified, commands should be run in the monorepo's root folder
 
 1. Open a command line in the monorepo's root folder and run `pnpm i` to install all dependencies.
     - You do not need to install dependencies individually within subfolders.
+1. You would have been provided a JSON file containing Firebase service account credentials.\
+  Place it in `.firebase/service-account.json`.
+
+#### For development
+
+1. Make a copy of `services/user/.env.local.example` and name it `services/user/.env.local`. Change the sample `JWT_SECRET` value for security reasons.
+
+#### For production
+
+1. Change the contents of `jwt_secret.txt` for security reasons.\
+  Do not check the new value in.
 
 ### Running the project (development)
 
