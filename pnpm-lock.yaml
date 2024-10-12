@@ -118,6 +118,9 @@ importers:
       '@common/shared-types':
         specifier: workspace:*
         version: link:../../common/shared-types
+      '@common/utils':
+        specifier: workspace:*
+        version: link:../../common/utils
       axios:
         specifier: ^1.7.7
         version: 1.7.7
