@@ -8,7 +8,13 @@ This is the monorepo for our PeerPrep implementation.
 
 ## Development Instructions
 
-Unless otherwise specified, commands should be run in the monorepo's root folder.
+### Terminology
+
+- Monorepo root: The root folder in which you have cloned the monorepo.
+- Service root: The root folder of a particular service.\
+  e.g. the question service's root is at `services/question/` relative to the monorepo root.
+
+Unless otherwise specified, commands should be run in the monorepo root.
 
 ### Pre-requisites
 
@@ -19,10 +25,14 @@ Unless otherwise specified, commands should be run in the monorepo's root folder
 
 ### First-time setup
 
-1. Open a command line in the monorepo's root folder and run `pnpm i` to install all dependencies.
+1. Run `pnpm i` to install all dependencies.
     - You do not need to install dependencies individually within subfolders.
 1. You would have been provided a JSON file containing Firebase service account credentials.\
   Place it in `.firebase/service-account.json`.
+
+**Only** if the questions database has yet to be initialised and is thus empty:
+
+1. Navigate to the question service's root and run `npm run upload` to populate it.
 
 #### For development
 

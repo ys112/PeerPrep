@@ -2,11 +2,6 @@
 
 ## Development Instructions
 
-### Terminology
-
-- Monorepo root: The root folder in which you have cloned the monorepo.
-- Service root: The root folder of this service, i.e. `services/user/` relative to the monorepo root.
-
 Unless otherwise specified, commands should be run in the service root.
 
 ### Running the service (development)
