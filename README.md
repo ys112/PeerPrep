@@ -34,6 +34,11 @@ Unless otherwise specified, commands should be run in the monorepo root.
 
 1. Navigate to the question service's root and run `npm run upload` to populate it.
 
+If a new admin user account is required:
+
+1. Make a copy of `services/user/.env.development.local.example` and name it `services/user/.env.development.local`. Change the sample account details as desired.
+1. Navigate to the user service's root and run `npm run create-admin` to create the account.
+
 #### For development
 
 1. Make a copy of `services/user/.env.local.example` and name it `services/user/.env.local`. Change the sample `JWT_SECRET` value for security reasons.
@@ -58,7 +63,7 @@ Unless otherwise specified, commands should be run in the monorepo root.
 
 ### Troubleshooting
 
-#### An attempt was made to access a socket in a way forbidden by its access permissions
+#### "An attempt was made to access a socket in a way forbidden by its access permissions"
 
 The following error may be encountered when attempting to `docker compose up` on Windows:
 

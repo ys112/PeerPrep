@@ -9,11 +9,6 @@ Unless otherwise specified, commands should be run in the service root.
 1. Run `npm run dev` to run the dev script.
 1. Open your browser at <http://localhost:3002>.
 
-### Creating a new admin account
-
-1. Make a copy of `.env.development.local.example` and name it `.env.development.local`. Change the sample account details as desired.
-1. Run `npm run create-admin` to create the new admin account.
-
 ## Documentation
 
 ### Environment variables
