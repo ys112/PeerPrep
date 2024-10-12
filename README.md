@@ -14,7 +14,7 @@ Unless otherwise specified, commands should be run in the monorepo's root folder
 
 - [Node.js](https://nodejs.org/en)
 - [Docker](https://docs.docker.com/get-started/get-docker/)
-- `pnpm`
+- [`pnpm`](https://pnpm.io/installation)
   - On Windows, run `npm i -g pnpm` to install it.
 
 ### First-time setup
@@ -35,9 +35,9 @@ Unless otherwise specified, commands should be run in the monorepo's root folder
 1. In a separate command prompt, run `pnpm dev:frontend` to run the frontend's dev script.
 1. Open your browser at <http://localhost:3000>.
 
-## Troubleshooting
+### Troubleshooting
 
-### An attempt was made to access a socket in a way forbidden by its access permissions
+#### An attempt was made to access a socket in a way forbidden by its access permissions
 
 The following error may be encountered when attempting to `docker compose up` on Windows:
 
@@ -53,3 +53,27 @@ Open an **administrator** command prompt and run:
 net stop winnat
 net start winnat
 ```
+
+### Managing dependencies
+
+We use `pnpm` as our package manager, which handles nested dependencies. Do not use `npm` to add dependencies; there should be no `package-lock.json` files generated.
+
+For example, to add `jest` to the user service, as a dev dependency:
+
+```shell
+pnpm add jest -F @services/user-service -D
+```
+
+The [`-F` filter](https://pnpm.io/cli/add#--filter-package_selector) is based on *package name*, i.e. the name of the service in `package.json`. It is not based on workspace name.
+
+## Documentation
+
+### Env files
+
+Throughout the monorepo, the env file design mirrors that of [Vite](https://v2.vitejs.dev/guide/env-and-mode.html#env-files), which we use for our frontend.
+
+We check in `.env`, and optionally `.env.[NODE_ENV]` as needed.
+
+We **do not** check in `.env.local` and any `.env.[NODE_ENV].local` files. Secrets should only be contained in such local files and should never be checked in at any point. Example local env files, appended with `.example`, can be found in the repo containing sample values.
+
+In the case of duplicate variables, the priority is as follows with later files overwriting earlier files' variables: `.env` < `.env.local` < `.env.[NODE_ENV]` < `.env.[NODE_ENV].local`.
