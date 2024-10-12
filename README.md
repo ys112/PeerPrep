@@ -12,7 +12,8 @@ Unless otherwise specified, commands should be run in the monorepo's root folder
 
 ### Pre-requisites
 
-- Node.js
+- [Node.js](https://nodejs.org/en)
+- [Docker](https://docs.docker.com/get-started/get-docker/)
 - `pnpm`
   - On Windows, run `npm i -g pnpm` to install it.
 
@@ -24,7 +25,14 @@ Unless otherwise specified, commands should be run in the monorepo's root folder
 ### Running the project (development)
 
 1. Run `pnpm dev` to run the dev script.
-    - This starts the frontend, user, and question services in dev mode.
+    - This starts the frontend, user service, and question service in dev mode.
+1. Open your browser at <http://localhost:3000>.
+
+### Running the project (production)
+
+1. Run `docker compose up`.
+    - This runs Docker containers for the user and question services.
+1. In a separate command prompt, run `pnpm dev:frontend` to run the frontend's dev script.
 1. Open your browser at <http://localhost:3000>.
 
 ## Troubleshooting
