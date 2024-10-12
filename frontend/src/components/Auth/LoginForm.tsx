@@ -1,48 +1,41 @@
-import { Button, PasswordInput, Stack, TextInput } from '@mantine/core';
-import { useForm, zodResolver } from '@mantine/form';
-import { useMutation } from '@tanstack/react-query';
-import { z } from 'zod';
-import { api } from '../../api';
-import { useNavigate } from '@tanstack/react-router';
-import { notifications } from '@mantine/notifications';
-import { AxiosError } from 'axios';
-
-const loginFormSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1, { message: 'Please enter a password' }),
-});
-
-type FormValues = z.infer<typeof loginFormSchema>;
+import { Button, PasswordInput, Stack, TextInput } from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "../../api";
+import { useNavigate } from "@tanstack/react-router";
+import { notifications } from "@mantine/notifications";
+import { AxiosError } from "axios";
+import { loginFormSchema, LoginFormValue } from "@common/shared-types";
 
 export function LoginForm() {
   const navigate = useNavigate();
-  const form = useForm<FormValues>({
+  const form = useForm<LoginFormValue>({
     initialValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     validate: zodResolver(loginFormSchema),
   });
 
   const { mutateAsync: login, isPending } = useMutation({
-    mutationFn: async (values: FormValues) => {
+    mutationFn: async (values: LoginFormValue) => {
       await api.userClient.loginUser({
         ...values,
       });
     },
     onSuccess: () => {
       notifications.show({
-        color: 'green',
-        message: 'Successfully logged in',
+        color: "green",
+        message: "Successfully logged in",
       });
-      navigate({ to: '/' });
+      navigate({ to: "/" });
     },
     onError: (error) => {
       notifications.show({
-        color: 'red',
+        color: "red",
         title: `Error logging in`,
         message:
-          error instanceof AxiosError && 'message' in error.response?.data
+          error instanceof AxiosError && "message" in error.response?.data
             ? error.response?.data.message
             : error.message,
       });
@@ -53,18 +46,18 @@ export function LoginForm() {
     <form onSubmit={form.onSubmit(async (values) => await login(values))}>
       <Stack>
         <TextInput
-          label='Email'
-          placeholder='you@example.com'
+          label="Email"
+          placeholder="you@example.com"
           required
-          {...form.getInputProps('email')}
+          {...form.getInputProps("email")}
         />
         <PasswordInput
-          label='Password'
-          placeholder='Your password'
+          label="Password"
+          placeholder="Your password"
           required
-          {...form.getInputProps('password')}
+          {...form.getInputProps("password")}
         />
-        <Button type='submit' mt='xl' loading={isPending}>
+        <Button type="submit" mt="xl" loading={isPending}>
           Login
         </Button>
       </Stack>
