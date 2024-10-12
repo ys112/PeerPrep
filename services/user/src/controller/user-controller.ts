@@ -2,7 +2,12 @@ import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import { Query } from 'firebase-admin/firestore'
 import { db } from '../db/clients'
-import { User, SensitiveUser, registerFormSchema, updatePrivilegeSchema } from '../model'
+import {
+  User,
+  SensitiveUser,
+  registerFormSchema,
+  updatePrivilegeSchema,
+} from '@common/shared-types'
 
 export async function getAllUsers(req: Request, res: Response): Promise<Response> {
   try {

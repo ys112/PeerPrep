@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./",
+    "baseUrl": ".",
+    "outDir": "dist",
     "module": "NodeNext",
     "target": "ESNext",
     "strict": true,

@@ -1,4 +1,4 @@
-import { Question } from '@common/shared-types';
+import { Question } from "@common/shared-types";
 import {
   Button,
   Pill,
@@ -9,55 +9,39 @@ import {
   Text,
   Textarea,
   TextInput,
-} from '@mantine/core';
-import { useForm, zodResolver } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconPlus } from '@tabler/icons-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import z from 'zod';
-import { api } from '../../api';
-
-const questionFormSchema = z.object({
-  id: z.string().optional(),
-  title: z.string().min(1, { message: 'Title is required' }),
-  description: z.string().min(1, { message: 'Description is required' }),
-  categories: z
-    .string()
-    .min(1)
-    .array()
-    .min(1, { message: 'At least 1 category required' }),
-  complexity: z.enum(['Easy', 'Medium', 'Hard'], {
-    message: 'Complexity is required',
-  }),
-});
-
-type FormValues = z.infer<typeof questionFormSchema>;
+} from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { IconCheck, IconPlus } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { api } from "../../api";
+import { questionFormSchema, QuestionFormValues } from "@common/shared-types";
 
 interface Props {
-  initialValues?: FormValues;
+  initialValues?: QuestionFormValues;
 }
 
 export function QuestionForm({ initialValues }: Props) {
   const queryClient = useQueryClient();
 
-  const form = useForm<FormValues>({
+  const form = useForm<QuestionFormValues>({
     initialValues: {
       id: initialValues?.id ?? undefined,
-      title: initialValues?.title ?? '',
-      description: initialValues?.description ?? '',
+      title: initialValues?.title ?? "",
+      description: initialValues?.description ?? "",
       categories: initialValues?.categories ?? [],
-      complexity: initialValues?.complexity ?? 'Easy',
+      complexity: initialValues?.complexity ?? "Easy",
     },
     validate: zodResolver(questionFormSchema),
   });
 
-  const mode = !form.values.id ? 'create' : 'edit';
+  const mode = !form.values.id ? "create" : "edit";
 
   const { mutateAsync: createOrUpdateQuestionMutation } = useMutation({
-    mutationFn: async (values: FormValues) => {
+    mutationFn: async (values: QuestionFormValues) => {
       try {
-        if (mode === 'create') {
+        if (mode === "create") {
           return await api.questionClient.addQuestion(values);
         } else {
           return await api.questionClient.updateQuestion({
@@ -72,17 +56,17 @@ export function QuestionForm({ initialValues }: Props) {
     },
     onSuccess: (data) => {
       notifications.show({
-        color: 'green',
-        message: `Successfully ${mode === 'create' ? 'added' : 'updated'} question`,
+        color: "green",
+        message: `Successfully ${mode === "create" ? "added" : "updated"} question`,
       });
-      if (mode === 'create') {
-        queryClient.setQueryData<Question[]>(['questions'], (prev) => [
+      if (mode === "create") {
+        queryClient.setQueryData<Question[]>(["questions"], (prev) => [
           ...(prev ?? []),
           { ...data },
         ]);
         form.reset();
       } else {
-        queryClient.setQueryData<Question[]>(['questions'], (prev) =>
+        queryClient.setQueryData<Question[]>(["questions"], (prev) =>
           prev?.map((qn) => (qn.id === data.id ? { ...data } : qn))
         );
         form.resetDirty();
@@ -92,16 +76,16 @@ export function QuestionForm({ initialValues }: Props) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 403) {
           notifications.show({
-            color: 'red',
-            title: 'Unauthorized',
-            message: 'You are not authorized to delete this question',
+            color: "red",
+            title: "Unauthorized",
+            message: "You are not authorized to delete this question",
           });
         }
         return;
       }
       notifications.show({
-        color: 'red',
-        title: <Text fw='bold'>Error occured</Text>,
+        color: "red",
+        title: <Text fw="bold">Error occured</Text>,
         message: error.message,
       });
     },
@@ -118,55 +102,55 @@ export function QuestionForm({ initialValues }: Props) {
           <TextInput
             disabled
             readOnly
-            label='ID'
-            {...form.getInputProps('id')}
+            label="ID"
+            {...form.getInputProps("id")}
           />
         )}
         <TextInput
-          label='Title'
+          label="Title"
           required
-          placeholder='Enter the title of the question'
-          key={form.key('title')}
-          {...form.getInputProps('title')}
+          placeholder="Enter the title of the question"
+          key={form.key("title")}
+          {...form.getInputProps("title")}
         />
         <Textarea
-          label='Description'
+          label="Description"
           required
-          placeholder='Enter the question description'
+          placeholder="Enter the question description"
           autosize
           minRows={3}
-          key={form.key('description')}
-          {...form.getInputProps('description')}
+          key={form.key("description")}
+          {...form.getInputProps("description")}
         />
         <TagsInput
-          label='Categories'
+          label="Categories"
           required
-          description='Press Enter to submit a category'
-          placeholder='Enter categories'
+          description="Press Enter to submit a category"
+          placeholder="Enter categories"
           data={[]}
-          {...form.getInputProps('categories')}
+          {...form.getInputProps("categories")}
           onChange={(values) => {
-            form.setFieldValue('categories', values);
+            form.setFieldValue("categories", values);
             form.setDirty({ categories: true });
           }}
         />
         <Select
-          label='Complexity'
+          label="Complexity"
           required
           allowDeselect={false}
-          placeholder='Select the complexity'
-          data={['Easy', 'Medium', 'Hard']}
-          key={form.key('complexity')}
-          {...form.getInputProps('complexity')}
+          placeholder="Select the complexity"
+          data={["Easy", "Medium", "Hard"]}
+          key={form.key("complexity")}
+          {...form.getInputProps("complexity")}
         />
 
         <Button
-          mt='md'
-          type='submit'
+          mt="md"
+          type="submit"
           disabled={!form.isDirty() || Object.keys(form.errors).length > 1}
-          leftSection={mode === 'create' ? <IconPlus /> : <IconCheck />}
+          leftSection={mode === "create" ? <IconPlus /> : <IconCheck />}
         >
-          {mode === 'create' ? 'Add' : 'Update'}
+          {mode === "create" ? "Add" : "Update"}
         </Button>
       </Stack>
     </form>

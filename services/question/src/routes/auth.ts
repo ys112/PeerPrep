@@ -4,20 +4,10 @@ if (process.env.NODE_ENV) {
 } else {
   dotenv.config({ path: '.env' })
 }
-import z from 'zod'
-import { User } from '@common/shared-types'
+import { User, extractedUserSchema, ExtractedUser } from '@common/shared-types'
 import axios, { AxiosResponse } from 'axios'
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-
-const extractedUserSchema = z.object({
-  id: z.string().min(1),
-  username: z.string().min(1),
-  email: z.string().email(),
-  isAdmin: z.boolean(),
-})
-
-type ExtractedUser = z.infer<typeof extractedUserSchema>
 
 /* [Main] */
 
