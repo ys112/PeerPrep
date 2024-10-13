@@ -25,3 +25,7 @@ Unless otherwise specified, commands should be run in the monorepo's root folder
 
 1. Run `pnpm dev` to run the dev script.
 1. Open your browser at <http://localhost:3000>.
+
+### Acknowledgement
+Mantine UI: https://ui.mantine.dev/
+Mantine: https://v6.mantine.dev/
