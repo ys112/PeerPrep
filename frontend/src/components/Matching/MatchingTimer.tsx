@@ -61,9 +61,9 @@ function MatchingTimer({
 
   return (
     <Stack justify="center" align="center">
-      <Text fz="h1"> Matching... </Text>
+      <Text fz="xl"> Matching... </Text>
       <RingProgress
-        size={200}
+        size={150}
         sections={ringProgress}
         label={
           <Text c="blue" ta={"center"} fz="h1">
