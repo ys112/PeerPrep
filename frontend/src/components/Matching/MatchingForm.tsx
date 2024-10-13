@@ -5,16 +5,14 @@ import {
   Group,
   LoadingOverlay,
   Paper,
-  RingProgress,
   Select,
-  Stack,
-  Text,
+  Stack
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import { useQuery } from "@tanstack/react-query";
-import { fetchQuestions } from "../../queries/questionQueries";
-import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { fetchQuestions } from "../../queries/questionQueries";
 import MatchingTimer from "./MatchingTimer";
 
 

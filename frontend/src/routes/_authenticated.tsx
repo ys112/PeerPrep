@@ -22,9 +22,9 @@ import {
   redirect,
   useRouter,
 } from "@tanstack/react-router";
-import { userStorage } from "../utils/userStorage";
 import { api } from "../api";
 import { accessTokenStorage } from "../utils/accessTokenStorage";
+import { userStorage } from "../utils/userStorage";
 
 export const Route = createFileRoute("/_authenticated")({
   component: Auth,
@@ -74,7 +74,7 @@ function Auth() {
             leftSection={<IconUsers />}
             component={Link}
             to="/matching"
-          />  
+          />
           <NavLink
             label="Questions"
             leftSection={<IconQuestionMark />}
