@@ -24,40 +24,42 @@ function MatchingTimer({
       color: "blue",
     },
   ]);
+  const [startTime, setStartTime] = useState<number>(Date.now());
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (isMatching) {
+      setStartTime(Date.now());
       const interval = setInterval(() => {
-        setTimer((prevTime) => prevTime - 0.01);
-        setRingProgress((arr) =>
-          arr.map((section) => ({
-            ...section,
-            value: section.value - 1 / time,
-          }))
-        );
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        const remainingTime = Math.max(time - elapsedTime, 0);
+
+        setTimer(Math.ceil(remainingTime));
+
+        setRingProgress([
+          {
+            value: (remainingTime / time) * 100,
+            color: "blue",
+          },
+        ]);
+
+        if (remainingTime <= 0) {
+          clearInterval(intervalId!);
+          onTimeout();
+        }
       }, 10);
+
       setIntervalId(interval);
 
-      const timeoutId = setTimeout(() => {
-        // Handle match timeout
-        onTimeout();
-        clearInterval(intervalId!);
-      }, 30000);
-
-      setTimeoutId(timeoutId);
-    }
-
-    return () => {
+      return () => {
+        clearInterval(interval);
+      };
+    } else {
       if (intervalId) {
         clearInterval(intervalId);
       }
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [isMatching]);
+    }
+  }, [isMatching, startTime]);
 
   return (
     <Stack justify="center" align="center">
@@ -67,10 +69,10 @@ function MatchingTimer({
         sections={ringProgress}
         label={
           <Text c="blue" ta={"center"} fz="h1">
-            {Math.ceil(timer)}
+            {timer}
           </Text>
         }
-      ></RingProgress>
+      />
       <Button
         fullWidth
         color="red"
@@ -82,12 +84,10 @@ function MatchingTimer({
               color: "blue",
             },
           ]);
-          clearInterval(intervalId!);
-          clearTimeout(timeoutId!);
-
-          {
-            /* Handle match cancelation */
+          if (intervalId) {
+            clearInterval(intervalId);
           }
+          // Handle match cancelation
           onTimeout();
         }}
       >
