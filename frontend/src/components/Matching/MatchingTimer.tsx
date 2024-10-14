@@ -30,14 +30,14 @@ function MatchingTimer({
   useEffect(() => {
     if (isMatching) {
       const interval = setInterval(() => {
-        setTimer((prevTime) => prevTime - 1);
+        setTimer((prevTime) => prevTime - 0.01);
         setRingProgress((arr) =>
           arr.map((section) => ({
             ...section,
-            value: section.value - 100 / time,
+            value: section.value - 1 / time,
           }))
         );
-      }, 1000);
+      }, 10);
       setIntervalId(interval);
 
       const timeoutId = setTimeout(() => {
@@ -67,7 +67,7 @@ function MatchingTimer({
         sections={ringProgress}
         label={
           <Text c="blue" ta={"center"} fz="h1">
-            {timer}
+            {Math.ceil(timer)}
           </Text>
         }
       ></RingProgress>

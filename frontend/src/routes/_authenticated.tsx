@@ -25,6 +25,7 @@ import {
 import { api } from "../api";
 import { accessTokenStorage } from "../utils/accessTokenStorage";
 import { userStorage } from "../utils/userStorage";
+import logo from "../assets/logo.svg";
 
 export const Route = createFileRoute("/_authenticated")({
   component: Auth,
@@ -54,10 +55,18 @@ function Auth() {
       padding="md"
     >
       <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
+        <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          {/* Change this to logo when we have one */}
-          <Text fw="bold">PeerPrep</Text>
+          <Group p="0" m="0">
+            <img
+              style={{ width: "55px", padding: 0 }}
+              src={logo}
+              alt="PeerPrep"
+            />
+            <Text fw="bold" ml="0" pl="0">
+              PeerPrep
+            </Text>
+          </Group>
         </Group>
       </AppShell.Header>
 
