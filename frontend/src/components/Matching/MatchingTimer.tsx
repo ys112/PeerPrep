@@ -59,7 +59,7 @@ function MatchingTimer({
         clearInterval(intervalId);
       }
     }
-  }, [isMatching, startTime]);
+  }, [isMatching]);
 
   return (
     <Stack justify="center" align="center">
