@@ -63,3 +63,11 @@ export type LoginFormValue = z.infer<typeof loginFormSchema>;
 export type RegisterFormValue = z.infer<typeof registerFormSchema>;
 export type ExtractedUser = z.infer<typeof extractedUserSchema>;
 export type UpdatePrivilegeRequest = z.infer<typeof updatePrivilegeSchema>;
+
+// [Match]
+export const matchFormSchema = questionDocSchema
+  .pick({
+    complexity: true,
+  })
+  .extend({ category: z.string().min(1) });
+export type matchFormSchema = z.infer<typeof matchFormSchema>;

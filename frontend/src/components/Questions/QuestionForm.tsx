@@ -1,14 +1,12 @@
-import { Question } from "@common/shared-types";
+import { Question, questionFormSchema, QuestionFormValues } from "@common/shared-types";
 import {
   Button,
-  Pill,
-  PillsInput,
   Select,
   Stack,
   TagsInput,
   Text,
   Textarea,
-  TextInput,
+  TextInput
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -16,7 +14,6 @@ import { IconCheck, IconPlus } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { api } from "../../api";
-import { questionFormSchema, QuestionFormValues } from "@common/shared-types";
 
 interface Props {
   initialValues?: QuestionFormValues;

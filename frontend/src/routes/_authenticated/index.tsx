@@ -1,5 +1,4 @@
 import { Paper, Stack, Text, Title } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { userStorage } from '../../utils/userStorage';
 

@@ -103,3 +103,7 @@ We check in `.env`, and optionally `.env.[NODE_ENV]` as needed.
 We **do not** check in `.env.local` and any `.env.[NODE_ENV].local` files. Secrets should only be contained in such local files and should never be checked in at any point. Example local env files, appended with `.example`, can be found in the repo containing sample values.
 
 In the case of duplicate variables, the priority is as follows with later files overwriting earlier files' variables: `.env` < `.env.local` < `.env.[NODE_ENV]` < `.env.[NODE_ENV].local`.
+
+## Acknowledgements
+Mantine: <https://v6.mantine.dev/>
+Mantine UI: <https://ui.mantine.dev/>
