@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
       target: question-service
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp_credentials.json
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/secrets/gcp_credentials.json
       USER_SERVICE_URL: http://user-service:3002
       PORT: 3001
     secrets:
@@ -23,8 +23,9 @@ services:
       dockerfile: Dockerfile
       target: user-service
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp_credentials.json
-      JWT_SECRET_PATH: /run/secrets/jwt_secret
+      # changed from run to etc/secrets for render
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/secrets/gcp_credentials.json
+      JWT_SECRET_PATH: /etc/secrets/jwt_secret
       PORT: 3002
     secrets:
       - gcp_credentials.json
