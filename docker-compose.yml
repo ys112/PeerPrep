@@ -44,5 +44,5 @@ networks:
 secrets:
   gcp_credentials.json:
     file: ./service-account.json
-  jwt_secret:
+  jwt_secret.txt:
     file: ./jwt_secret.txt
