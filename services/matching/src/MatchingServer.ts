@@ -38,6 +38,9 @@ export default class MatchingServer {
         ticketId: getTicketId(data),
         data: data,
       }
+
+      // TODO: Preliminary validation here: duplicate ticket, user in a match already, etc.
+
       const job = await this._matchingQueueManager.addTicket(ticket)
 
       // TODO: Move this to inside onConnection method
@@ -54,6 +57,8 @@ export default class MatchingServer {
   }
 
   private async onMatchCancel(ticket: UserTicket, socket: Socket) {
+    // TODO: Invalidate the ticket
+    // If you are reading the database, you can fetch the data there and only use ticketId here.
     await this._matchingQueueManager.removeTicket(
       ticket.ticketId,
       ticket.data.topic,
