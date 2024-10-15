@@ -16,7 +16,7 @@ services:
       - 3001
     networks:
       - demo-network
-    
+
   user-service:
     build:
       context: .
@@ -42,7 +42,6 @@ networks:
 
 secrets:
   gcp_credentials.json:
-    file: ./.firebase/service-account.json
+    file: ./service-account.json
   jwt_secret:
     file: ./jwt_secret.txt
-    
