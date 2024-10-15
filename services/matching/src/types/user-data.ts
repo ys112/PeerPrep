@@ -11,7 +11,7 @@ export type UserTicket = {
   data: UserMatchingData
 }
 
-export type UserMatch = {
+export type UserMatchDoneData = {
   topic: string
   difficulty: UserMatchingData['difficulty']
   userIds: string[]

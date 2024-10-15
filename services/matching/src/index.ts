@@ -8,7 +8,7 @@ if (process.env.NODE_ENV) {
 import cors from 'cors'
 import express from 'express'
 import logger from './utils/logger'
-import { Server } from 'socket.io'
+import MatchingServer from './MatchingServer'
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -23,7 +23,5 @@ app.use(
 const server = app.listen(port, () => {
   logger.info(`Server is running on http://localhost:${port}`)
 })
-const io = new Server(server)
-io.on('connection', (socket) => {
-  logger.info(`New connection: ${socket}`)
-})
+
+const matchingServer = new MatchingServer(server)
