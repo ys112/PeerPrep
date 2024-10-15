@@ -1,3 +1,4 @@
+syntax = docker/dockerfile:1.2
 FROM node:20-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -7,8 +8,8 @@ FROM base AS build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN --mount=type=secret,id=service-account,dst=/etc/secrets/service-account.json cat ./service-account.json
-RUN --mount=type=secret,id=jwt_secret,dst=/etc/secrets/jwt_secret.txt cat ./jwt_secret.txt 
+RUN --mount=type=secret,id=service-account,dst=/run/secrets/service-account.json cat ./service-account.json
+RUN --mount=type=secret,id=jwt_secret,dst=/run/secrets/jwt_secret.txt cat ./jwt_secret.txt 
 RUN pnpm run build:common
 RUN pnpm run build:services
 RUN pnpm deploy --filter=@services/user-service --prod /prod/user-service
