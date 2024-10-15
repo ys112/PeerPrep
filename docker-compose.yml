@@ -25,7 +25,7 @@ services:
     environment:
       # changed from run to etc/secrets for render
       GOOGLE_APPLICATION_CREDENTIALS: /etc/secrets/gcp_credentials.json
-      JWT_SECRET_PATH: /etc/secrets/jwt_secret
+      JWT_SECRET_PATH: /etc/secrets/jwt_secret.txt
       PORT: 3002
     secrets:
       - gcp_credentials.json
