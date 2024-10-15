@@ -7,10 +7,13 @@ FROM base AS build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=secret,id=service-account,dst=/etc/secrets/service-account.json cat /etc/secrets/service-account.json
+RUN --mount=type=secret,id=jwt_secret,dst=/etc/secrets/jwt_secret.txt cat /etc/secrets/jwt_secret.txt 
 RUN pnpm run build:common
 RUN pnpm run build:services
 RUN pnpm deploy --filter=@services/user-service --prod /prod/user-service
 RUN pnpm deploy --filter=@services/question-service --prod /prod/question-service
+
 
 FROM base AS question-service
 COPY --from=build /prod/question-service /prod/question-service
