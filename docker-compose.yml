@@ -29,7 +29,7 @@ services:
       PORT: 3002
     secrets:
       - gcp_credentials.json
-      - jwt_secret
+      - jwt_secret.txt
     ports:
       - 3002:3002
     expose:
