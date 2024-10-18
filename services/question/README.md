@@ -6,12 +6,12 @@ Unless otherwise specified, commands should be run in the service root.
 
 ### Running the service (development)
 
-1. Run `npm run dev` to run the dev script.
+1. Run `pnpm run dev` to run the dev script.
 1. Open your browser at <http://localhost:3001>.
 
 ### Running tests
 
-1. Run `npm test` to run the test script.
+1. Run `pnpm test` to run the test script.
 
 ## Documentation
 

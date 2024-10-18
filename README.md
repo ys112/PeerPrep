@@ -32,12 +32,12 @@ Unless otherwise specified, commands should be run in the monorepo root.
 
 **Only** if the questions database has yet to be initialised and is thus empty:
 
-1. Navigate to the question service's root and run `npm run upload` to populate it.
+1. Navigate to the question service's root and run `pnpm run upload` to populate it.
 
 If a new admin user account is required:
 
 1. Make a copy of `services/user/.env.development.local.example` and name it `services/user/.env.development.local`. Change the sample account details as desired.
-1. Navigate to the user service's root and run `npm run create-admin` to create the account.
+1. Navigate to the user service's root and run `pnpm run create-admin` to create the account.
 
 #### For development
 
