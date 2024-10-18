@@ -14,12 +14,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchQuestions } from "../../queries/questionQueries";
 import MatchingTimer from "./MatchingTimer";
-import socket from "../../socket/match-socket";
+import socket from "../../socket/match";
 import { userStorage } from "../../utils/userStorage";
-import { io, Socket } from "socket.io-client";
 
 export function MatchingForm() {
-  const user = userStorage.getUser()!;
   type Complexity = "Easy" | "Medium" | "Hard";
 
   const [isMatching, setIsMatching] = useState(false);
@@ -37,7 +35,6 @@ export function MatchingForm() {
     },
     validate: zodResolver(matchFormSchema),
   });
-  // const socket: Socket = io("ws://localhost:3003");
 
   const complexities = ["Easy", "Medium", "Hard"].filter((c) =>
     questions?.some((q) => q.complexity === c)
@@ -51,22 +48,6 @@ export function MatchingForm() {
       difficulty: values.complexity,
       topic: values.category,
     });
-    // Check if socket is connected before emitting
-    if (socket.connected) {
-      console.log("Socket is connected!");
-      socket.emit("MATCH_REQUEST", {
-        userId: 1, // Use proper user ID
-        difficulty: values.complexity,
-        topic: values.category,
-      });
-    } else {
-      console.log("Socket is not connected!");
-      notifications.show({
-        title: "Error",
-        message: "Could not connect to match server",
-        color: "red",
-      });
-    }
   };
 
   return (

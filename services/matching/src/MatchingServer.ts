@@ -5,6 +5,7 @@ import { Server as HttpServer } from 'http'
 import { MessageType } from './types/events'
 import logger from './utils/logger'
 import { getTicketId } from './utils/ticketid'
+import { verifyUser } from './utils/verifyToken'
 
 export default class MatchingServer {
   private readonly _matchingQueueManager: MatchingQueueManager
@@ -23,12 +24,14 @@ export default class MatchingServer {
   private async onConnection(socket: Socket) {
     // TODO: Authenticate the user and save the socket object for future use
 
-    const token = socket.handshake.auth.token // Access the token sent from the client
+    const token = socket.handshake.auth.token as string
     // if (!token) {
     //   return new Error('Authentication error')
     // }
 
-    console.log('connect' + token)
+    const user = await verifyUser('Bearer ' + token)
+    const userId = user?.id
+    console.log('userId' + userId)
 
     socket.on(MessageType.MATCH_REQUEST, (data: UserMatchingData) =>
       this.onMatchingRequest(data, socket)
