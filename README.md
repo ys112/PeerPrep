@@ -56,9 +56,9 @@ If a new admin user account is required:
 
 ### Running the project (production)
 
-1. Run `docker compose up`.
-    - This runs Docker containers for the user and question services.
-1. In a separate command prompt, run `pnpm dev:frontend` to run the frontend's dev script.
+1. Run `docker compose up -d`.
+    - This starts Docker containers for the user and question services, in a detached state (running in the background).
+1. Run `pnpm dev:frontend` to run the frontend's dev script.
 1. Open your browser at <http://localhost:3000>.
 
 ### Troubleshooting
