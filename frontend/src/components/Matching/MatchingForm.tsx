@@ -1,4 +1,4 @@
-import { matchFormSchema } from "@common/shared-types";
+import { matchFormSchema, MatchFormValue } from "@common/shared-types";
 import {
   Box,
   Button,
@@ -6,7 +6,7 @@ import {
   LoadingOverlay,
   Paper,
   Select,
-  Stack
+  Stack,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -14,9 +14,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchQuestions } from "../../queries/questionQueries";
 import MatchingTimer from "./MatchingTimer";
-
+import socket from "../../socket/match-socket";
+import { userStorage } from "../../utils/userStorage";
+import { io, Socket } from "socket.io-client";
 
 export function MatchingForm() {
+  const user = userStorage.getUser()!;
+  type Complexity = "Easy" | "Medium" | "Hard";
+
   const [isMatching, setIsMatching] = useState(false);
 
   const { data: questions, isLoading } = useQuery({
@@ -27,22 +32,45 @@ export function MatchingForm() {
 
   const form = useForm({
     initialValues: {
-      complexity: "",
+      complexity: "" as Complexity,
       category: "",
     },
     validate: zodResolver(matchFormSchema),
   });
+  // const socket: Socket = io("ws://localhost:3003");
 
   const complexities = ["Easy", "Medium", "Hard"].filter((c) =>
     questions?.some((q) => q.complexity === c)
   );
 
+  const match = (values: MatchFormValue) => {
+    setIsMatching(!isMatching);
+
+    socket.emit("MATCH_REQUEST", {
+      userId: 1, // Use proper user ID
+      difficulty: values.complexity,
+      topic: values.category,
+    });
+    // Check if socket is connected before emitting
+    if (socket.connected) {
+      console.log("Socket is connected!");
+      socket.emit("MATCH_REQUEST", {
+        userId: 1, // Use proper user ID
+        difficulty: values.complexity,
+        topic: values.category,
+      });
+    } else {
+      console.log("Socket is not connected!");
+      notifications.show({
+        title: "Error",
+        message: "Could not connect to match server",
+        color: "red",
+      });
+    }
+  };
+
   return (
-    <form
-      onSubmit={form.onSubmit(() => {
-        setIsMatching(!isMatching);
-      })}
-    >
+    <form onSubmit={form.onSubmit((values) => match(values))}>
       <Box pos="relative">
         <LoadingOverlay visible={isLoading} />
         <Paper withBorder shadow="md" radius="md" w={600} p={30} mt={30}>

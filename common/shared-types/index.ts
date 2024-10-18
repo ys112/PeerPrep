@@ -70,4 +70,4 @@ export const matchFormSchema = questionDocSchema
     complexity: true,
   })
   .extend({ category: z.string().min(1) });
-export type matchFormSchema = z.infer<typeof matchFormSchema>;
+export type MatchFormValue = z.infer<typeof matchFormSchema>;

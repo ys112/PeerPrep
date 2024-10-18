@@ -23,6 +23,13 @@ export default class MatchingServer {
   private async onConnection(socket: Socket) {
     // TODO: Authenticate the user and save the socket object for future use
 
+    const token = socket.handshake.auth.token // Access the token sent from the client
+    // if (!token) {
+    //   return new Error('Authentication error')
+    // }
+
+    console.log('connect' + token)
+
     socket.on(MessageType.MATCH_REQUEST, (data: UserMatchingData) =>
       this.onMatchingRequest(data, socket)
     )
