@@ -1,11 +1,15 @@
 import z from "zod";
 
+// [Common]
+
+export const DIFFCULTY_LEVELS = ["Easy", "Medium", "Hard"] as const;
+
 // [Question]
 export const questionDocSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   categories: z.string().min(1).array().min(1),
-  complexity: z.enum(["Easy", "Medium", "Hard"]),
+  complexity: z.enum(DIFFCULTY_LEVELS),
 });
 
 export const questionSchema = questionDocSchema.extend({
@@ -65,9 +69,57 @@ export type ExtractedUser = z.infer<typeof extractedUserSchema>;
 export type UpdatePrivilegeRequest = z.infer<typeof updatePrivilegeSchema>;
 
 // [Match]
+
 export const matchFormSchema = questionDocSchema
   .pick({
     complexity: true,
   })
   .extend({ category: z.string().min(1) });
-export type matchFormSchema = z.infer<typeof matchFormSchema>;
+
+export const userMatchingDataSchema = z.object({
+  userId: z.string().min(1),
+  topic: z.string().min(1),
+  difficulty: z.enum(DIFFCULTY_LEVELS),
+});
+
+export const userMatchingRequestSchema = userMatchingDataSchema.pick({
+  topic: true,
+  difficulty: true,
+});
+
+export const userMatchDoneDataSchema = userMatchingDataSchema
+  .pick({
+    topic: true,
+    difficulty: true,
+  })
+  .extend({
+    userIds: z.string().min(1).array().min(1),
+    ticketIds: z.string().min(1).array().min(1),
+  });
+
+export const userTicketSchema = z.object({
+  ticketId: z.string().min(1),
+  data: userMatchingDataSchema,
+});
+
+export const userTicketPayloadSchema = z.object({
+  ticketId: z.string().min(1),
+  data: userMatchingRequestSchema,
+});
+
+export type MatchFormValue = z.infer<typeof matchFormSchema>;
+export type UserMatchingData = z.infer<typeof userMatchingDataSchema>;
+export type UserMatchingRequest = z.infer<typeof userMatchingRequestSchema>;
+export type UserMatchDoneData = z.infer<typeof userMatchDoneDataSchema>;
+export type UserTicket = z.infer<typeof userTicketSchema>;
+export type UserTicketPayload = z.infer<typeof userTicketPayloadSchema>;
+
+export enum MessageType {
+  MATCH_REQUEST = "MATCH_REQUEST",
+  MATCH_REQUEST_QUEUED = "MATCH_REQUEST_QUEUED",
+  MATCH_FOUND = "MATCH_FOUND",
+  MATCH_CANCEL = "MATCH_CANCEL",
+  MATCH_CANCELLED = "MATCH_CANCELLED",
+  MATCH_REQUEST_FAILED = "MATCH_REQUEST_FAILED",
+  AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED",
+}

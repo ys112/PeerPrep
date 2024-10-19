@@ -1,10 +1,17 @@
-import { UserMatchDoneData, UserMatchingData, UserTicket } from './types/user-data'
 import MatchingQueueManager from './queue-manager/MatchingQueueManager'
 import { Server as SocketIOServer, ServerOptions, Socket } from 'socket.io'
 import { Server as HttpServer } from 'http'
-import { MessageType } from './types/events'
+import {
+  MessageType,
+  UserMatchDoneData,
+  UserMatchingData,
+  UserTicket,
+  UserTicketPayload,
+  UserMatchingRequest,
+} from '@common/shared-types'
 import logger from './utils/logger'
 import { getTicketId } from './utils/ticketid'
+import { verifyUser } from './utils/verifyToken'
 
 export default class MatchingServer {
   private readonly _matchingQueueManager: MatchingQueueManager
@@ -21,13 +28,25 @@ export default class MatchingServer {
   }
 
   private async onConnection(socket: Socket) {
-    // TODO: Authenticate the user and save the socket object for future use
+    // TODO: Save the socket object for future use
 
-    socket.on(MessageType.MATCH_REQUEST, (data: UserMatchingData) =>
-      this.onMatchingRequest(data, socket)
-    )
+    const token = socket.handshake.auth.token as string
+    if (!token) {
+      socket.emit(MessageType.AUTHENTICATION_FAILED)
+      return
+    }
+    const user = await verifyUser(token)
+    if (!user) {
+      socket.emit(MessageType.AUTHENTICATION_FAILED)
+      return
+    }
+    const userId = user?.id as string
 
-    socket.on(MessageType.MATCH_CANCEL, (ticket: UserTicket) => {
+    socket.on(MessageType.MATCH_REQUEST, (data: UserMatchingRequest) => {
+      this.onMatchingRequest({ userId, ...data }, socket)
+    })
+
+    const ticket = socket.on(MessageType.MATCH_CANCEL, (ticket: UserTicket) => {
       this.onMatchCancel(ticket, socket)
     })
   }
@@ -56,7 +75,7 @@ export default class MatchingServer {
     }
   }
 
-  private async onMatchCancel(ticket: UserTicket, socket: Socket) {
+  private async onMatchCancel(ticket: UserTicketPayload, socket: Socket) {
     // TODO: Invalidate the ticket
     // If you are reading the database, you can fetch the data there and only use ticketId here.
     await this._matchingQueueManager.removeTicket(

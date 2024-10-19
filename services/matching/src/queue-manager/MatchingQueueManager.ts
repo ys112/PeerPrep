@@ -5,7 +5,7 @@ import {
   UserMatchDoneData,
   UserMatchingData,
   UserTicket,
-} from '../types/user-data'
+} from '@common/shared-types'
 import { redisConfig } from '../constants/redis'
 
 export type MatchingQueueManagerOptions = {
