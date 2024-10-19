@@ -1,25 +1,20 @@
-# CS3219 Microservice template with Express.js
-This is a simple microservice template with Express.js. It is meant to be used as a starting point for building microservices with Express.js.
+# Matching Service
 
-## Packages
-- `express`: Web framework for Node.js
-- `ts-node` and `ts-node-dev`: TypeScript execution engine, transforms TypeScript into JavaScript, enabling you to directly execute TypeScript on Node.js without precompiling
-- `jest`: Testing framework
-- `dotenv` and `cross-env`: Environment variable loader
-- `winston`: Logging library
+## Development Instructions
 
-## Scripts
-Use `npm run <script>` or `yarn <script>` to run available scripts in `package.json`.
+Unless otherwise specified, commands should be run in the service root.
 
-**Window users**: If you encounter this error: `'NODE_ENV' is not recognized as an internal or external command, operable program or batch file.`, add `cross-env` before every `NODE_ENV`. The `dev` and `test` scripts have been updated to use `cross-env`.
+### Running the service (development)
 
-- `dev`: Start the server in development mode, with hot reloading (`ts-node-dev`) enabled
+1. Ensure that you have a container for Redis set up on Docker, exposing the port 6379
+2. Run `pnpm run dev` to run the dev script.
 
-- `build`: Build the project. It cleans `package-lock.json` and reinstall dependencies before compiling TypeScript files.
+## Documentation
 
-- `start`: Start the server in production mode
+### Environment variables
 
-- `test`: Run tests with Jest
+`.env`:
 
-## Logger
-This template uses `winston` as the logging library. The logger is configured in `src/utils/logger.ts`.
+- `PORT` (optional): Port to run the service on.
+- `CORS_ORIGINS` (optional): Allow list for CORS, as parseable JSON.
+- `USER_SERVICE_URL`: The URL to the user service.
