@@ -102,7 +102,7 @@ export const userTicketSchema = z.object({
   data: userMatchingDataSchema,
 });
 
-export const userTicketPlayloadSchema = z.object({
+export const userTicketPayloadSchema = z.object({
   ticketId: z.string().min(1),
   data: userMatchingRequestSchema,
 });
@@ -112,7 +112,7 @@ export type UserMatchingData = z.infer<typeof userMatchingDataSchema>;
 export type UserMatchingRequest = z.infer<typeof userMatchingRequestSchema>;
 export type UserMatchDoneData = z.infer<typeof userMatchDoneDataSchema>;
 export type UserTicket = z.infer<typeof userTicketSchema>;
-export type UserTicketPlayload = z.infer<typeof userTicketPlayloadSchema>;
+export type UserTicketPayload = z.infer<typeof userTicketPayloadSchema>;
 
 export enum MessageType {
   MATCH_REQUEST = "MATCH_REQUEST",

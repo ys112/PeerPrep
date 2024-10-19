@@ -18,7 +18,7 @@ import socket from "../../socket/match";
 import {
   MessageType,
   UserMatchDoneData,
-  UserTicketPlayload,
+  UserTicketPayload,
   UserMatchingRequest,
   DIFFCULTY_LEVELS,
 } from "@common/shared-types";
@@ -64,7 +64,7 @@ export function MatchingForm() {
       throw new Error("Cannot cancel for undefined ticketId");
     }
     const { complexity, category } = form.values;
-    const ticket: UserTicketPlayload = {
+    const ticket: UserTicketPayload = {
       ticketId: ticketId,
       data: {
         difficulty: complexity,
