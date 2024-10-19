@@ -36,6 +36,42 @@ services:
     networks:
       - demo-network
 
+  redis:
+    image: redis:alpine
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+    networks:
+      - demo-network
+
+  matching-service:
+    depends_on:
+      redis:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: matching-service
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp_credentials.json
+      PORT: 3003
+      REDIS_URL: redis://redis:6379
+      USER_SERVICE_URL: http://user-service:3002
+    secrets:
+      - gcp_credentials.json
+    ports:
+      - 3003:3003
+    expose:
+      - 3003
+    networks:
+      - demo-network
+
 networks:
   demo-network:
     driver: bridge
