@@ -5,7 +5,7 @@ import {
   UserMatchDoneData,
   UserMatchingData,
   UserTicket,
-} from '../types/user-data'
+} from '@common/shared-types'
 
 export type MatchingQueueManagerOptions = {
   onMatchFound?: (data: UserMatchDoneData) => void

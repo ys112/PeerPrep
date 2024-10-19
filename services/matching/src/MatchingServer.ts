@@ -1,8 +1,14 @@
-import { UserMatchDoneData, UserMatchingData, UserTicket } from './types/user-data'
 import MatchingQueueManager from './queue-manager/MatchingQueueManager'
 import { Server as SocketIOServer, ServerOptions, Socket } from 'socket.io'
 import { Server as HttpServer } from 'http'
-import { MessageType } from '@common/shared-types'
+import {
+  MessageType,
+  UserMatchDoneData,
+  UserMatchingData,
+  UserTicket,
+  UserTicketPlayload,
+  UserMatchingRequest,
+} from '@common/shared-types'
 import logger from './utils/logger'
 import { getTicketId } from './utils/ticketid'
 import { verifyUser } from './utils/verifyToken'
@@ -28,13 +34,13 @@ export default class MatchingServer {
     if (!token) {
       return new Error('Authentication error')
     }
-    const user = await verifyUser('Bearer ' + token)
+    const user = await verifyUser(token)
     if (!user) {
       return new Error('Authentication error')
     }
     const userId = user?.id as string
 
-    socket.on(MessageType.MATCH_REQUEST, (data: Omit<UserMatchingData, 'userId'>) => {
+    socket.on(MessageType.MATCH_REQUEST, (data: UserMatchingRequest) => {
       this.onMatchingRequest({ userId, ...data }, socket)
     })
 
@@ -67,7 +73,7 @@ export default class MatchingServer {
     }
   }
 
-  private async onMatchCancel(ticket: UserTicket, socket: Socket) {
+  private async onMatchCancel(ticket: UserTicketPlayload, socket: Socket) {
     // TODO: Invalidate the ticket
     // If you are reading the database, you can fetch the data there and only use ticketId here.
     await this._matchingQueueManager.removeTicket(

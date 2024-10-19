@@ -15,10 +15,16 @@ import { useState, useEffect } from "react";
 import { fetchQuestions } from "../../queries/questionQueries";
 import MatchingTimer from "./MatchingTimer";
 import socket from "../../socket/match";
-import { MessageType } from "@common/shared-types";
+import {
+  MessageType,
+  UserMatchDoneData,
+  UserTicketPlayload,
+  UserMatchingRequest,
+  DIFFCULTY_LEVELS,
+} from "@common/shared-types";
 
 export function MatchingForm() {
-  type Complexity = "Easy" | "Medium" | "Hard";
+  type Complexity = (typeof DIFFCULTY_LEVELS)[number];
 
   const [isMatching, setIsMatching] = useState(false);
   const [ticketId, setTicketId] = useState<string | null>(null);
@@ -44,10 +50,11 @@ export function MatchingForm() {
   const match = (values: MatchFormValue) => {
     setIsMatching(!isMatching);
 
-    socket.emit("MATCH_REQUEST", {
+    const data: UserMatchingRequest = {
       difficulty: values.complexity,
       topic: values.category,
-    });
+    };
+    socket.emit("MATCH_REQUEST", data);
   };
 
   const cancel = () => {
@@ -57,7 +64,7 @@ export function MatchingForm() {
       throw new Error("Cannot cancel for undefined ticketId");
     }
     const { complexity, category } = form.values;
-    const ticket = {
+    const ticket: UserTicketPlayload = {
       ticketId: ticketId,
       data: {
         difficulty: complexity,
@@ -68,7 +75,7 @@ export function MatchingForm() {
   };
 
   useEffect(() => {
-    socket.on(MessageType.MATCH_REQUEST_QUEUED, (data) => {
+    socket.on(MessageType.MATCH_REQUEST_QUEUED, (data: string) => {
       console.log(`Match request queued for user`, data);
       setTicketId(data);
     });
@@ -82,7 +89,7 @@ export function MatchingForm() {
       });
     });
 
-    socket.on(MessageType.MATCH_FOUND, (data) => {
+    socket.on(MessageType.MATCH_FOUND, (data: UserMatchDoneData) => {
       setIsMatching(false);
       notifications.show({
         title: "Success",
