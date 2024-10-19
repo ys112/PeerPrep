@@ -11,7 +11,7 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { fetchQuestions } from "../../queries/questionQueries";
 import MatchingTimer from "./MatchingTimer";
 import socket from "../../socket/match";
@@ -21,6 +21,7 @@ export function MatchingForm() {
   type Complexity = "Easy" | "Medium" | "Hard";
 
   const [isMatching, setIsMatching] = useState(false);
+  const [ticketId, setTicketId] = useState<string | null>(null);
 
   const { data: questions, isLoading } = useQuery({
     queryKey: ["questions"],
@@ -44,11 +45,52 @@ export function MatchingForm() {
     setIsMatching(!isMatching);
 
     socket.emit("MATCH_REQUEST", {
-      userId: 1, // Use proper user ID
       difficulty: values.complexity,
       topic: values.category,
     });
   };
+
+  const cancel = () => {
+    setIsMatching(false);
+
+    if (!ticketId) {
+      throw new Error("Cannot cancel for undefined ticketId");
+    }
+    const { complexity, category } = form.values;
+    const ticket = {
+      ticketId: ticketId,
+      data: {
+        difficulty: complexity,
+        topic: category,
+      },
+    };
+    socket.emit("MATCH_CANCEL", ticket);
+  };
+
+  useEffect(() => {
+    socket.on("MATCH_REQUEST_QUEUED", (data) => {
+      console.log(`Match request queued for user`, data);
+      setTicketId(data);
+    });
+
+    socket.on("MATCH_FOUND", (data) => {
+      setIsMatching(false);
+      notifications.show({
+        title: "Success",
+        message: "Match found",
+        color: "green",
+      });
+      console.log(`Match found for users: ${data.userIds}`);
+    });
+
+    socket.on("MATCH_CANCELLED", () => {
+      notifications.show({
+        title: "Match cancelled",
+        message: "No match found",
+        color: "red",
+      });
+    });
+  }, []);
 
   return (
     <form onSubmit={form.onSubmit((values) => match(values))}>
@@ -83,18 +125,7 @@ export function MatchingForm() {
 
           {/* Matching state */}
           {isMatching && (
-            <MatchingTimer
-              time={30}
-              isMatching={isMatching}
-              onTimeout={() => {
-                setIsMatching(false);
-                notifications.show({
-                  title: "Match timeout",
-                  message: "No match found",
-                  color: "red",
-                });
-              }}
-            />
+            <MatchingTimer time={30} isMatching={isMatching} cancel={cancel} />
           )}
         </Paper>
       </Box>

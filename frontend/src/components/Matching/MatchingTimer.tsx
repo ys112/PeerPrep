@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 interface MatchingTimerProps {
   time: number;
-  onTimeout: () => void;
+  cancel: () => void;
   isMatching: boolean;
 }
 
@@ -12,11 +12,7 @@ interface RingProgressSection {
   color: string;
 }
 
-function MatchingTimer({
-  time = 30,
-  onTimeout,
-  isMatching,
-}: MatchingTimerProps) {
+function MatchingTimer({ time = 30, cancel, isMatching }: MatchingTimerProps) {
   const [timer, setTimer] = useState<number>(time);
   const [ringProgress, setRingProgress] = useState<RingProgressSection[]>([
     {
@@ -45,7 +41,7 @@ function MatchingTimer({
 
         if (remainingTime <= 0) {
           clearInterval(intervalId!);
-          onTimeout();
+          cancel();
         }
       }, 10);
 
@@ -88,7 +84,7 @@ function MatchingTimer({
             clearInterval(intervalId);
           }
           // Handle match cancelation
-          onTimeout();
+          cancel();
         }}
       >
         Cancel

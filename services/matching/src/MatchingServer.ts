@@ -25,19 +25,21 @@ export default class MatchingServer {
     // TODO: Authenticate the user and save the socket object for future use
 
     const token = socket.handshake.auth.token as string
-    // if (!token) {
-    //   return new Error('Authentication error')
-    // }
-
+    if (!token) {
+      return new Error('Authentication error')
+    }
     const user = await verifyUser('Bearer ' + token)
-    const userId = user?.id
-    console.log('userId' + userId)
+    if (!user) {
+      return
+    }
+    const userId = user?.id as string
+    // console.log('userId: ' + userId)
 
-    socket.on(MessageType.MATCH_REQUEST, (data: UserMatchingData) =>
-      this.onMatchingRequest(data, socket)
-    )
+    socket.on(MessageType.MATCH_REQUEST, (data: Omit<UserMatchingData, 'userId'>) => {
+      this.onMatchingRequest({ userId, ...data }, socket)
+    })
 
-    socket.on(MessageType.MATCH_CANCEL, (ticket: UserTicket) => {
+    const ticket = socket.on(MessageType.MATCH_CANCEL, (ticket: UserTicket) => {
       this.onMatchCancel(ticket, socket)
     })
   }
