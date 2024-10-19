@@ -89,6 +89,15 @@ export function MatchingForm() {
       });
     });
 
+    socket.on(MessageType.AUTHENTICATION_FAILED, () => {
+      setIsMatching(false);
+      notifications.show({
+        title: "Failed",
+        message: "Authentication failed",
+        color: "red",
+      });
+    });
+
     socket.on(MessageType.MATCH_FOUND, (data: UserMatchDoneData) => {
       setIsMatching(false);
       notifications.show({

@@ -32,11 +32,13 @@ export default class MatchingServer {
 
     const token = socket.handshake.auth.token as string
     if (!token) {
-      return new Error('Authentication error')
+      socket.emit(MessageType.AUTHENTICATION_FAILED)
+      return
     }
     const user = await verifyUser(token)
     if (!user) {
-      return new Error('Authentication error')
+      socket.emit(MessageType.AUTHENTICATION_FAILED)
+      return
     }
     const userId = user?.id as string
 
