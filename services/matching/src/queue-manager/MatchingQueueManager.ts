@@ -6,6 +6,7 @@ import {
   UserMatchingData,
   UserTicket,
 } from '@common/shared-types'
+import { redisConfig } from '../constants/redis'
 
 export type MatchingQueueManagerOptions = {
   onMatchFound?: (data: UserMatchDoneData) => void
@@ -55,9 +56,13 @@ export default class MatchingQueueManager {
     for (const key of DIFFCULTY_LEVELS) {
       const queueName = this.getQueueName(topic, key)
 
-      const queue = new Queue<UserTicket, UserMatchDoneData | null>(queueName)
+      const queue = new Queue<UserTicket, UserMatchDoneData | null>(queueName, {
+        connection: redisConfig,
+      })
 
-      const queueEvents = new QueueEvents(queueName)
+      const queueEvents = new QueueEvents(queueName, {
+        connection: redisConfig,
+      })
       queueEvents.on('completed', async ({ returnvalue }) => {
         if (returnvalue !== null) {
           // type casting since returnvalue is string for some reason
