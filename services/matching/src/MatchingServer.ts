@@ -6,7 +6,7 @@ import {
   UserMatchDoneData,
   UserMatchingData,
   UserTicket,
-  UserTicketPlayload,
+  UserTicketPayload,
   UserMatchingRequest,
 } from '@common/shared-types'
 import logger from './utils/logger'
@@ -75,7 +75,7 @@ export default class MatchingServer {
     }
   }
 
-  private async onMatchCancel(ticket: UserTicketPlayload, socket: Socket) {
+  private async onMatchCancel(ticket: UserTicketPayload, socket: Socket) {
     // TODO: Invalidate the ticket
     // If you are reading the database, you can fetch the data there and only use ticketId here.
     await this._matchingQueueManager.removeTicket(
