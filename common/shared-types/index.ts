@@ -2,14 +2,14 @@ import z from "zod";
 
 // [Common]
 
-export const DIFFCULTY_LEVELS = ["Easy", "Medium", "Hard"] as const;
+export const DIFFICULTY_LEVELS = ["Easy", "Medium", "Hard"] as const;
 
 // [Question]
 export const questionDocSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   categories: z.string().min(1).array().min(1),
-  complexity: z.enum(DIFFCULTY_LEVELS),
+  complexity: z.enum(DIFFICULTY_LEVELS),
 });
 
 export const questionSchema = questionDocSchema.extend({
@@ -70,16 +70,10 @@ export type UpdatePrivilegeRequest = z.infer<typeof updatePrivilegeSchema>;
 
 // [Match]
 
-export const matchFormSchema = questionDocSchema
-  .pick({
-    complexity: true,
-  })
-  .extend({ category: z.string().min(1) });
-
 export const userMatchingDataSchema = z.object({
   userId: z.string().min(1),
   topic: z.string().min(1),
-  difficulty: z.enum(DIFFCULTY_LEVELS),
+  difficulty: z.enum(DIFFICULTY_LEVELS),
 });
 
 export const userMatchingRequestSchema = userMatchingDataSchema.pick({
@@ -107,7 +101,6 @@ export const userTicketPayloadSchema = z.object({
   data: userMatchingRequestSchema,
 });
 
-export type MatchFormValue = z.infer<typeof matchFormSchema>;
 export type UserMatchingData = z.infer<typeof userMatchingDataSchema>;
 export type UserMatchingRequest = z.infer<typeof userMatchingRequestSchema>;
 export type UserMatchDoneData = z.infer<typeof userMatchDoneDataSchema>;

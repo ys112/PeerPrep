@@ -1,7 +1,7 @@
 import { Job, Queue, QueueEvents } from 'bullmq'
 import Matcher from '../worker/Matcher'
 import {
-  DIFFCULTY_LEVELS,
+  DIFFICULTY_LEVELS,
   UserMatchDoneData,
   UserMatchingData,
   UserTicket,
@@ -27,7 +27,7 @@ export default class MatchingQueueManager {
 
   constructor(options?: MatchingQueueManagerOptions) {
     this._options = {
-      onMatchFound: () => {},
+      onMatchFound: () => { },
       ...(options || {}),
     }
   }
@@ -53,7 +53,7 @@ export default class MatchingQueueManager {
       UserMatchingData['difficulty'],
       Queue<UserTicket, UserMatchDoneData | null>
     >
-    for (const key of DIFFCULTY_LEVELS) {
+    for (const key of DIFFICULTY_LEVELS) {
       const queueName = this.getQueueName(topic, key)
 
       const queue = new Queue<UserTicket, UserMatchDoneData | null>(queueName, {
@@ -180,7 +180,7 @@ export default class MatchingQueueManager {
    */
   private async getTopicQueueCount(topic: UserMatchingData['topic']) {
     let count = 0
-    for (const difficulty of DIFFCULTY_LEVELS) {
+    for (const difficulty of DIFFICULTY_LEVELS) {
       const queue = this.getQueue(topic, difficulty)
       if (queue !== undefined) {
         count += await queue.count()

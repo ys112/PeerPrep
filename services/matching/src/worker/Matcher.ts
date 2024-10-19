@@ -1,7 +1,7 @@
 import { Job, Worker } from 'bullmq'
-import { UserMatchDoneData, UserMatchingData, UserTicket } from '../types/user-data'
 import logger from '../utils/logger'
 import { redisConfig } from '../constants/redis'
+import { UserMatchDoneData, UserTicket } from '@common/shared-types'
 
 export default class Matcher {
   private _worker: Worker

@@ -1,5 +1,5 @@
-import { Button, RingProgress, Stack, Text } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { Button, RingProgress, Stack, Text } from '@mantine/core';
+import { useEffect, useState } from 'react';
 
 interface MatchingTimerProps {
   time: number;
@@ -17,7 +17,7 @@ function MatchingTimer({ time = 30, cancel, isMatching }: MatchingTimerProps) {
   const [ringProgress, setRingProgress] = useState<RingProgressSection[]>([
     {
       value: 100,
-      color: "blue",
+      color: 'blue',
     },
   ]);
   const [startTime, setStartTime] = useState<number>(Date.now());
@@ -35,7 +35,7 @@ function MatchingTimer({ time = 30, cancel, isMatching }: MatchingTimerProps) {
         setRingProgress([
           {
             value: (remainingTime / time) * 100,
-            color: "blue",
+            color: 'blue',
           },
         ]);
 
@@ -58,26 +58,26 @@ function MatchingTimer({ time = 30, cancel, isMatching }: MatchingTimerProps) {
   }, [isMatching]);
 
   return (
-    <Stack justify="center" align="center">
-      <Text fz="xl"> Matching... </Text>
+    <Stack justify='center' align='center'>
+      <Text fz='xl'> Matching... </Text>
       <RingProgress
         size={150}
         sections={ringProgress}
         label={
-          <Text c="blue" ta={"center"} fz="h1">
+          <Text c='blue' ta={'center'} fz='h1'>
             {timer}
           </Text>
         }
       />
       <Button
         fullWidth
-        color="red"
+        color='red'
         onClick={() => {
           setTimer(time);
           setRingProgress([
             {
               value: 100,
-              color: "blue",
+              color: 'blue',
             },
           ]);
           if (intervalId) {
