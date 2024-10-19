@@ -13,7 +13,7 @@ export async function verifyUser(token: string): Promise<ExtractedUser | null> {
   let verificationResponse: AxiosResponse = await axios.get('/auth/verify-token', {
     baseURL: process.env.USER_SERVICE_URL,
     headers: {
-      Authorization: token,
+      Authorization: 'Bearer ' + token,
     },
   })
   if (verificationResponse.status !== StatusCodes.OK) {

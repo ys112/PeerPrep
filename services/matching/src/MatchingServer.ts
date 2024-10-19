@@ -2,7 +2,7 @@ import { UserMatchDoneData, UserMatchingData, UserTicket } from './types/user-da
 import MatchingQueueManager from './queue-manager/MatchingQueueManager'
 import { Server as SocketIOServer, ServerOptions, Socket } from 'socket.io'
 import { Server as HttpServer } from 'http'
-import { MessageType } from './types/events'
+import { MessageType } from '@common/shared-types'
 import logger from './utils/logger'
 import { getTicketId } from './utils/ticketid'
 import { verifyUser } from './utils/verifyToken'
@@ -22,7 +22,7 @@ export default class MatchingServer {
   }
 
   private async onConnection(socket: Socket) {
-    // TODO: Authenticate the user and save the socket object for future use
+    // TODO: Save the socket object for future use
 
     const token = socket.handshake.auth.token as string
     if (!token) {
@@ -30,10 +30,9 @@ export default class MatchingServer {
     }
     const user = await verifyUser('Bearer ' + token)
     if (!user) {
-      return
+      return new Error('Authentication error')
     }
     const userId = user?.id as string
-    // console.log('userId: ' + userId)
 
     socket.on(MessageType.MATCH_REQUEST, (data: Omit<UserMatchingData, 'userId'>) => {
       this.onMatchingRequest({ userId, ...data }, socket)

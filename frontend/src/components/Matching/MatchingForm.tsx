@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 import { fetchQuestions } from "../../queries/questionQueries";
 import MatchingTimer from "./MatchingTimer";
 import socket from "../../socket/match";
-import { userStorage } from "../../utils/userStorage";
+import { MessageType } from "@common/shared-types";
 
 export function MatchingForm() {
   type Complexity = "Easy" | "Medium" | "Hard";
@@ -64,16 +64,25 @@ export function MatchingForm() {
         topic: category,
       },
     };
-    socket.emit("MATCH_CANCEL", ticket);
+    socket.emit(MessageType.MATCH_CANCEL, ticket);
   };
 
   useEffect(() => {
-    socket.on("MATCH_REQUEST_QUEUED", (data) => {
+    socket.on(MessageType.MATCH_REQUEST_QUEUED, (data) => {
       console.log(`Match request queued for user`, data);
       setTicketId(data);
     });
 
-    socket.on("MATCH_FOUND", (data) => {
+    socket.on(MessageType.MATCH_REQUEST_FAILED, () => {
+      setIsMatching(false);
+      notifications.show({
+        title: "Failed",
+        message: "Match request failed",
+        color: "red",
+      });
+    });
+
+    socket.on(MessageType.MATCH_FOUND, (data) => {
       setIsMatching(false);
       notifications.show({
         title: "Success",
@@ -83,7 +92,7 @@ export function MatchingForm() {
       console.log(`Match found for users: ${data.userIds}`);
     });
 
-    socket.on("MATCH_CANCELLED", () => {
+    socket.on(MessageType.MATCH_CANCELLED, () => {
       notifications.show({
         title: "Match cancelled",
         message: "No match found",

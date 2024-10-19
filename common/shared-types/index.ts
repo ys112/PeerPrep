@@ -71,3 +71,13 @@ export const matchFormSchema = questionDocSchema
   })
   .extend({ category: z.string().min(1) });
 export type MatchFormValue = z.infer<typeof matchFormSchema>;
+
+// [Match Messages]
+export enum MessageType {
+  MATCH_REQUEST = "MATCH_REQUEST",
+  MATCH_REQUEST_QUEUED = "MATCH_REQUEST_QUEUED",
+  MATCH_FOUND = "MATCH_FOUND",
+  MATCH_CANCEL = "MATCH_CANCEL",
+  MATCH_CANCELLED = "MATCH_CANCELLED",
+  MATCH_REQUEST_FAILED = "MATCH_REQUEST_FAILED",
+}
