@@ -59,7 +59,7 @@ export function MatchingForm({ onSubmit, isCooldown }: Props) {
           />
         </Group>
         <Button type="submit" disabled={isLoading || isCooldown}>
-          {isCooldown ? "Please wait 5 seconds before matching again" : "Match"}
+          {isCooldown ? "Please wait..." : "Match"}
         </Button>
       </Stack>
     </form>
