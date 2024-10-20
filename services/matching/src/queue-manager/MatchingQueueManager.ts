@@ -27,7 +27,7 @@ export default class MatchingQueueManager {
 
   constructor(options?: MatchingQueueManagerOptions) {
     this._options = {
-      onMatchFound: () => { },
+      onMatchFound: () => {},
       ...(options || {}),
     }
   }
@@ -106,7 +106,7 @@ export default class MatchingQueueManager {
       jobId: ticket.ticketId,
       deduplication: {
         id: ticket.data.userId,
-        ttl: 10000, // cooldown in milliseconds, avoid spamming
+        ttl: 5000, // cooldown in milliseconds, avoid spamming
       },
     })
 

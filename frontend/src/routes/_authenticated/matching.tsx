@@ -7,32 +7,38 @@ import {
   Stack,
   Text,
   Title,
-} from '@mantine/core';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { MatchingForm } from '../../components/Matching/MatchingForm';
+} from "@mantine/core";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { MatchingForm } from "../../components/Matching/MatchingForm";
 import {
   UserMatchDoneData,
   MessageType,
   UserMatchingRequest,
-} from '@common/shared-types';
-import { notifications } from '@mantine/notifications';
-import { useState, useEffect } from 'react';
-import { Socket } from 'socket.io-client';
-import { initializeMatchSocket } from '../../socket/match';
-import MatchingTimer from '../../components/Matching/MatchingTimer';
-import { IconCheck, IconX } from '@tabler/icons-react';
+} from "@common/shared-types";
+import { notifications } from "@mantine/notifications";
+import { useState, useEffect } from "react";
+import { Socket } from "socket.io-client";
+import { initializeMatchSocket } from "../../socket/match";
+import MatchingTimer from "../../components/Matching/MatchingTimer";
+import { IconCheck, IconX } from "@tabler/icons-react";
+import { useTimeout } from "@mantine/hooks";
 
-export const Route = createFileRoute('/_authenticated/matching')({
+export const Route = createFileRoute("/_authenticated/matching")({
   component: Matching,
 });
 
 export function Matching() {
-  const [isMatching, setIsMatching] = useState(false);
+  const [isMatching, setIsMatching] = useState<boolean>(false);
+  const [isCooldown, setIsCooldown] = useState<boolean>(false);
   const [matchFound, setMatchFound] = useState(false);
   const [ticketId, setTicketId] = useState<string | null>(null);
   const [matchSocket, setMatchSocket] = useState<Socket | null>(null);
 
   const navigate = useNavigate();
+
+  const { start: startCooldown, clear: clearCooldown } = useTimeout(() => {
+    setIsCooldown(false);
+  }, 5000);
 
   useEffect(() => {
     const socket = initializeMatchSocket();
@@ -47,8 +53,8 @@ export function Matching() {
       setIsMatching(false);
       notifications.show({
         icon: <IconX />,
-        message: 'Match request failed',
-        color: 'red',
+        message: "Match request failed",
+        color: "red",
       });
     };
 
@@ -56,22 +62,22 @@ export function Matching() {
       setIsMatching(false);
       notifications.show({
         icon: <IconX />,
-        message: 'Failed to authenticate match request',
-        color: 'red',
+        message: "Failed to authenticate match request",
+        color: "red",
       });
     };
 
     const handleMatchFound = (data: UserMatchDoneData) => {
       notifications.show({
         icon: <IconCheck />,
-        title: 'Match found',
-        message: 'Redirecting...',
-        color: 'green',
+        title: "Match found",
+        message: "Redirecting...",
+        color: "green",
       });
       setMatchFound(true);
       setTimeout(() => {
         navigate({
-          to: '/collaboration',
+          to: "/collaboration",
         });
       }, 3000);
     };
@@ -80,8 +86,8 @@ export function Matching() {
       setIsMatching(false);
       notifications.show({
         icon: <IconX />,
-        message: 'Matching cancelled',
-        color: 'red',
+        message: "Matching cancelled",
+        color: "red",
       });
     };
 
@@ -91,7 +97,7 @@ export function Matching() {
     socket.on(MessageType.AUTHENTICATION_FAILED, handleAuthenticationFailed);
     socket.on(MessageType.MATCH_FOUND, handleMatchFound);
     socket.on(MessageType.MATCH_CANCELLED, handleMatchCancelled);
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
       setIsMatching(false);
     });
 
@@ -107,11 +113,13 @@ export function Matching() {
   }, []);
 
   const startMatch = (values: UserMatchingRequest) => {
+    startCooldown();
+    setIsCooldown(true);
     if (!matchSocket) {
       notifications.show({
-        title: 'Socket not connected',
-        message: 'Unable to send match request.',
-        color: 'red',
+        title: "Socket not connected",
+        message: "Unable to send match request.",
+        color: "red",
       });
       return;
     }
@@ -125,22 +133,25 @@ export function Matching() {
   };
 
   return (
-    <Stack align='center'>
-      <Title ta='center'>Find a match!</Title>
-      <Paper shadow='md' withBorder p='lg'>
+    <Stack align="center">
+      <Title ta="center">Find a match!</Title>
+      <Paper shadow="md" withBorder p="lg">
         {!isMatching && !matchFound && (
-          <MatchingForm onSubmit={(values) => startMatch(values)} />
+          <MatchingForm
+            isCooldown={isCooldown}
+            onSubmit={(values) => startMatch(values)}
+          />
         )}
         {isMatching && !matchFound && (
           <MatchingTimer time={30} isMatching={isMatching} cancel={cancel} />
         )}
         {matchFound && (
-          <Stack align='center'>
-            <Avatar color='green'>
+          <Stack align="center">
+            <Avatar color="green">
               <IconCheck />
             </Avatar>
-            <Text fw='bold'>Match Found!</Text>
-            <Text c='dimmed' fs='italic'>
+            <Text fw="bold">Match Found!</Text>
+            <Text c="dimmed" fs="italic">
               Redirecting...
             </Text>
           </Stack>
