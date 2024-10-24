@@ -11,6 +11,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconDashboard,
+  IconHeartHandshake,
   IconLogout,
   IconQuestionMark,
   IconUsers,
