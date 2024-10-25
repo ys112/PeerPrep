@@ -26,7 +26,7 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "dependencies": {
-    "@common/shared-types": "workspace:*",
+    "@common/shared-types": "1.0.0",
     "@mantine/core": "^7.12.2",
     "@mantine/form": "^7.12.2",
     "@mantine/hooks": "^7.13.2",
