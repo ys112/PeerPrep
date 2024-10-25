@@ -9,6 +9,8 @@ import { EditorState } from "@codemirror/state";
 import { javascript, javascriptLanguage } from "@codemirror/lang-javascript";
 import { useEffect, useRef } from "react";
 import { HocuspocusProvider } from "@Hocuspocus/provider";
+import { accessTokenStorage } from "../../utils/accessTokenStorage";
+import { notifications } from "@mantine/notifications";
 
 export default function CodingEditor() {
   const elementRef = useRef<HTMLDivElement | null>(null);
@@ -23,6 +25,15 @@ export default function CodingEditor() {
       url: import.meta.env.VITE_COLLABORATION_SERVICE_WS_URL,
       name: "room123",
       document: ydoc,
+      token: accessTokenStorage.getAccessToken(),
+      onAuthenticationFailed: () => {
+        notifications.show({
+          title: "Authentication failed",
+          message: "Server failed to authenticate you, please login again",
+          color: "red",
+        });
+        console.error("Authentication failed");
+      },
     });
 
     const yText = ydoc.getText("codemirror");

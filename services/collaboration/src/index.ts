@@ -1,4 +1,4 @@
-import { db } from './db/clients'
+import { getDocument, storeDocument } from './controller/doc-controller'
 import { verifyUser } from './utils/verifyToken'
 
 async function startServer() {
@@ -14,12 +14,11 @@ async function startServer() {
     // quiet: true,
     async onAuthenticate(data) {
       const { token } = data
-
-      console.log('token', token)
-      // const user = verifyUser(token)
-
-      // return user
-      return 'user'
+      const user = await verifyUser(token)
+      if (!user) {
+        throw new Error('Not authorized!')
+      }
+      return user
     },
     extensions: [
       new Logger({
@@ -29,53 +28,13 @@ async function startServer() {
         },
       }),
       new Database({
-        // Return a Promise to retrieve data …
+        // Retrieve the document in firestore
         fetch: async ({ documentName }) => {
-          return new Promise(async (resolve, reject) => {
-            console.log('fetching', documentName)
-            const response = await db.doc(documentName).get()
-
-            if (!response) {
-              reject(response)
-            }
-
-            resolve(response.data() as Uint8Array)
-
-            // this.db?.get(
-            //   `
-            //   SELECT data FROM "documents" WHERE name = $name ORDER BY rowid DESC
-            // `,
-            //   {
-            //     $name: documentName,
-            //   },
-            //   (error, row) => {
-            //     if (error) {
-            //       reject(error)
-            //     }
-            //     resolve(row?.data)
-            //   }
-            // )
-          })
+          return getDocument(documentName)
         },
-        // … and a Promise to store data:
+        // Store the document in firestore
         store: async ({ documentName, state }) => {
-          console.log('storing', documentName)
-          const response = await db.doc(documentName).set(
-            {
-              data: state,
-            },
-            { merge: true }
-          )
-          // this.db?.run(
-          //   `
-          //   INSERT INTO "documents" ("name", "data") VALUES ($name, $data)
-          //     ON CONFLICT(name) DO UPDATE SET data = $data
-          // `,
-          //   {
-          //     $name: documentName,
-          //     $data: state,
-          //   }
-          // )
+          storeDocument(documentName, state)
         },
       }),
     ],
