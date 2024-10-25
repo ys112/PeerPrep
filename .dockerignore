@@ -5,6 +5,7 @@
 **/Dockerfile
 **/LICENSE
 services/question/data/questions.json
+jwt_secret.*
 
 **/.env
 **/.env.*
