@@ -18,7 +18,7 @@ Unless otherwise specified, commands should be run in the monorepo root.
 
 ### Pre-requisites
 
-- [Node.js](https://nodejs.org/en)
+- [Node.js](https://nodejs.org/en) V19 or greater
 - [Docker](https://docs.docker.com/get-started/get-docker/)
 - [`pnpm`](https://pnpm.io/installation)
   - On Windows, run `npm i -g pnpm` to install it.
