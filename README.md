@@ -45,8 +45,7 @@ If a new admin user account is required:
 
 #### For production
 
-1. Change the contents of `jwt_secret.txt` for security reasons.\
-  Do not check the new value in.
+1. Make a copy of `jwt_secret.example` and name it `jwt_secret.txt`. Change its contents for security reasons.
 
 ### Running the project (development)
 
