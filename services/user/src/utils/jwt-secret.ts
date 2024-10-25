@@ -1,12 +1,8 @@
 import fs from 'fs'
 
 function getJwtSecret(): string {
-  if (!process.env.JWT_SECRET && !process.env.JWT_SECRET_PATH) {
+  if (process.env.JWT_SECRET_PATH === undefined) {
     throw new Error('JWT_SECRET and JWT_SECRET_PATH is not set')
-  }
-
-  if (process.env.JWT_SECRET !== undefined) {
-    return process.env.JWT_SECRET
   }
 
   return fs.readFileSync(process.env.JWT_SECRET_PATH!, 'utf8')

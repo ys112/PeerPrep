@@ -29,6 +29,7 @@ Unless otherwise specified, commands should be run in the monorepo root.
     - You do not need to install dependencies individually within subfolders.
 1. You would have been provided a JSON file containing Firebase service account credentials.\
   Place it in `.firebase/service-account.json`.
+1. Make a copy of `jwt_secret.example` and name it `jwt_secret.txt`. Change its contents for security reasons.
 
 **Only** if the questions database has yet to be initialised and is thus empty:
 
@@ -38,14 +39,6 @@ If a new admin user account is required:
 
 1. Make a copy of `services/user/.env.development.local.example` and name it `services/user/.env.development.local`. Change the sample account details as desired.
 1. Navigate to the user service's root and run `pnpm run create-admin` to create the account.
-
-#### For development
-
-1. Make a copy of `services/user/.env.local.example` and name it `services/user/.env.local`. Change the sample `JWT_SECRET` value for security reasons.
-
-#### For production
-
-1. Make a copy of `jwt_secret.example` and name it `jwt_secret.txt`. Change its contents for security reasons.
 
 ### Running the project (development)
 

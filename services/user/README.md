@@ -19,10 +19,7 @@ Unless otherwise specified, commands should be run in the service root.
 - `CORS_ORIGINS` (optional): Allow list for CORS, as parseable JSON.
 - `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
 - `COLLECTION_NAME` (optional): Name of the collection to use in Firestore.
-
-`.env.local` (**secret**):
-
-- `JWT_SECRET`: Secret for creating JWT signatures.
+- `JWT_SECRET_PATH`: Path to file containing secret for creating JWT signatures.
 
 `.env.development.local` (**secret**):
 
