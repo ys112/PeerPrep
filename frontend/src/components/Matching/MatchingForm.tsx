@@ -1,11 +1,11 @@
-import { Button, Group, Loader, Select, Stack } from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
-import { useQuery } from "@tanstack/react-query";
-import { fetchQuestions } from "../../queries/questionQueries";
 import {
   UserMatchingRequest,
   userMatchingRequestSchema,
 } from "@common/shared-types";
+import { Button, Group, Loader, Select, Stack } from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
+import { useQuery } from "@tanstack/react-query";
+import { fetchQuestions } from "../../queries/questionQueries";
 
 interface Props {
   onSubmit: (values: UserMatchingRequest) => void;
@@ -38,7 +38,7 @@ export function MatchingForm({ onSubmit, isCooldown }: Props) {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
-        <Group w="100%" justify="space-between" grow>
+        <Group w="100%" justify="space-between" align="flex-start" grow>
           <Select
             rightSection={isLoading && <Loader size={18} />}
             allowDeselect={false}
