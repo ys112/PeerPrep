@@ -7,17 +7,11 @@ import { WebsocketProvider } from "y-websocket";
 import { EditorView, basicSetup } from "codemirror";
 import { EditorState } from "@codemirror/state";
 import { javascript, javascriptLanguage } from "@codemirror/lang-javascript";
-import {  useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { HocuspocusProvider } from "@Hocuspocus/provider";
 
 export default function CodingEditor() {
   const elementRef = useRef<HTMLDivElement | null>(null);
-  // const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
-
-  // legacy: callback ref
-  // const ref = useCallback((element: HTMLDivElement) => {
-  //   if (!element) return;
-  //   setElementRef(element);
-  // }, []);
 
   useEffect(() => {
     let ydoc: Y.Doc;
@@ -25,18 +19,18 @@ export default function CodingEditor() {
 
     ydoc = new Y.Doc();
     // TODO: take props for room name and host url
-    const provider = new WebsocketProvider(
-      import.meta.env.VITE_COLLABORATION_SERVICE_WS_URL,
-      "room",
-      ydoc
-    );
+    const provider = new HocuspocusProvider({
+      url: import.meta.env.VITE_COLLABORATION_SERVICE_WS_URL,
+      name: "room123",
+      document: ydoc,
+    });
 
     const yText = ydoc.getText("codemirror");
     const undoManager = new Y.UndoManager(yText);
 
-    // TODO: for future use of user awareness
-    provider.awareness.setLocalStateField("user", {
-      // name: "Anonymous " + Math.floor(Math.random() * 100),
+    // TODO: set name to username from session
+    provider.setAwarenessField("user", {
+      name: "Your peer",
       color: "#30bced",
       colorLight: "#30bced33",
     });

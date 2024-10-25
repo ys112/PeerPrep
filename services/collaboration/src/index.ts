@@ -1,47 +1,87 @@
-//References: https://github.com/yjs/y-websocket/blob/master/bin/server.cjs
-import { configEnv } from '@common/utils'
-configEnv()
+import { db } from './db/clients'
+import { verifyUser } from './utils/verifyToken'
 
-// import express from 'express'
-import logger from './utils/logger'
-import cors from 'cors'
+async function startServer() {
+  const { Server } = await import('@hocuspocus/server')
+  const { Logger } = await import('@hocuspocus/extension-logger')
+  const { Database } = await import('@hocuspocus/extension-database')
 
-import { WebSocket } from 'ws'
-import * as Y from 'yjs'
-import http from 'http'
+  const server = Server.configure({
+    port: 3004,
+    timeout: 30000,
+    // debounce: 5000,
+    // maxDebounce: 30000,
+    // quiet: true,
+    async onAuthenticate(data) {
+      const { token } = data
 
-// Currently using the default connection setup from y-websocket
-// @ts-ignore
-import yUtils from 'y-websocket/bin/utils'
+      console.log('token', token)
+      // const user = verifyUser(token)
 
-// const app = express()
-const port = process.env.PORT || 3004
+      // return user
+      return 'user'
+    },
+    extensions: [
+      new Logger({
+        log: (message) => {
+          // do something custom here
+          console.log(message)
+        },
+      }),
+      new Database({
+        // Return a Promise to retrieve data …
+        fetch: async ({ documentName }) => {
+          return new Promise(async (resolve, reject) => {
+            console.log('fetching', documentName)
+            const response = await db.doc(documentName).get()
 
-// app.use(express.json())
-// app.use(
-//   cors({
-//     origin: process.env.CORS_ORIGINS ? JSON.parse(process.env.CORS_ORIGINS) : '*',
-//   })
-// )
+            if (!response) {
+              reject(response)
+            }
 
-const server = http.createServer((_request, response) => {
-  response.writeHead(200, { 'Content-Type': 'text/plain' })
-  response.end('okay')
-})
-const wss = new WebSocket.Server({ server })
+            resolve(response.data() as Uint8Array)
 
-wss.on('connection', yUtils.setupWSConnection)
+            // this.db?.get(
+            //   `
+            //   SELECT data FROM "documents" WHERE name = $name ORDER BY rowid DESC
+            // `,
+            //   {
+            //     $name: documentName,
+            //   },
+            //   (error, row) => {
+            //     if (error) {
+            //       reject(error)
+            //     }
+            //     resolve(row?.data)
+            //   }
+            // )
+          })
+        },
+        // … and a Promise to store data:
+        store: async ({ documentName, state }) => {
+          console.log('storing', documentName)
+          const response = await db.doc(documentName).set(
+            {
+              data: state,
+            },
+            { merge: true }
+          )
+          // this.db?.run(
+          //   `
+          //   INSERT INTO "documents" ("name", "data") VALUES ($name, $data)
+          //     ON CONFLICT(name) DO UPDATE SET data = $data
+          // `,
+          //   {
+          //     $name: documentName,
+          //     $data: state,
+          //   }
+          // )
+        },
+      }),
+    ],
+  })
 
-// server.on('upgrade', (request, socket, head) => {
-//   // You may check auth of request here..
-//   // Call `wss.handleUpgrade` *after* you checked whether the client has access
-//   // (e.g. by checking cookies, or url parameters).
-//   // See https://github.com/websockets/ws#client-authentication
-//   wss.handleUpgrade(request, socket, head, (ws: WebSocket) => {
-//     wss.emit('connection', ws, request)
-//   })
-// })
+  server.listen()
+}
 
-server.listen(port, () => {
-  logger.info(`Server is running on ws://localhost:${port}`)
-})
+startServer()
