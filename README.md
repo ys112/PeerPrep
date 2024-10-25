@@ -50,14 +50,16 @@ If a new admin user account is required:
 
 ### Running the project (development)
 
+1. Run `docker compose up -d redis`.
+    - This starts a Docker container for Redis, in a detached state (running in the background). This is required by the matching service.
 1. Run `pnpm dev` to run the dev script.
-    - This starts the frontend, user service, and question service in dev mode.
+    - This starts the frontend and the user/question/matching services in dev mode.
 1. Open your browser at <http://localhost:3000>.
 
 ### Running the project (production)
 
 1. Run `docker compose up -d`.
-    - This starts Docker containers for the user and question services, in a detached state (running in the background).
+    - This starts Docker containers for Redis and the user/question/matching services, in a detached state.
 1. Run `pnpm dev:frontend` to run the frontend's dev script.
 1. Open your browser at <http://localhost:3000>.
 
