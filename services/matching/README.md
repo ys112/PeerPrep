@@ -6,8 +6,9 @@ Unless otherwise specified, commands should be run in the service root.
 
 ### Running the service (development)
 
-1. Ensure that you have a container for Redis set up on Docker, exposing the port 6379
-2. Run `pnpm run dev` to run the dev script.
+1. Run `docker compose up -d redis`.
+    - This starts a Docker container for Redis, in a detached state.
+1. Run `pnpm dev` to run the dev script.
 
 ## Documentation
 
