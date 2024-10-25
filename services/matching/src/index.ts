@@ -1,15 +1,11 @@
-import dotenv from 'dotenv'
-if (process.env.NODE_ENV) {
-  dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
-} else {
-  dotenv.config({ path: '.env' })
-}
+import { configEnv } from '@common/utils'
+configEnv()
 
 import cors from 'cors'
 import express from 'express'
-import logger from './utils/logger'
 import { ServerOptions } from 'socket.io'
 import MatchingServer from './MatchingServer'
+import logger from './utils/logger'
 
 const app = express()
 const port = process.env.PORT || 3003
