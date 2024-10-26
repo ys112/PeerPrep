@@ -1,3 +1,6 @@
+import { configEnv } from '@common/utils'
+configEnv()
+
 import { getDocument, storeDocument } from './controller/doc-controller'
 import { verifyUser } from './utils/verifyToken'
 
@@ -6,8 +9,10 @@ async function startServer() {
   const { Logger } = await import('@hocuspocus/extension-logger')
   const { Database } = await import('@hocuspocus/extension-database')
 
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
+
   const server = Server.configure({
-    port: 3004,
+    port: port,
     timeout: 30000,
     // debounce: 5000,
     // maxDebounce: 30000,

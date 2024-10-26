@@ -1,25 +1,18 @@
-# CS3219 Microservice template with Express.js
-This is a simple microservice template with Express.js. It is meant to be used as a starting point for building microservices with Express.js.
+# Collaboration Service
 
-## Packages
-- `express`: Web framework for Node.js
-- `ts-node` and `ts-node-dev`: TypeScript execution engine, transforms TypeScript into JavaScript, enabling you to directly execute TypeScript on Node.js without precompiling
-- `jest`: Testing framework
-- `dotenv` and `cross-env`: Environment variable loader
-- `winston`: Logging library
+A service to connect users with live collaboration sessions.
 
-## Scripts
-Use `npm run <script>` or `yarn <script>` to run available scripts in `package.json`.
+## Development Instructions
 
-**Window users**: If you encounter this error: `'NODE_ENV' is not recognized as an internal or external command, operable program or batch file.`, add `cross-env` before every `NODE_ENV`. The `dev` and `test` scripts have been updated to use `cross-env`.
+Unless otherwise specified, commands should be run in the service root.
 
-- `dev`: Start the server in development mode, with hot reloading (`ts-node-dev`) enabled
+### Running the service (development) 
+`pnpm run dev:collaboration` : Run the dev script for this collaboration service.
 
-- `build`: Build the project. It cleans `package-lock.json` and reinstall dependencies before compiling TypeScript files.
 
-- `start`: Start the server in production mode
-
-- `test`: Run tests with Jest
-
-## Logger
-This template uses `winston` as the logging library. The logger is configured in `src/utils/logger.ts`.
+## Environment Variables
+  
+  `.env`:
+- `PORT` (optional): Port to run the service on.
+- `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
+- `COLLECTION_NAME` (optional): Name of the collection to use in Firestore.
