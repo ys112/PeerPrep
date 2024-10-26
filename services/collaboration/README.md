@@ -7,7 +7,7 @@ A service to connect users with live collaboration sessions.
 Unless otherwise specified, commands should be run in the service root.
 
 ### Running the service (development) 
-`pnpm run dev:collaboration` : Run the dev script for this collaboration service.
+`pnpm dev` : Run the dev script for this collaboration service.
 
 
 ## Environment Variables
