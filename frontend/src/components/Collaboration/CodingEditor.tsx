@@ -13,6 +13,7 @@ import { HocuspocusProvider } from "@Hocuspocus/provider";
 import { accessTokenStorage } from "../../utils/accessTokenStorage";
 import { notifications } from "@mantine/notifications";
 import { userStorage } from "../../utils/userStorage";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   roomId: string;
@@ -21,7 +22,12 @@ interface Props {
 
 export default function CodingEditor({ roomId, isOpen }: Props) {
   const elementRef = useRef<HTMLDivElement | null>(null);
-  const accessToken = accessTokenStorage.getAccessToken();
+  const { data: accessToken, isLoading } = useQuery({
+    queryKey: ["accessToken"],
+    queryFn: async () => {
+      return await accessTokenStorage.getAccessToken();
+    },
+  });
 
   useEffect(() => {
     let ydoc: Y.Doc;
@@ -64,12 +70,12 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
     const state = EditorState.create({
       doc: yText.toString(),
       extensions: [
-        EditorState.readOnly.of(!isOpen), // Disable editing when room closed
         //TODO add more languages and do basic setup
         [keymap.of(defaultKeymap)],
         lineNumbers(),
         javascript(),
         fixedHeightEditor,
+        EditorState.readOnly.of(!isOpen), // Disable editing when room closed
         yCollab(yText, provider.awareness, { undoManager }),
       ],
     });
@@ -85,7 +91,7 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
       provider?.destroy();
       view?.destroy();
     };
-  }, [elementRef]);
+  }, [accessToken, roomId, isOpen]);
 
   return (
     <div
