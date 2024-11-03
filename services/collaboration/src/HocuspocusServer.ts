@@ -28,7 +28,6 @@ async function createHocuspocusServer(port: number) {
       if (!isRoomUser) {
         throw new Error('User is not part of the room')
       }
-      console.log('User is part of the room')
 
       const isRoomOpen = await verifyRoomOpen(documentName)
       if (!isRoomOpen) {
