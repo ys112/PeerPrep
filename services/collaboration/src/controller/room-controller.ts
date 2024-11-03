@@ -44,7 +44,10 @@ export async function createRoom(
   return newRoomData
 }
 
-export async function getRoom(roomId: string): Promise<UserRoomCreatedData> {
+export async function getRoom(
+  roomId: string,
+  user: ExtractedUser
+): Promise<UserRoomCreatedData> {
   const response = await db.doc(roomId).get()
   if (!response) {
     throw new Error('Error getting room')
@@ -54,6 +57,11 @@ export async function getRoom(roomId: string): Promise<UserRoomCreatedData> {
   if (!room) {
     throw new Error('Room does not exist')
   }
+  // Check if user part of the matched room
+  if (!room.userMatchDoneData.userIds.includes(user.id)) {
+    throw new Error('User is not part of the room')
+  }
+
   const question = await getQuestion(room.questionId)
   if (!question) {
     throw new Error('Error retrieving question')
@@ -98,7 +106,7 @@ export async function verifyRoomUser(
 }
 
 /**
- * To internally verify if the user is part of the room
+ * To internally verify if the room is open
  * @param roomId
  * @returns Promise of boolean
  */

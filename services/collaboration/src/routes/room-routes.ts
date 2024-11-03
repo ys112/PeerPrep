@@ -54,10 +54,15 @@ router.get('/:roomId', requireLogin, async (req: Request, res: Response) => {
       throw new Error('Room Id not found in request')
     }
 
-    const roomData = await getRoom(roomId)
+    const roomData = await getRoom(roomId, res.locals.user)
 
     res.json(userRoomCreatedDataSchema.safeParse(roomData))
   } catch (err) {
+    if (err instanceof Error && err.message.includes('User is not part of the room')) {
+      res.status(StatusCodes.UNAUTHORIZED).json('User is not part of the room')
+      return
+    }
+
     console.error(err)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json('Error when getting room:\n' + err)
   }
