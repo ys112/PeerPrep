@@ -1,9 +1,16 @@
-import { Question, QuestionDoc, questionDocSchema } from '@common/shared-types'
+import {
+  Question,
+  QuestionDoc,
+  questionDocSchema,
+  questionFilterSchema,
+} from '@common/shared-types'
 import { NextFunction, Request, Response, Router } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import * as controller from '../controller/controller'
 import { DuplicateQuestionError } from '../utils/errors'
 import { requireAdmin, requireLogin } from './auth'
+import { QuestionFilter } from '@common/shared-types'
+import { request } from 'axios'
 
 // Provides the parsed QuestionDoc to subsequent middleware
 function parseQuestionDoc(req: Request, res: Response, next: NextFunction) {
@@ -42,9 +49,20 @@ router.use(requireLogin)
 
 // GET all questions
 router.get('/', async (req: Request, res: Response) => {
-  let { complexity, categories } = req.body
+  console.dir(req.query)
+  const { complexity, categories } = req.query
 
-  let questions: Question[] = await controller.getAll(complexity, categories)
+  console.log('categories:', categories)
+
+  const questionFilter = questionFilterSchema.safeParse({
+    complexity: complexity,
+    categories: categories,
+  }).data
+
+  let questions: Question[] = await controller.getAll(
+    questionFilter?.complexity,
+    questionFilter?.categories
+  )
 
   res.status(StatusCodes.OK)
   res.json(questions)

@@ -1,16 +1,17 @@
-import ReactDOM from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { routeTree } from './routeTree.gen';
-import { theme } from './theme.ts';
+import ReactDOM from "react-dom/client";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
+import { theme } from "./theme.ts";
 
-import '@mantine/core/styles.css';
-import './main.css';
+import "@mantine/core/styles.css";
+import "./main.css";
 
-import { MantineProvider } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
-import '@mantine/notifications/styles.css';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ModalsProvider } from '@mantine/modals';
+import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ModalsProvider } from "@mantine/modals";
+import { UserRoomCreatedData } from "@common/shared-types";
 
 // Set up a Router instance
 const router = createRouter({
@@ -18,13 +19,17 @@ const router = createRouter({
 });
 
 // Register things for typesafety
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
+
+  interface HistoryState {
+    userRoomData: UserRoomCreatedData;
+  }
 }
 
-const rootElement = document.getElementById('app')!;
+const rootElement = document.getElementById("app")!;
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
@@ -45,7 +50,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme}>
         <ModalsProvider>
-          <Notifications position='top-right' />{' '}
+          <Notifications position="top-right" />{" "}
           <RouterProvider router={router} />
         </ModalsProvider>
       </MantineProvider>

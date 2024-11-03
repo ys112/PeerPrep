@@ -1,51 +1,38 @@
 import { configEnv } from '@common/utils'
 configEnv()
 
-import { getDocument, storeDocument } from './controller/doc-controller'
-import { verifyUser } from './utils/verifyToken'
+import express from 'express'
+import cors from 'cors'
+import expressWebSockets from 'express-ws'
+import createHocuspocusServer from './HocuspocusServer'
+import roomRoutes from './routes/room-routes'
+
+const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
 
 async function startServer() {
-  const { Server } = await import('@hocuspocus/server')
-  const { Logger } = await import('@hocuspocus/extension-logger')
-  const { Database } = await import('@hocuspocus/extension-database')
+  // Hocuspocus server
+  const hocuspocusServer = await createHocuspocusServer(port)
 
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
+  // Room server
+  const { app } = expressWebSockets(express())
 
-  const server = Server.configure({
-    port: port,
-    timeout: 30000,
-    // debounce: 5000,
-    // maxDebounce: 30000,
-    // quiet: true,
-    async onAuthenticate(data) {
-      const { token } = data
-      const user = await verifyUser(token)
-      if (!user) {
-        throw new Error('Not authorized!')
-      }
-      return user
-    },
-    extensions: [
-      new Logger({
-        log: (message) => {
-          // do something custom here
-          console.log(message)
-        },
-      }),
-      new Database({
-        // Retrieve the document in firestore
-        fetch: async ({ documentName }) => {
-          return getDocument(documentName)
-        },
-        // Store the document in firestore
-        store: async ({ documentName, state }) => {
-          storeDocument(documentName, state)
-        },
-      }),
-    ],
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGINS ? JSON.parse(process.env.CORS_ORIGINS) : '*',
+    })
+  )
+
+  app.use(express.json())
+
+  app.use('/room', roomRoutes)
+
+  app.ws('/', (websocket, request) => {
+    hocuspocusServer.handleConnection(websocket, request)
   })
 
-  server.listen()
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`)
+  })
 }
 
 startServer()

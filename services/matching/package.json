@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@common/shared-types": "workspace:*",
+    "@common/utils": "workspace:*",
     "axios": "^1.7.7",
     "bullmq": "^5.19.1",
     "cors": "^2.8.5",

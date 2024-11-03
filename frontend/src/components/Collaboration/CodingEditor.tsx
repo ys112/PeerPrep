@@ -2,30 +2,37 @@
 import * as Y from "yjs";
 // @ts-ignore
 import { yCollab } from "y-codemirror.next";
-import { WebsocketProvider } from "y-websocket";
 
 import { EditorView, basicSetup } from "codemirror";
 import { EditorState } from "@codemirror/state";
-import { javascript, javascriptLanguage } from "@codemirror/lang-javascript";
+import { javascript } from "@codemirror/lang-javascript";
 import { useEffect, useRef } from "react";
 import { HocuspocusProvider } from "@Hocuspocus/provider";
 import { accessTokenStorage } from "../../utils/accessTokenStorage";
 import { notifications } from "@mantine/notifications";
+import { userStorage } from "../../utils/userStorage";
 
-export default function CodingEditor() {
+interface Props {
+  roomId: string;
+  isOpen: boolean;
+}
+
+export default function CodingEditor({ roomId, isOpen }: Props) {
   const elementRef = useRef<HTMLDivElement | null>(null);
+  const accessToken = accessTokenStorage.getAccessToken();
 
   useEffect(() => {
     let ydoc: Y.Doc;
     let view: EditorView;
 
     ydoc = new Y.Doc();
-    // TODO: take props for room name and host url
+
+    console.log("Creating editor with access token:", accessToken);
     const provider = new HocuspocusProvider({
       url: import.meta.env.VITE_COLLABORATION_SERVICE_WS_URL,
-      name: "room123",
+      name: roomId,
       document: ydoc,
-      token: accessTokenStorage.getAccessToken(),
+      token: accessToken,
       onAuthenticationFailed: () => {
         notifications.show({
           title: "Authentication failed",
@@ -34,14 +41,16 @@ export default function CodingEditor() {
         });
         console.error("Authentication failed");
       },
+      onStatus: (status) => {
+        console.log("Connection status:", status);
+      },
     });
 
     const yText = ydoc.getText("codemirror");
     const undoManager = new Y.UndoManager(yText);
 
-    // TODO: set name to username from session
     provider.setAwarenessField("user", {
-      name: "Your peer",
+      name: userStorage.getUser()?.username,
       color: "#30bced",
       colorLight: "#30bced33",
     });
@@ -50,10 +59,11 @@ export default function CodingEditor() {
       "&": { height: "100%" },
       ".cm-scroller": { overflow: "auto" },
     });
-
+    console.log("Is open:", isOpen);
     const state = EditorState.create({
       doc: yText.toString(),
       extensions: [
+        EditorState.readOnly.of(!isOpen), // Disable editing when room closed
         basicSetup,
         javascript(),
         fixedHeightEditor,
@@ -67,8 +77,9 @@ export default function CodingEditor() {
     });
 
     return () => {
+      console.log("Editor unmounted");
       ydoc?.destroy();
-      provider?.disconnect();
+      provider?.destroy();
       view?.destroy();
     };
   }, [elementRef]);

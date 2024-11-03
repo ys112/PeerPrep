@@ -10,10 +10,11 @@ import {
 } from '@common/shared-types'
 import logger from './utils/logger'
 import { verifyUser } from './utils/verifyToken'
+import { createRoom } from './api/room'
 
 type ClientRequests = {
-  socket: Socket,
-  ticket: UserTicket,
+  socket: Socket
+  ticket: UserTicket
   timeout: NodeJS.Timeout
 }
 
@@ -21,7 +22,7 @@ export default class MatchingServer {
   private readonly _matchingQueueManager: MatchingQueueManager
   private readonly _webSocketServer: SocketIOServer
   private readonly _clientRequestsById: Map<string, ClientRequests> = new Map()
-  private readonly _MATCH_TIMEOUT_DURATION = 30000; // 30 seconds
+  private readonly _MATCH_TIMEOUT_DURATION = 30000 // 30 seconds
 
   constructor(httpServer: HttpServer, options?: ServerOptions) {
     this._matchingQueueManager = new MatchingQueueManager({
@@ -62,19 +63,19 @@ export default class MatchingServer {
     try {
       const ticket: UserTicket = {
         ticketId: `${data.userId}_${crypto.randomUUID()}`,
-        data
+        data,
       }
 
       const isCurrentlyMatching = !!this._clientRequestsById.get(data.userId)
 
       if (isCurrentlyMatching) {
-        socket.emit(MessageType.MATCH_REQUEST_FAILED);
-        return;
+        socket.emit(MessageType.MATCH_REQUEST_FAILED)
+        return
       }
 
       const timeout = setTimeout(() => {
-        this.onMatchTimeout(data.userId);
-      }, this._MATCH_TIMEOUT_DURATION);
+        this.onMatchTimeout(data.userId)
+      }, this._MATCH_TIMEOUT_DURATION)
 
       const job = await this._matchingQueueManager.addTicket(ticket)
 
@@ -89,7 +90,6 @@ export default class MatchingServer {
       this._clientRequestsById.set(ticket.data.userId, { socket, ticket, timeout })
 
       socket.emit(MessageType.MATCH_REQUEST_QUEUED, ticket.ticketId)
-
     } catch (error) {
       logger.error(`Error processing matching request: ${error}`)
       if (error instanceof Error) {
@@ -125,32 +125,49 @@ export default class MatchingServer {
       }
     })
 
-    if (clientRequests.length === data.userIds.length) {
-      logger.info(`[MATCH REQUEST FOUND]`)
-      logger.info(`Topic: ${data.topic}`)
-      logger.info(`Difficulty: ${data.difficulty}`)
+    try {
+      if (clientRequests.length === data.userIds.length) {
+        logger.info(`[MATCH REQUEST FOUND]`)
+        logger.info(`Topic: ${data.topic}`)
+        logger.info(`Difficulty: ${data.difficulty}`)
+
+        // Get roomId, matched user data, selected question from collaboration server
+        const roomTicket = await createRoom(data)
+
+        logger.info('Room created successfully: ' + roomTicket?.id)
+
+        clientRequests.forEach((request, index) => {
+          logger.info(`User ${index + 1}: ${request.ticket.data.userId}`)
+          request.socket.emit(MessageType.MATCH_FOUND, roomTicket)
+        })
+        logger.info(`======================================================`)
+      } else {
+        logger.error('Not all users found in the socket map')
+        clientRequests.forEach((request) => {
+          request.socket.emit(MessageType.MATCH_REQUEST_FAILED)
+        })
+      }
+    } catch (error) {
+      logger.error(`Error processing match found: ${error}`)
+      if (error instanceof Error) {
+        logger.error(error.stack)
+      }
+
       clientRequests.forEach((request, index) => {
-        logger.info(`User ${index + 1}: ${request.ticket.data.userId}`)
-        request.socket.emit(MessageType.MATCH_FOUND, data)
-      })
-      logger.info(`======================================================`)
-    } else {
-      logger.error('Not all users found in the socket map')
-      clientRequests.forEach((request) => {
-        request.socket.emit(MessageType.MATCH_REQUEST_FAILED)
+        request.socket.emit('Error processing match found')
       })
     }
   }
 
   private async onMatchTimeout(userId: string) {
-    const clientRequest = this._clientRequestsById.get(userId);
-    if (!clientRequest) return;
+    const clientRequest = this._clientRequestsById.get(userId)
+    if (!clientRequest) return
 
-    const { socket, ticket, timeout } = clientRequest;
+    const { socket, ticket, timeout } = clientRequest
 
     // Clear the timeout (just in case it hasn't already been cleared)
     if (timeout) {
-      clearTimeout(timeout);
+      clearTimeout(timeout)
     }
 
     // Remove request from state && queue
@@ -158,10 +175,9 @@ export default class MatchingServer {
       ticket.ticketId,
       ticket.data.topic,
       ticket.data.difficulty
-    );
+    )
 
-    this._clientRequestsById.delete(userId);
-    socket.emit(MessageType.MATCH_REQUEST_FAILED);
+    this._clientRequestsById.delete(userId)
+    socket.emit(MessageType.MATCH_REQUEST_FAILED)
   }
 }
-
