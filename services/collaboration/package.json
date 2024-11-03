@@ -1,5 +1,5 @@
 {
-  "name": "@services/collaboration",
+  "name": "@services/collaboration-service",
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
@@ -9,6 +9,7 @@
     "start": "NODE_ENV=production node dist/index.js"
   },
   "keywords": [],
+  "files" : ["dist"],
   "author": "Bach Le Tuan Khai",
   "license": "ISC",
   "description": "",
@@ -28,6 +29,7 @@
     "@hocuspocus/extension-logger": "^2.13.7",
     "@hocuspocus/server": "^2.13.7",
     "@types/async-lock": "^1.4.2",
+    "@types/cors": "^2.8.17",
     "@types/express-ws": "^3.0.5",
     "@types/ws": "^8.5.12",
     "axios": "^1.7.7",

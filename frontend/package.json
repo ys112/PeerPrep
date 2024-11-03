@@ -25,8 +25,10 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "dependencies": {
+    "@codemirror/commands": "^6.7.1",
     "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.34.1",
     "@common/shared-types": "workspace:*",
     "@hocuspocus/provider": "^2.13.7",
     "@mantine/core": "^7.12.2",

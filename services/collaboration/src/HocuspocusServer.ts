@@ -1,6 +1,6 @@
 import { getDocument, storeDocument } from './controller/doc-controller'
-import { verifyUser } from '@common/utils/'
 import { closeRoom, verifyRoomOpen, verifyRoomUser } from './controller/room-controller'
+import { verifyUser } from './utils/verifyToken'
 
 async function createHocuspocusServer(port: number) {
   const { Server } = await import('@hocuspocus/server')

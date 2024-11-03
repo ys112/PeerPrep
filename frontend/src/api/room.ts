@@ -2,7 +2,7 @@ import { UserRoomCreatedData } from "@common/shared-types";
 import { createAuthAxiosInstance } from "./axios";
 
 const roomAxios = createAuthAxiosInstance(
-  import.meta.env.VITE_ROOM_SERVICE_API_URL
+  import.meta.env.VITE_COLLABORATION_SERVICE_API_URL
 );
 
 const ROOM_API_URL = "/room";

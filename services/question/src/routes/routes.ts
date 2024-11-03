@@ -9,8 +9,6 @@ import { StatusCodes } from 'http-status-codes'
 import * as controller from '../controller/controller'
 import { DuplicateQuestionError } from '../utils/errors'
 import { requireAdmin, requireLogin } from './auth'
-import { QuestionFilter } from '@common/shared-types'
-import { request } from 'axios'
 
 // Provides the parsed QuestionDoc to subsequent middleware
 function parseQuestionDoc(req: Request, res: Response, next: NextFunction) {
@@ -49,11 +47,7 @@ router.use(requireLogin)
 
 // GET all questions
 router.get('/', async (req: Request, res: Response) => {
-  console.dir(req.query)
   const { complexity, categories } = req.query
-
-  console.log('categories:', categories)
-
   const questionFilter = questionFilterSchema.safeParse({
     complexity: complexity,
     categories: categories,

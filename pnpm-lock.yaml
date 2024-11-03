@@ -39,12 +39,18 @@ importers:
 
   frontend:
     dependencies:
+      '@codemirror/commands':
+        specifier: ^6.7.1
+        version: 6.7.1
       '@codemirror/lang-javascript':
         specifier: ^6.2.2
         version: 6.2.2
       '@codemirror/state':
         specifier: ^6.4.1
         version: 6.4.1
+      '@codemirror/view':
+        specifier: ^6.34.1
+        version: 6.34.1
       '@common/shared-types':
         specifier: workspace:*
         version: link:../common/shared-types
@@ -169,6 +175,9 @@ importers:
       '@types/async-lock':
         specifier: ^1.4.2
         version: 1.4.2
+      '@types/cors':
+        specifier: ^2.8.17
+        version: 2.8.17
       '@types/express-ws':
         specifier: ^3.0.5
         version: 3.0.5

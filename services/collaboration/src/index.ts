@@ -6,6 +6,7 @@ import cors from 'cors'
 import expressWebSockets from 'express-ws'
 import createHocuspocusServer from './HocuspocusServer'
 import roomRoutes from './routes/room-routes'
+import logger from './utils/logger'
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
 
@@ -31,7 +32,7 @@ async function startServer() {
   })
 
   app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`)
+    logger.info(`Server is running on http://localhost:${port}`)
   })
 }
 

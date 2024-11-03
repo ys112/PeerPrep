@@ -1,61 +1,62 @@
 import axios from 'axios'
 import { UserMatchDoneData, UserRoomCreatedData } from '@common/shared-types'
-import { authenticateServiceUser } from '@common/utils'
 import logger from '../utils/logger'
 import { configEnv } from '@common/utils'
 configEnv()
 
 // Auth with user service
-const SERVICE_USER_EMAIL = process.env.SERVICE_USER_EMAIL
-const SERVICE_USER_PASSWORD = process.env.SERVICE_USER_PASSWORD
+// const SERVICE_USER_EMAIL = process.env.SERVICE_USER_EMAIL
+// const SERVICE_USER_PASSWORD = process.env.SERVICE_USER_PASSWORD
 
-let accessToken: string | null = null
+// let accessToken: string | null = null
 
-async function getAccessToken() {
-  try {
-    if (!accessToken) {
-      accessToken = await authenticateServiceUser(
-        SERVICE_USER_EMAIL,
-        SERVICE_USER_PASSWORD
-      )
-    }
-    return accessToken
-  } catch (error) {
-    accessToken = null
-    logger.error(error)
-  }
-}
+// async function getAccessToken() {
+//   try {
+//     if (!accessToken) {
+//       accessToken = await authenticateServiceUser(
+//         SERVICE_USER_EMAIL,
+//         SERVICE_USER_PASSWORD
+//       )
+//     }
+//     return accessToken
+//   } catch (error) {
+//     accessToken = null
+//     logger.error(error)
+//   }
+// }
+
+const { SERVICE_API_KEY } = process.env
 
 const axiosInstance = axios.create({
-  baseURL: process.env.ROOM_SERVICE_URL || 'http://localhost:3004',
+  baseURL: process.env.COLLABORATION_SERVICE_URL,
   headers: {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer ' + getAccessToken(),
+    Authorization: 'Bearer ' + SERVICE_API_KEY,
   },
 })
 
 // Set authorization header
-axiosInstance.interceptors.request.use(
-  async (config) => {
-    const token = await getAccessToken()
+// axiosInstance.interceptors.request.use(
+//   async (config) => {
+//     const token = await getAccessToken()
 
-    if (token) {
-      config.headers.Authorization = 'Bearer ' + token
-    } else {
-      logger.error('No token found when authorizing service')
-    }
+//     if (token) {
+//       config.headers.Authorization = 'Bearer ' + token
+//     } else {
+//       logger.error('No token found when authorizing service')
+//     }
 
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
+//     return config
+//   },
+//   (error) => {
+//     return Promise.reject(error)
+//   }
+// )
 
-async function refreshToken() {
-  accessToken = null
-  axiosInstance.defaults.headers.Authorization = 'Bearer ' + (await getAccessToken())
-}
+// async function refreshToken() {
+//   accessToken = null
+//   axiosInstance.defaults.headers.Authorization = 'Bearer ' + (await getAccessToken())
+// }
 
 export async function createRoom(
   userMatchDoneData: UserMatchDoneData
@@ -70,9 +71,7 @@ export async function createRoom(
     return response.data.data as UserRoomCreatedData
   } catch (error) {
     if (error instanceof Response && error.status === 401) {
-      accessToken = null
-      refreshToken()
-      return createRoom(userMatchDoneData)
+      logger.error('Unauthorized request to create room')
     }
     throw error
   }

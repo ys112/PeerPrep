@@ -1,6 +1,5 @@
 import { Question, UserMatchingRequest } from '@common/shared-types'
 import axios from 'axios'
-import { authenticateServiceUser } from '@common/utils'
 
 // Auth service
 // const SERVICE_USER_EMAIL = process.env.SERVICE_USER_EMAIL
@@ -25,32 +24,31 @@ import { authenticateServiceUser } from '@common/utils'
 //   }
 // }
 
-const SERVICE_API_KEY = process.env.SERVICE_API_KEY
+const { SERVICE_API_KEY } = process.env
 
 const axiosInstance = axios.create({
-  baseURL: process.env.QUESTION_SERVICE_URL || 'http://localhost:3001',
+  baseURL: process.env.QUESTION_SERVICE_URL,
   headers: {
     'Content-Type': 'application/json',
+    Authorization: 'Bearer ' + SERVICE_API_KEY,
   },
 })
 
 // Set authorization header
-axiosInstance.interceptors.request.use(
-  async (config) => {
-    // const token = await getAccessToken()
+// axiosInstance.interceptors.request.use(
+//   async (config) => {
+//     if (SERVICE_API_KEY) {
+//       config.headers.Authorization = 'Bearer ' + getAccessToken()
+//     } else {
+//       console.error('No api key found when authorizing service')
+//     }
 
-    if (SERVICE_API_KEY) {
-      config.headers.Authorization = 'Bearer ' + SERVICE_API_KEY
-    } else {
-      console.error('No api key found when authorizing service')
-    }
-
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
+//     return config
+//   },
+//   (error) => {
+//     return Promise.reject(error)
+//   }
+// )
 
 // async function refreshToken() {
 //   accessToken = null

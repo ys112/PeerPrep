@@ -1,19 +1,15 @@
 import {
   ExtractedUser,
-  User,
   userMatchDoneDataSchema,
   userRoomCreatedDataSchema,
 } from '@common/shared-types'
 import { NextFunction, Router, Request, Response } from 'express'
 import { createRoom, getRoom } from '../controller/room-controller'
 import { StatusCodes } from 'http-status-codes'
-import { verifyUser } from '@common/utils/'
-import { configEnv } from '@common/utils'
-configEnv()
+import { verifyUser } from '../utils/verifyToken'
 
 const router = Router()
 
-// TODO: Move to shared utility as it is used in multiple services
 async function requireLogin(req: Request, res: Response, next: NextFunction) {
   const userToken = req.headers.authorization
   if (!userToken || !userToken.startsWith('Bearer ')) {
@@ -31,18 +27,27 @@ async function requireLogin(req: Request, res: Response, next: NextFunction) {
   next()
 }
 
-export function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  let user: User = res.locals.user
-  if (!user.isAdmin) {
-    res.status(StatusCodes.FORBIDDEN).send()
+const { SERVICE_API_KEY } = process.env
+async function requireApiKey(req: Request, res: Response, next: NextFunction) {
+  const apiKey = req.headers.authorization
+  if (!SERVICE_API_KEY) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+      message: 'Service API key not found',
+    })
+    return
+  }
+
+  if (
+    !apiKey ||
+    (!apiKey.startsWith('Bearer ') && apiKey.split('Bearer ')[1] !== SERVICE_API_KEY)
+  ) {
+    res.status(StatusCodes.UNAUTHORIZED).send()
     return
   }
   next()
 }
 
-router.use(requireLogin)
-
-router.get('/:roomId', async (req: Request, res: Response) => {
+router.get('/:roomId', requireLogin, async (req: Request, res: Response) => {
   try {
     const roomId = req.params.roomId
     if (!roomId) {
@@ -58,9 +63,7 @@ router.get('/:roomId', async (req: Request, res: Response) => {
   }
 })
 
-router.use(requireAdmin)
-
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', requireApiKey, async (req: Request, res: Response) => {
   try {
     const userMatchDoneData = userMatchDoneDataSchema.safeParse(req.body).data
     if (!userMatchDoneData) {
