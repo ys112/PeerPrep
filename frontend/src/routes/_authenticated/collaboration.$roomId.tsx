@@ -83,12 +83,7 @@ export function Collaboration() {
 
   return (
     <Stack align="center">
-      <Group justify="space-between" w="100%">
-        <Title ta="center">Collaboration</Title>
-        <Button variant="light" color="red">
-          Exit Room
-        </Button>
-      </Group>
+      <Title ta="center">Collaboration</Title>
       {isLoading ? (
         <Paper shadow="md" withBorder p="lg">
           <Stack align="center">
@@ -102,33 +97,38 @@ export function Collaboration() {
         </Paper>
       ) : isSuccess ? (
         <Grid w="100%">
-          <Grid.Col span={{ base: 12, xs: 4 }}>
-            <Paper w="auto" shadow="md" p="lg" h="80vh" withBorder>
-              <Stack gap={10}>
-                <Title c="black" order={3}>
-                  {userRoomData.question.title}
-                </Title>
-                <Group gap={2} align="flex-start">
-                  {userRoomData.question.categories.map((category) => (
-                    <Badge
-                      key={category}
-                      size="sm"
-                      autoContrast
-                      bg={stringToHexColor(category)}
-                    >
-                      {category}
-                    </Badge>
-                  ))}
-                </Group>
-                <Text c="black">{userRoomData.question.description}</Text>
-              </Stack>
-            </Paper>
-          </Grid.Col>
-
           <Grid.Col span={{ base: 12, xs: 8 }}>
             <Paper shadow="md" p="lg" h="80vh" withBorder>
               <CodingEditor isOpen={userRoomData.isOpen} roomId={roomId} />
             </Paper>
+          </Grid.Col>
+
+          <Grid.Col span={{ base: 12, xs: 4 }}>
+            <Stack h="80vh">
+              <Paper w="auto" shadow="md" p="lg" h="75vh" withBorder>
+                <Stack gap={10}>
+                  <Title c="black" order={3}>
+                    {userRoomData.question.title}
+                  </Title>
+                  <Group gap={2} align="flex-start">
+                    {userRoomData.question.categories.map((category) => (
+                      <Badge
+                        key={category}
+                        size="sm"
+                        autoContrast
+                        bg={stringToHexColor(category)}
+                      >
+                        {category}
+                      </Badge>
+                    ))}
+                  </Group>
+                  <Text c="black">{userRoomData.question.description}</Text>
+                </Stack>
+              </Paper>
+              <Button color="black" w="10vw">
+                Exit Room
+              </Button>
+            </Stack>
           </Grid.Col>
         </Grid>
       ) : null}
