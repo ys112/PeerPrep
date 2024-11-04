@@ -17,7 +17,7 @@ import {
 } from "@tanstack/react-router";
 import CodingEditor from "../../components/Collaboration/CodingEditor";
 import { UserRoomCreatedData } from "@common/shared-types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../api";
 import { notifications } from "@mantine/notifications";
 import { AxiosError } from "axios";
@@ -34,6 +34,9 @@ export function Collaboration() {
   });
   const { roomId } = Route.useParams();
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
+  queryClient.removeQueries();
 
   const {
     data: userRoomData,
@@ -110,7 +113,7 @@ export function Collaboration() {
                   <Title c="black" order={3}>
                     {userRoomData.question.title}
                   </Title>
-                  <Group gap={2} align="flex-start">
+                  <Group gap={5} align="flex-start">
                     {userRoomData.question.categories.map((category) => (
                       <Badge
                         key={category}
@@ -131,9 +134,7 @@ export function Collaboration() {
             </Stack>
           </Grid.Col>
         </Grid>
-      ) : null}
-
-      {isError ? (
+      ) : isError ? (
         <Paper shadow="md" withBorder p="lg">
           <Stack align="center">
             <Avatar color="red">
