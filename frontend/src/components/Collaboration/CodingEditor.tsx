@@ -98,7 +98,7 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
       ref={elementRef}
       style={{
         height: "100%",
-        width: "50vw",
+        width: "100%",
         border: "1px solid #000",
         margin: "0 auto",
       }}
