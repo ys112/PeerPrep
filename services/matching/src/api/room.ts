@@ -1,8 +1,7 @@
-import axios from 'axios'
 import { UserMatchDoneData, UserRoomCreatedData } from '@common/shared-types'
+import { getApiKey } from '@common/utils'
+import axios from 'axios'
 import logger from '../utils/logger'
-import { configEnv } from '@common/utils'
-configEnv()
 
 // Auth with user service
 // const SERVICE_USER_EMAIL = process.env.SERVICE_USER_EMAIL
@@ -25,13 +24,11 @@ configEnv()
 //   }
 // }
 
-const { SERVICE_API_KEY } = process.env
-
 const axiosInstance = axios.create({
   baseURL: process.env.COLLABORATION_SERVICE_URL,
   headers: {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer ' + SERVICE_API_KEY,
+    Authorization: 'Bearer ' + getApiKey(),
   },
 })
 

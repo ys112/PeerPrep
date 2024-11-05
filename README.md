@@ -18,7 +18,7 @@ Unless otherwise specified, commands should be run in the monorepo root.
 
 ### Pre-requisites
 
-- [Node.js](https://nodejs.org/en)
+- [Node.js](https://nodejs.org/en) V19 or greater
 - [Docker](https://docs.docker.com/get-started/get-docker/)
 - [`pnpm`](https://pnpm.io/installation)
   - On Windows, run `npm i -g pnpm` to install it.
@@ -29,6 +29,10 @@ Unless otherwise specified, commands should be run in the monorepo root.
    - You do not need to install dependencies individually within subfolders.
 1. You would have been provided a JSON file containing Firebase service account credentials.\
    Place it in `.firebase/service-account.json`.
+1. Make a copy of `jwt_secret.example` and name it `jwt_secret.txt`. Change its contents for security reasons.
+   - This is used to sign user ID payloads into JSON Web Token strings, and later verify them to get back the decoded tokens.
+1. Make a copy of `service_api_key.example` and name it `service_api_key.txt`. Change its contents for security reasons.
+   - This is used to secure internal communications between services.
 
 **Only** if the questions database has yet to be initialised and is thus empty:
 
@@ -39,25 +43,18 @@ If a new admin user account is required:
 1. Make a copy of `services/user/.env.development.local.example` and name it `services/user/.env.development.local`. Change the sample account details as desired.
 1. Navigate to the user service's root and run `pnpm run create-admin` to create the account.
 
-#### For development
-
-1. Make a copy of `services/user/.env.local.example` and name it `services/user/.env.local`. Change the sample `JWT_SECRET` value for security reasons.
-
-#### For production
-
-1. Change the contents of `jwt_secret.txt` and `service_api_key.txt` for security reasons.\
-   Do not check the new value in.
-
 ### Running the project (development)
 
+1. Run `docker compose up -d redis`.
+   - This starts a Docker container for Redis, in a detached state (running in the background). This is required by the matching service.
 1. Run `pnpm dev` to run the dev script.
-   - This starts the frontend, user service, and question service in dev mode.
+   - This starts the frontend and all services in dev mode.
 1. Open your browser at <http://localhost:3000>.
 
 ### Running the project (production)
 
 1. Run `docker compose up -d`.
-   - This starts Docker containers for the user and question services, in a detached state (running in the background).
+   - This starts Docker containers for all services, including containers those services depend on, in a detached state.
 1. Run `pnpm dev:frontend` to run the frontend's dev script.
 1. Open your browser at <http://localhost:3000>.
 

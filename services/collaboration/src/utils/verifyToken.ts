@@ -1,8 +1,6 @@
 import { ExtractedUser, extractedUserSchema } from '@common/shared-types'
 import axios, { AxiosResponse } from 'axios'
 import { StatusCodes } from 'http-status-codes'
-import { configEnv } from '@common/utils'
-configEnv()
 
 export async function verifyUser(token: string): Promise<ExtractedUser | null> {
   try {

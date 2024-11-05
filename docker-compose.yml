@@ -5,10 +5,10 @@ services:
       dockerfile: Dockerfile
       target: question-service
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp_credentials.json
-      SERVICE_API_KEY: /run/secrets/service_api_key
-      USER_SERVICE_URL: http://user-service:3002
       PORT: 3001
+      USER_SERVICE_URL: http://user-service:3002
+      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp_credentials.json
+      SERVICE_API_KEY_PATH: /run/secrets/service_api_key
     secrets:
       - gcp_credentials.json
       - service_api_key
@@ -18,16 +18,16 @@ services:
       - 3001
     networks:
       - demo-network
-    
+
   user-service:
     build:
       context: .
       dockerfile: Dockerfile
       target: user-service
     environment:
+      PORT: 3002
       GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp_credentials.json
       JWT_SECRET_PATH: /run/secrets/jwt_secret
-      PORT: 3002
     secrets:
       - gcp_credentials.json
       - jwt_secret
@@ -61,14 +61,12 @@ services:
       dockerfile: Dockerfile
       target: matching-service
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp_credentials.json
-      SERVICE_API_KEY: /run/secrets/service_api_key
       PORT: 3003
       REDIS_URL: redis://redis:6379
       USER_SERVICE_URL: http://user-service:3002
       COLLABORATION_SERVICE_URL: http://collaboration-service:3004
+      SERVICE_API_KEY_PATH: /run/secrets/service_api_key
     secrets:
-      - gcp_credentials.json
       - service_api_key
     ports:
       - 3003:3003
@@ -83,11 +81,11 @@ services:
         dockerfile: Dockerfile
         target: collaboration-service
       environment:
-        GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp_credentials.json
-        SERVICE_API_KEY: /run/secrets/service_api_key
+        PORT: 3004
         QUESTION_SERVICE_URL: http://question-service:3001
         USER_SERVICE_URL: http://user-service:3002
-        PORT: 3004
+        GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp_credentials.json
+        SERVICE_API_KEY_PATH: /run/secrets/service_api_key
       secrets:
         - gcp_credentials.json
         - service_api_key
@@ -109,5 +107,3 @@ secrets:
     file: ./jwt_secret.txt
   service_api_key:
     file: ./service_api_key.txt
-
-
