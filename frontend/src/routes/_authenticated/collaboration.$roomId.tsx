@@ -1,4 +1,15 @@
-import { Paper, Stack, Text, Title } from "@mantine/core";
+import {
+  Paper,
+  Stack,
+  Text,
+  Title,
+  Grid,
+  Avatar,
+  Badge,
+  Group,
+  Button,
+} from "@mantine/core";
+import { IconX, IconLoader } from "@tabler/icons-react";
 import {
   createFileRoute,
   useRouterState,
@@ -6,10 +17,11 @@ import {
 } from "@tanstack/react-router";
 import CodingEditor from "../../components/Collaboration/CodingEditor";
 import { UserRoomCreatedData } from "@common/shared-types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../api";
 import { notifications } from "@mantine/notifications";
 import { AxiosError } from "axios";
+import { stringToHexColor } from "../../components/Questions/QuestionsTable";
 
 export const Route = createFileRoute("/_authenticated/collaboration/$roomId")({
   component: Collaboration,
@@ -22,6 +34,15 @@ export function Collaboration() {
   });
   const { roomId } = Route.useParams();
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
+  queryClient.removeQueries();
+
+  const exitRoom = () => {
+    navigate({
+      to: "/matching",
+    });
+  };
 
   const {
     data: userRoomData,
@@ -70,17 +91,68 @@ export function Collaboration() {
   });
 
   return (
-    <Paper shadow="md" p="lg" h="90vh" withBorder>
+    <Stack align="center">
       <Title ta="center">Collaboration</Title>
-      <Stack h="90%">
-        {isLoading ? (
-          <Text>"Loading..."</Text>
-        ) : isSuccess ? (
-          <CodingEditor isOpen={userRoomData.isOpen} roomId={roomId} />
-        ) : null}
+      {isLoading ? (
+        <Paper shadow="md" withBorder p="lg">
+          <Stack align="center">
+            <Avatar color="blue">
+              <IconLoader />
+            </Avatar>
+            <Text c="black" fw="bold">
+              Loading...
+            </Text>
+          </Stack>
+        </Paper>
+      ) : isSuccess ? (
+        <Grid w="100%">
+          <Grid.Col span={{ base: 12, xs: 8 }}>
+            <Paper shadow="md" p="lg" h="80vh" withBorder>
+              <CodingEditor isOpen={userRoomData.isOpen} roomId={roomId} />
+            </Paper>
+          </Grid.Col>
 
-        {isError ? <Text c="red">"Error fetching room"</Text> : null}
-      </Stack>
-    </Paper>
+          <Grid.Col span={{ base: 12, xs: 4 }}>
+            <Stack h="80vh" justify="space-between">
+              <Paper w="auto" shadow="md" p="lg" h="75vh" withBorder>
+                <Stack gap={10}>
+                  <Title c="black" order={3}>
+                    {userRoomData.question.title}
+                  </Title>
+                  <Group gap={5} align="flex-start">
+                    {userRoomData.question.categories.map((category) => (
+                      <Badge
+                        key={category}
+                        size="sm"
+                        autoContrast
+                        bg={stringToHexColor(category)}
+                      >
+                        {category}
+                      </Badge>
+                    ))}
+                  </Group>
+                  <Text c="black">{userRoomData.question.description}</Text>
+                </Stack>
+              </Paper>
+
+              <Button color="black" w="10vw" onClick={exitRoom}>
+                Exit Room
+              </Button>
+            </Stack>
+          </Grid.Col>
+        </Grid>
+      ) : isError ? (
+        <Paper shadow="md" withBorder p="lg">
+          <Stack align="center">
+            <Avatar color="red">
+              <IconX />
+            </Avatar>
+            <Text c="black" fw="bold">
+              Error fetching room
+            </Text>
+          </Stack>
+        </Paper>
+      ) : null}
+    </Stack>
   );
 }
