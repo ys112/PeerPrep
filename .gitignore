@@ -2,6 +2,7 @@
 **/.env.*.local
 **/.firebase/*.json
 jwt_secret.txt
+service_api_key.txt
 
 **/node_modules/
 **/dist/

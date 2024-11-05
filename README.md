@@ -30,6 +30,9 @@ Unless otherwise specified, commands should be run in the monorepo root.
 1. You would have been provided a JSON file containing Firebase service account credentials.\
    Place it in `.firebase/service-account.json`.
 1. Make a copy of `jwt_secret.example` and name it `jwt_secret.txt`. Change its contents for security reasons.
+   - This is used to sign user ID payloads into JSON Web Token strings, and later verify them to get back the decoded tokens.
+1. Make a copy of `service_api_key.example` and name it `service_api_key.txt`. Change its contents for security reasons.
+   - This is used to secure internal communications between services.
 
 **Only** if the questions database has yet to be initialised and is thus empty:
 
@@ -39,13 +42,6 @@ If a new admin user account is required:
 
 1. Make a copy of `services/user/.env.development.local.example` and name it `services/user/.env.development.local`. Change the sample account details as desired.
 1. Navigate to the user service's root and run `pnpm run create-admin` to create the account.
-
-#### For production
-
-//TODO git and dockerignore this file, git rm --cached, make .example. Ensure dev reads from path contents instead of env, check readmes
-
-1. Change the contents of `service_api_key.txt` for security reasons.\
-   Do not check the new value in.
 
 ### Running the project (development)
 
