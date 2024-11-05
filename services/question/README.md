@@ -24,9 +24,7 @@ Unless otherwise specified, commands should be run in the service root.
 - `USER_SERVICE_URL`: The URL to the user service.
 - `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
 - `COLLECTION_NAME` (optional): Name of the collection to use in Firestore.
-
-`.env.local`:
-- `SERVICE_API_KEY`: API key for the service to service communication.
+- `SERVICE_API_KEY_PATH`: Path to the file containing the API key for our services.
 
 ### Tests
 
