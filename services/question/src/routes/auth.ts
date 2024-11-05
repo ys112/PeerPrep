@@ -3,9 +3,6 @@ import axios, { AxiosResponse } from 'axios'
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 
-import { configEnv } from '@common/utils'
-configEnv()
-
 const { SERVICE_API_KEY } = process.env // Provides service API key verification for service-to-service communication
 
 /* [Main] */
