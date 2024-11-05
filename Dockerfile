@@ -9,10 +9,12 @@ WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build:common
 RUN pnpm run build:services
+RUN pnpm run build:frontend
 RUN pnpm deploy --filter=@services/user-service --prod /prod/user-service
 RUN pnpm deploy --filter=@services/question-service --prod /prod/question-service
 RUN pnpm deploy --filter=@services/matching-service --prod /prod/matching-service
 RUN pnpm deploy --filter=@services/collaboration-service --prod /prod/collaboration-service
+RUN pnpm deploy --filter=frontend --prod /prod/frontend
 
 
 FROM base AS question-service
@@ -37,4 +39,10 @@ FROM base AS collaboration-service
 COPY --from=build /prod/collaboration-service /prod/collaboration-service
 WORKDIR /prod/collaboration-service
 EXPOSE 3004
+CMD ["pnpm", "start"]
+
+FROM base AS frontend
+COPY --from=build /prod/frontend /prod/frontend
+WORKDIR /prod/frontend
+EXPOSE 3000
 CMD ["pnpm", "start"]
