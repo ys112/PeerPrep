@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import fs from 'fs';
 
 export * from "./constants";
 
@@ -18,3 +19,17 @@ export function configEnv() {
     override: true,
   });
 }
+
+function readFromEnvPath(variableName: string): string {
+  let path: string | undefined = process.env[variableName];
+  if (path === undefined) {
+    throw new Error(`Environment variable ${path} is not set!`);
+  }
+
+  let contents: string = fs.readFileSync(path, 'utf8');
+  // Trim whitespace, such as trailing newlines
+  return contents.trim();
+}
+
+export const getApiKey = () => readFromEnvPath("SERVICE_API_KEY_PATH");
+export const getJwtSecret = () => readFromEnvPath("JWT_SECRET_PATH");

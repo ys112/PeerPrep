@@ -1,5 +1,5 @@
 import { ExtractedUser, SensitiveUser, loginFormSchema } from '@common/shared-types'
-import { JWT_SECRET } from '@common/utils'
+import { getJwtSecret } from '@common/utils'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
@@ -30,7 +30,7 @@ export async function handleLogin(req: Request, res: Response) {
       return res.status(401).json({ message: 'Wrong email and/or password' })
     }
 
-    const accessToken = jwt.sign({ id: userDoc.id }, JWT_SECRET, {
+    const accessToken = jwt.sign({ id: userDoc.id }, getJwtSecret(), {
       expiresIn: '1d',
     })
 

@@ -1,5 +1,5 @@
 import { Question, UserMatchingRequest } from '@common/shared-types'
-import { SERVICE_API_KEY } from '@common/utils'
+import { getApiKey } from '@common/utils'
 import axios from 'axios'
 
 // Auth service
@@ -29,7 +29,7 @@ const axiosInstance = axios.create({
   baseURL: process.env.QUESTION_SERVICE_URL,
   headers: {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer ' + SERVICE_API_KEY,
+    Authorization: 'Bearer ' + getApiKey(),
   },
 })
 

@@ -1,5 +1,5 @@
 import { ExtractedUser, User, extractedUserSchema } from '@common/shared-types'
-import { SERVICE_API_KEY } from '@common/utils'
+import { getApiKey } from '@common/utils'
 import axios, { AxiosResponse } from 'axios'
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
@@ -38,7 +38,7 @@ export async function requireLogin(req: Request, res: Response, next: NextFuncti
     return
   }
 
-  if (userToken.split('Bearer ')[1] === SERVICE_API_KEY) {
+  if (userToken.split('Bearer ')[1] === getApiKey()) {
     return next()
   }
 

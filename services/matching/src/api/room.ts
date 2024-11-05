@@ -1,5 +1,5 @@
 import { UserMatchDoneData, UserRoomCreatedData } from '@common/shared-types'
-import { SERVICE_API_KEY } from '@common/utils'
+import { getApiKey } from '@common/utils'
 import axios from 'axios'
 import logger from '../utils/logger'
 
@@ -28,7 +28,7 @@ const axiosInstance = axios.create({
   baseURL: process.env.COLLABORATION_SERVICE_URL,
   headers: {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer ' + SERVICE_API_KEY,
+    Authorization: 'Bearer ' + getApiKey(),
   },
 })
 
