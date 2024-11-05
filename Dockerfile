@@ -12,6 +12,8 @@ RUN pnpm run build:services
 RUN pnpm deploy --filter=@services/user-service --prod /prod/user-service
 RUN pnpm deploy --filter=@services/question-service --prod /prod/question-service
 RUN pnpm deploy --filter=@services/matching-service --prod /prod/matching-service
+RUN pnpm deploy --filter=@services/collaboration-service --prod /prod/collaboration-service
+
 
 FROM base AS question-service
 COPY --from=build /prod/question-service /prod/question-service
@@ -29,4 +31,10 @@ FROM base AS matching-service
 COPY --from=build /prod/matching-service /prod/matching-service
 WORKDIR /prod/matching-service
 EXPOSE 3003
+CMD ["pnpm", "start"]
+
+FROM base AS collaboration-service
+COPY --from=build /prod/collaboration-service /prod/collaboration-service
+WORKDIR /prod/collaboration-service
+EXPOSE 3004
 CMD ["pnpm", "start"]

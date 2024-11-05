@@ -3,6 +3,7 @@ interface ImportMetaEnv {
   readonly VITE_QUESTION_SERVICE_API_URL: string;
   readonly VITE_USER_SERVICE_API_URL: string;
   readonly VITE_MATCH_SERVICE_API_URL: string;
+  readonly VITE_COLLABORATION_SERVICE_WS_URL: string;
 }
 
 interface ImportMeta {

@@ -18,6 +18,7 @@ Unless otherwise specified, commands should be run in the service root.
 - `VITE_QUESTION_SERVICE_API_URL`: The URL to the question service.
 - `VITE_USER_SERVICE_API_URL`: The URL to the user service.
 - `VITE_MATCH_SERVICE_API_URL`: The URL to the match service
+- `VITE_COLLABORATION_SERVICE_WS_URL`: The URL to the collaboration service websocket
 
 For more details on how `.env` works in Vite:
 <https://vitejs.dev/guide/env-and-mode>

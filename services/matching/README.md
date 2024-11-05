@@ -19,3 +19,7 @@ Unless otherwise specified, commands should be run in the service root.
 - `PORT` (optional): Port to run the service on.
 - `CORS_ORIGINS` (optional): Allow list for CORS, as parseable JSON.
 - `USER_SERVICE_URL`: The URL to the user service.
+- `COLLABORATION_SERVICE_URL`: The URL to the collaboration service.
+
+`.env.local`:
+- `SERVICE_API_KEY`: API key for the service to service communication.
