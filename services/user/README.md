@@ -6,7 +6,7 @@ Unless otherwise specified, commands should be run in the service root.
 
 ### Running the service (development)
 
-1. Run `pnpm run dev` to run the dev script.
+1. Run `pnpm dev` to run the dev script.
 1. Open your browser at <http://localhost:3002>.
 
 ## Documentation
@@ -19,10 +19,7 @@ Unless otherwise specified, commands should be run in the service root.
 - `CORS_ORIGINS` (optional): Allow list for CORS, as parseable JSON.
 - `GOOGLE_APPLICATION_CREDENTIALS`: Path to the service account credentials file for Firestore.
 - `COLLECTION_NAME` (optional): Name of the collection to use in Firestore.
-
-`.env.local` (**secret**):
-
-- `JWT_SECRET`: Secret for creating JWT signatures.
+- `JWT_SECRET_PATH`: Path to the file containing the JWT secret.
 
 `.env.development.local` (**secret**):
 

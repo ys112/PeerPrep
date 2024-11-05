@@ -1,12 +1,8 @@
 import { ExtractedUser, User, extractedUserSchema } from '@common/shared-types'
+import { getApiKey } from '@common/utils'
 import axios, { AxiosResponse } from 'axios'
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-
-import { configEnv } from '@common/utils'
-configEnv()
-
-const { SERVICE_API_KEY } = process.env // Provides service API key verification for service-to-service communication
 
 /* [Main] */
 
@@ -42,7 +38,7 @@ export async function requireLogin(req: Request, res: Response, next: NextFuncti
     return
   }
 
-  if (userToken.split('Bearer ')[1] === SERVICE_API_KEY) {
+  if (userToken.split('Bearer ')[1] === getApiKey()) {
     return next()
   }
 

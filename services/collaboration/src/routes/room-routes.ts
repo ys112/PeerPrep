@@ -3,9 +3,10 @@ import {
   userMatchDoneDataSchema,
   userRoomCreatedDataSchema,
 } from '@common/shared-types'
-import { NextFunction, Router, Request, Response } from 'express'
-import { createRoom, getRoom } from '../controller/room-controller'
+import { getApiKey } from '@common/utils'
+import { NextFunction, Request, Response, Router } from 'express'
 import { StatusCodes } from 'http-status-codes'
+import { createRoom, getRoom } from '../controller/room-controller'
 import { verifyUser } from '../utils/verifyToken'
 
 const router = Router()
@@ -27,19 +28,12 @@ async function requireLogin(req: Request, res: Response, next: NextFunction) {
   next()
 }
 
-const { SERVICE_API_KEY } = process.env
 async function requireApiKey(req: Request, res: Response, next: NextFunction) {
   const apiKey = req.headers.authorization
-  if (!SERVICE_API_KEY) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: 'Service API key not found',
-    })
-    return
-  }
 
   if (
     !apiKey ||
-    (!apiKey.startsWith('Bearer ') && apiKey.split('Bearer ')[1] !== SERVICE_API_KEY)
+    (!apiKey.startsWith('Bearer ') && apiKey.split('Bearer ')[1] !== getApiKey())
   ) {
     res.status(StatusCodes.UNAUTHORIZED).send()
     return
