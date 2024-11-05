@@ -18,6 +18,7 @@ Unless otherwise specified, commands should be run in the service root.
 
 - `PORT` (optional): Port to run the service on.
 - `CORS_ORIGINS` (optional): Allow list for CORS, as parseable JSON.
+- `REDIS_URL`: The URL for this service's Redis.
 - `USER_SERVICE_URL`: The URL to the user service.
 - `COLLABORATION_SERVICE_URL`: The URL to the collaboration service.
 - `SERVICE_API_KEY_PATH`: Path to the file containing the API key for our services.
