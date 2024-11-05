@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "baseUrl": ".",
     "outDir": "dist",
     "module": "NodeNext",
@@ -12,5 +13,5 @@
     "skipLibCheck": true
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "**/*.js"]
+  "exclude": ["node_modules", "**/*.js", "dist"]
 }
