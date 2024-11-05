@@ -38,6 +38,12 @@ export function Collaboration() {
   const queryClient = useQueryClient();
   queryClient.removeQueries();
 
+  const exitRoom = () => {
+    navigate({
+      to: "/matching",
+    });
+  };
+
   const {
     data: userRoomData,
     isLoading,
@@ -107,7 +113,7 @@ export function Collaboration() {
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, xs: 4 }}>
-            <Stack h="80vh">
+            <Stack h="80vh" justify="space-between">
               <Paper w="auto" shadow="md" p="lg" h="75vh" withBorder>
                 <Stack gap={10}>
                   <Title c="black" order={3}>
@@ -128,7 +134,8 @@ export function Collaboration() {
                   <Text c="black">{userRoomData.question.description}</Text>
                 </Stack>
               </Paper>
-              <Button color="black" w="10vw">
+
+              <Button color="black" w="10vw" onClick={exitRoom}>
                 Exit Room
               </Button>
             </Stack>
