@@ -1,13 +1,8 @@
-import dotenv from 'dotenv'
-if (process.env.NODE_ENV) {
-  dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
-} else {
-  dotenv.config({ path: '.env' })
-}
-import { extractedUserSchema, ExtractedUser } from '@common/shared-types'
+import { ExtractedUser, extractedUserSchema } from '@common/shared-types'
 import axios, { AxiosResponse } from 'axios'
 import { StatusCodes } from 'http-status-codes'
-import logger from './logger'
+import { configEnv } from '@common/utils'
+configEnv()
 
 export async function verifyUser(token: string): Promise<ExtractedUser | null> {
   try {
@@ -30,9 +25,9 @@ export async function verifyUser(token: string): Promise<ExtractedUser | null> {
     }
     return extractedUser.data
   } catch (error) {
-    logger.error(`Error verifying user token: ${error}`)
+    console.error(`Error verifying user token: ${error}`)
     if (error instanceof Error) {
-      logger.error(error.stack)
+      console.error(error.stack)
     }
     return null
   }

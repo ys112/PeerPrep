@@ -20,9 +20,15 @@ export const questionFormSchema = questionDocSchema.extend({
   id: z.string().min(1).optional(),
 });
 
+export const questionFilterSchema = questionDocSchema.pick({
+  categories: true,
+  complexity: true,
+});
+
 export type QuestionDoc = z.infer<typeof questionDocSchema>;
 export type Question = z.infer<typeof questionSchema>;
 export type QuestionFormValues = z.infer<typeof questionFormSchema>;
+export type QuestionFilter = z.infer<typeof questionFilterSchema>;
 
 // [User]
 export const userSchema = z.object({
@@ -91,6 +97,13 @@ export const userMatchDoneDataSchema = userMatchingDataSchema
     ticketIds: z.string().min(1).array().min(1),
   });
 
+export const userRoomCreatedDataSchema = z.object({
+  id: z.string().min(1),
+  question: questionDocSchema,
+  userMatchDoneData: userMatchDoneDataSchema,
+  isOpen: z.boolean(),
+});
+
 export const userTicketSchema = z.object({
   ticketId: z.string().min(1),
   data: userMatchingDataSchema,
@@ -104,6 +117,7 @@ export const userTicketPayloadSchema = z.object({
 export type UserMatchingData = z.infer<typeof userMatchingDataSchema>;
 export type UserMatchingRequest = z.infer<typeof userMatchingRequestSchema>;
 export type UserMatchDoneData = z.infer<typeof userMatchDoneDataSchema>;
+export type UserRoomCreatedData = z.infer<typeof userRoomCreatedDataSchema>;
 export type UserTicket = z.infer<typeof userTicketSchema>;
 export type UserTicketPayload = z.infer<typeof userTicketPayloadSchema>;
 

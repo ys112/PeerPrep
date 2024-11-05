@@ -22,6 +22,7 @@ import { initializeMatchSocket } from "../../socket/match";
 import MatchingTimer from "../../components/Matching/MatchingTimer";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { useTimeout } from "@mantine/hooks";
+import { UserRoomCreatedData } from "../../../../common/shared-types/index";
 
 export const Route = createFileRoute("/_authenticated/matching")({
   component: Matching,
@@ -67,17 +68,31 @@ export function Matching() {
       });
     };
 
-    const handleMatchFound = (data: UserMatchDoneData) => {
+    const handleMatchFound = (data: UserRoomCreatedData) => {
+      console.log(data);
+      if (!data.id) {
+        notifications.show({
+          icon: <IconX />,
+          title: "Matching server error",
+          message: "No room data received",
+          color: "red",
+        });
+        setIsMatching(false);
+        return;
+      }
+
+      setMatchFound(true);
       notifications.show({
         icon: <IconCheck />,
         title: "Match found",
         message: "Redirecting...",
         color: "green",
       });
-      setMatchFound(true);
+
       setTimeout(() => {
         navigate({
-          to: "/collaboration",
+          to: `/collaboration/${data.id}`,
+          state: { userRoomData: data },
         });
       }, 3000);
     };

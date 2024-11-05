@@ -26,9 +26,9 @@ Unless otherwise specified, commands should be run in the monorepo root.
 ### First-time setup
 
 1. Run `pnpm i` to install all dependencies.
-    - You do not need to install dependencies individually within subfolders.
+   - You do not need to install dependencies individually within subfolders.
 1. You would have been provided a JSON file containing Firebase service account credentials.\
-  Place it in `.firebase/service-account.json`.
+   Place it in `.firebase/service-account.json`.
 
 **Only** if the questions database has yet to be initialised and is thus empty:
 
@@ -45,19 +45,19 @@ If a new admin user account is required:
 
 #### For production
 
-1. Change the contents of `jwt_secret.txt` for security reasons.\
-  Do not check the new value in.
+1. Change the contents of `jwt_secret.txt` and `service_api_key.txt` for security reasons.\
+   Do not check the new value in.
 
 ### Running the project (development)
 
 1. Run `pnpm dev` to run the dev script.
-    - This starts the frontend, user service, and question service in dev mode.
+   - This starts the frontend, user service, and question service in dev mode.
 1. Open your browser at <http://localhost:3000>.
 
 ### Running the project (production)
 
 1. Run `docker compose up -d`.
-    - This starts Docker containers for the user and question services, in a detached state (running in the background).
+   - This starts Docker containers for the user and question services, in a detached state (running in the background).
 1. Run `pnpm dev:frontend` to run the frontend's dev script.
 1. Open your browser at <http://localhost:3000>.
 
@@ -90,7 +90,7 @@ For example, to add `jest` to the user service, as a dev dependency:
 pnpm add jest -F @services/user-service -D
 ```
 
-The [`-F` filter](https://pnpm.io/cli/add#--filter-package_selector) is based on *package name*, i.e. the name of the service in `package.json`. It is not based on workspace name.
+The [`-F` filter](https://pnpm.io/cli/add#--filter-package_selector) is based on _package name_, i.e. the name of the service in `package.json`. It is not based on workspace name.
 
 ## Documentation
 
@@ -105,5 +105,6 @@ We **do not** check in `.env.local` and any `.env.[NODE_ENV].local` files. Secre
 In the case of duplicate variables, the priority is as follows with later files overwriting earlier files' variables: `.env` < `.env.local` < `.env.[NODE_ENV]` < `.env.[NODE_ENV].local`.
 
 ## Acknowledgements
+
 Mantine: <https://v6.mantine.dev/>
 Mantine UI: <https://ui.mantine.dev/>

@@ -3,6 +3,11 @@ import axios, { AxiosResponse } from 'axios'
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 
+import { configEnv } from '@common/utils'
+configEnv()
+
+const { SERVICE_API_KEY } = process.env // Provides service API key verification for service-to-service communication
+
 /* [Main] */
 
 async function verifyUser(token: string): Promise<ExtractedUser | null> {
@@ -37,15 +42,19 @@ export async function requireLogin(req: Request, res: Response, next: NextFuncti
     return
   }
 
-  let user: ExtractedUser | null = await verifyUser(userToken)
-  if (user === null) {
-    res.status(StatusCodes.UNAUTHORIZED)
-    res.send()
-    return
+  if (userToken.split('Bearer ')[1] === SERVICE_API_KEY) {
+    return next()
   }
 
-  res.locals.user = user
-  next()
+  let user: ExtractedUser | null = await verifyUser(userToken)
+  if (user !== null) {
+    res.locals.user = user
+    return next()
+  }
+
+  res.status(StatusCodes.UNAUTHORIZED)
+  res.send()
+  return
 }
 
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
@@ -57,3 +66,19 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   }
   next()
 }
+
+// export async function requireApiKey(req: Request, res: Response, next: NextFunction) {
+//   const apiKey = req.headers.authorization
+//   if (!SERVICE_API_KEY) {
+//     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+//       message: 'Service API key not found',
+//     })
+//     return
+//   }
+
+//   if (!apiKey || (!apiKey.startsWith('Bearer ') && apiKey !== SERVICE_API_KEY)) {
+//     res.status(StatusCodes.UNAUTHORIZED).send()
+//     return
+//   }
+//   next()
+// }
