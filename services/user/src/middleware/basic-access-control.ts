@@ -1,8 +1,8 @@
 import { ExtractedUser, User } from '@common/shared-types'
+import { JWT_SECRET } from '@common/utils'
 import { NextFunction, Request, Response } from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { db } from '../db/clients'
-import { jwtSecret } from '../utils/jwt-secret'
 
 interface VerifyRequest extends Request {
   user?: ExtractedUser
@@ -19,7 +19,7 @@ export function verifyAccessToken(
   }
 
   const token = authHeader.split(' ')[1]
-  jwt.verify(token, jwtSecret, async (err, decoded) => {
+  jwt.verify(token, JWT_SECRET, async (err, decoded) => {
     if (err) {
       return res.status(401).json({ message: 'Authentication failed' })
     }
