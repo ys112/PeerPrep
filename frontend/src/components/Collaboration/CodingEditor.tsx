@@ -13,7 +13,6 @@ import { HocuspocusProvider } from "@Hocuspocus/provider";
 import { accessTokenStorage } from "../../utils/accessTokenStorage";
 import { notifications } from "@mantine/notifications";
 import { userStorage } from "../../utils/userStorage";
-import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   roomId: string;
