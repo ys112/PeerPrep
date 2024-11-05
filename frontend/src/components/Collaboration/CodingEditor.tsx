@@ -22,19 +22,13 @@ interface Props {
 
 export default function CodingEditor({ roomId, isOpen }: Props) {
   const elementRef = useRef<HTMLDivElement | null>(null);
-  const { data: accessToken, isLoading } = useQuery({
-    queryKey: ["accessToken"],
-    queryFn: async () => {
-      return await accessTokenStorage.getAccessToken();
-    },
-  });
 
   useEffect(() => {
     let ydoc: Y.Doc;
     let view: EditorView;
 
     ydoc = new Y.Doc();
-
+    const accessToken = accessTokenStorage.getAccessToken();
     console.log("Creating editor with access token:", accessToken);
     const provider = new HocuspocusProvider({
       url: import.meta.env.VITE_COLLABORATION_SERVICE_WS_URL,
@@ -91,7 +85,7 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
       provider?.destroy();
       view?.destroy();
     };
-  }, [accessToken, roomId, isOpen]);
+  }, [roomId, isOpen]);
 
   return (
     <div

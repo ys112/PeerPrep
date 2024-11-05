@@ -35,9 +35,6 @@ export function Collaboration() {
   const { roomId } = Route.useParams();
   const navigate = useNavigate();
 
-  const queryClient = useQueryClient();
-  queryClient.removeQueries();
-
   const exitRoom = () => {
     navigate({
       to: "/matching",
@@ -50,7 +47,7 @@ export function Collaboration() {
     isError,
     isSuccess,
   } = useQuery({
-    queryKey: ["userRoomData"],
+    queryKey: ["userRoomData", { roomId }],
     queryFn: async () => {
       try {
         return await api.roomClient.getRoom(roomId);
