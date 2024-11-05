@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
 
+export * from "./constants";
+
 export function configEnv() {
   // https://v2.vitejs.dev/guide/env-and-mode.html#env-files
   let paths = [".env", ".env.local"];
@@ -16,5 +18,3 @@ export function configEnv() {
     override: true,
   });
 }
-
-// export * from "./auth";

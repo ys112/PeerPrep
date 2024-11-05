@@ -1,4 +1,5 @@
 import { Question, UserMatchingRequest } from '@common/shared-types'
+import { SERVICE_API_KEY } from '@common/utils'
 import axios from 'axios'
 
 // Auth service
@@ -23,8 +24,6 @@ import axios from 'axios'
 //     console.error(error)
 //   }
 // }
-
-const { SERVICE_API_KEY } = process.env
 
 const axiosInstance = axios.create({
   baseURL: process.env.QUESTION_SERVICE_URL,

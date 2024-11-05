@@ -1,4 +1,5 @@
 import { UserMatchDoneData, UserRoomCreatedData } from '@common/shared-types'
+import { SERVICE_API_KEY } from '@common/utils'
 import axios from 'axios'
 import logger from '../utils/logger'
 
@@ -22,8 +23,6 @@ import logger from '../utils/logger'
 //     logger.error(error)
 //   }
 // }
-
-const { SERVICE_API_KEY } = process.env
 
 const axiosInstance = axios.create({
   baseURL: process.env.COLLABORATION_SERVICE_URL,

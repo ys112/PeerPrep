@@ -1,9 +1,8 @@
 import { ExtractedUser, User, extractedUserSchema } from '@common/shared-types'
+import { SERVICE_API_KEY } from '@common/utils'
 import axios, { AxiosResponse } from 'axios'
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-
-const { SERVICE_API_KEY } = process.env // Provides service API key verification for service-to-service communication
 
 /* [Main] */
 
