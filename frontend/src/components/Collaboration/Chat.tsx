@@ -8,7 +8,6 @@ import {
   Group,
   Divider,
   Textarea,
-  Button,
   Text,
   ActionIcon,
 } from '@mantine/core';
@@ -17,7 +16,7 @@ import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import { initializeChatSocket } from '../../socket/chat';
 import { userStorage } from '../../utils/userStorage';
-import { IconBrandTelegram, IconSend } from '@tabler/icons-react';
+import { IconSend } from '@tabler/icons-react';
 
 interface ChatMessage {
   timestamp: Date;
