@@ -9,7 +9,7 @@ import { defaultKeymap } from "@codemirror/commands";
 import { EditorState } from "@codemirror/state";
 import { javascript } from "@codemirror/lang-javascript";
 import { useEffect, useRef } from "react";
-import { HocuspocusProvider } from "@Hocuspocus/provider";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 import { accessTokenStorage } from "../../utils/accessTokenStorage";
 import { notifications } from "@mantine/notifications";
 import { userStorage } from "../../utils/userStorage";

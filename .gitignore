@@ -1,6 +1,6 @@
 **/.env.local
 **/.env.*.local
-**/.firebase/*.json
+**/.firebase/**/*.json
 jwt_secret.txt
 service_api_key.txt
 

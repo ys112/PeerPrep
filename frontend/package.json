@@ -7,7 +7,8 @@
     "typecheck": "tsc --noEmit",
     "dev": "vite --port=3000",
     "build": "vite build",
-    "start": "vite preview"
+    "preview": "vite preview --port=3000",
+    "start": "serve dist -p 3000"
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.57.15",
@@ -44,6 +45,7 @@
     "codemirror": "^6.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "serve": "^14.2.4",
     "socket.io-client": "^4.8.0",
     "y-codemirror.next": "^0.3.5",
     "y-websocket": "^2.0.4",
