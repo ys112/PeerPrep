@@ -11,7 +11,7 @@ export function Dashboard() {
 		<Group>
 			<Paper w={{ base: '100%', lg: '50%' }} mx='auto' p='md' withBorder radius='md' shadow='md'>
 				<Stack>
-					<Title order={2}>Past Collaborations</Title>
+					<Title order={2}>Collab History</Title>
 					<Divider />
 					<AttemptsTable user={user} />
 				</Stack>
