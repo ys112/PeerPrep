@@ -7,8 +7,7 @@ import {
 import { getApiKey } from '@common/utils'
 import { NextFunction, Request, Response, Router } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import * as roomController from '../controller/room-controller'
-import { createRoom, getRoom } from '../controller/room-controller'
+import roomController, { createRoom, getRoom } from '../controller/room-controller'
 import { verifyUser } from '../utils/verifyToken'
 
 const router = Router()
