@@ -8,23 +8,27 @@ import {
   Badge,
   Group,
   Button,
-  Menu,
 } from "@mantine/core";
 import { IconX, IconLoader } from "@tabler/icons-react";
+
 import {
   createFileRoute,
   useRouterState,
   useNavigate,
+  useParams,
 } from "@tanstack/react-router";
 import CodingEditor from "../../components/Collaboration/CodingEditor";
-import LanguageSelection from "../../components/Collaboration/LanguageSelection";
 import { UserRoomCreatedData } from "@common/shared-types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../api";
 import { notifications } from "@mantine/notifications";
 import { AxiosError } from "axios";
 import { stringToHexColor } from "../../components/Questions/QuestionsTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { initializeChatSocket } from "../../socket/chat";
+import { Socket } from "socket.io-client";
+import { userStorage } from "../../utils/userStorage";
+import Chat from "../../components/Collaboration/Chat";
 
 export const Route = createFileRoute("/_authenticated/collaboration/$roomId")({
   component: Collaboration,
@@ -37,12 +41,6 @@ export function Collaboration() {
   });
   const { roomId } = Route.useParams();
   const navigate = useNavigate();
-
-  const exitRoom = () => {
-    navigate({
-      to: "/matching",
-    });
-  };
 
   const {
     data: userRoomData,
@@ -90,8 +88,14 @@ export function Collaboration() {
     initialData: locationState.userRoomData as UserRoomCreatedData,
   });
 
+  const exitRoom = () => {
+    navigate({
+      to: "/matching",
+    });
+  };
+
   return (
-    <Stack align="center">
+    <Stack align="center" h="80vh">
       <Title ta="center">Collaboration</Title>
       {isLoading ? (
         <Paper shadow="md" withBorder p="lg">
@@ -111,8 +115,8 @@ export function Collaboration() {
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, xs: 4 }}>
-            <Stack h="80vh" justify="space-between">
-              <Paper w="auto" shadow="md" p="lg" h="75vh" withBorder>
+            <Stack>
+              <Paper w="auto" shadow="md" p="lg" withBorder>
                 <Stack gap={10}>
                   <Title c="black" order={3}>
                     {userRoomData.question.title}
@@ -132,7 +136,7 @@ export function Collaboration() {
                   <Text c="black">{userRoomData.question.description}</Text>
                 </Stack>
               </Paper>
-
+              <Chat w="auto" shadow="md" p="lg" withBorder />
               <Button color="black" w="10vw" onClick={exitRoom}>
                 Exit Room
               </Button>
