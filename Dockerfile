@@ -15,18 +15,21 @@ ARG VITE_USER_SERVICE_API_URL
 ARG VITE_MATCH_SERVICE_API_URL
 ARG VITE_COLLABORATION_SERVICE_WS_URL
 ARG VITE_COLLABORATION_SERVICE_API_URL
+ARG VITE_AI_SERVICE_API_URL
 
 ENV VITE_QUESTION_SERVICE_API_URL=$VITE_QUESTION_SERVICE_API_URL
 ENV VITE_USER_SERVICE_API_URL=$VITE_USER_SERVICE_API_URL
 ENV VITE_MATCH_SERVICE_API_URL=$VITE_MATCH_SERVICE_API_URL
 ENV VITE_COLLABORATION_SERVICE_WS_URL=$VITE_COLLABORATION_SERVICE_WS_URL
 ENV VITE_COLLABORATION_SERVICE_API_URL=$VITE_COLLABORATION_SERVICE_API_URL
+ENV VITE_AI_SERVICE_API_URL=$VITE_AI_SERVICE_API_URL
 
 RUN pnpm run build:frontend
 RUN pnpm deploy --filter=@services/user-service --prod /prod/user-service
 RUN pnpm deploy --filter=@services/question-service --prod /prod/question-service
 RUN pnpm deploy --filter=@services/matching-service --prod /prod/matching-service
 RUN pnpm deploy --filter=@services/collaboration-service --prod /prod/collaboration-service
+RUN pnpm deploy --filter=@services/ai-service --prod /prod/ai-service
 RUN pnpm deploy --filter=frontend --prod /prod/frontend
 
 
@@ -52,6 +55,12 @@ FROM base AS collaboration-service
 COPY --from=build /prod/collaboration-service /prod/collaboration-service
 WORKDIR /prod/collaboration-service
 EXPOSE 3004
+CMD ["pnpm", "start"]
+
+FROM base AS ai-service
+COPY --from=build /prod/ai-service /prod/ai-service
+WORKDIR /prod/ai-service
+EXPOSE 3007
 CMD ["pnpm", "start"]
 
 FROM base AS frontend

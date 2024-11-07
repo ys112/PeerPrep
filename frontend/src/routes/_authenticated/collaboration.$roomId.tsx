@@ -17,17 +17,27 @@ import {
 } from "@tanstack/react-router";
 import CodingEditor from "../../components/Collaboration/CodingEditor";
 import { UserRoomCreatedData } from "@common/shared-types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "../../api";
 import { notifications } from "@mantine/notifications";
 import { AxiosError } from "axios";
 import { stringToHexColor } from "../../components/Questions/QuestionsTable";
+import { useCopilotChat, useCopilotReadable } from "@copilotkit/react-core";
+import { CopilotPopup } from "@copilotkit/react-ui";
+import { useState } from "react";
+import { leetCodePrompt } from "../../components/Copilot/prompts";
+import "@copilotkit/react-ui/styles.css";
+import "./collaboration.css";
 
 export const Route = createFileRoute("/_authenticated/collaboration/$roomId")({
   component: Collaboration,
 });
 
 export function Collaboration() {
+  const [code, setCode] = useState<string>("");
+
+  useCopilotChat({ initialMessages: [] });
+
   // Get room data from router state
   const locationState = useRouterState({
     select: (state) => state.location.state,
@@ -87,8 +97,31 @@ export function Collaboration() {
     initialData: locationState.userRoomData as UserRoomCreatedData,
   });
 
+  const onCodeChange = (newCode: string) => {
+    setCode(newCode);
+  };
+
+  useCopilotReadable({
+    description: "Question given",
+    value: userRoomData?.question.title + userRoomData?.question.description,
+  });
+
+  useCopilotReadable({
+    description: "Code written by user",
+    value: code,
+  });
+
   return (
     <Stack align="center">
+      <CopilotPopup
+        labels={{
+          title: "Peerprep Sensei",
+          initial: "Hi, PeerPrep Sensei here. Need any help?",
+        }}
+        instructions={leetCodePrompt}
+        clickOutsideToClose={false}
+      />
+
       <Title ta="center">Collaboration</Title>
       {isLoading ? (
         <Paper shadow="md" withBorder p="lg">
@@ -105,7 +138,11 @@ export function Collaboration() {
         <Grid w="100%">
           <Grid.Col span={{ base: 12, xs: 8 }}>
             <Paper shadow="md" p="lg" h="80vh" withBorder>
-              <CodingEditor isOpen={userRoomData.isOpen} roomId={roomId} />
+              <CodingEditor
+                isOpen={userRoomData.isOpen}
+                roomId={roomId}
+                onCodeChange={onCodeChange}
+              />
             </Paper>
           </Grid.Col>
 

@@ -27,6 +27,7 @@ import { api } from "../api";
 import { accessTokenStorage } from "../utils/accessTokenStorage";
 import { userStorage } from "../utils/userStorage";
 import logo from "../assets/logo.svg";
+import { CopilotKit } from "@copilotkit/react-core";
 
 export const Route = createFileRoute("/_authenticated")({
   component: Auth,
@@ -117,10 +118,17 @@ function Auth() {
           </Stack>
         </AppShell.Section>
       </AppShell.Navbar>
-
-      <AppShell.Main>
-        <Outlet />
-      </AppShell.Main>
+      <CopilotKit
+        runtimeUrl={import.meta.env.VITE_AI_SERVICE_API_URL}
+        showDevConsole={false}
+        headers={{
+          Authorization: `Bearer ${accessTokenStorage.getAccessToken()}`,
+        }}
+      >
+        <AppShell.Main>
+          <Outlet />
+        </AppShell.Main>
+      </CopilotKit>
     </AppShell>
   );
 }
