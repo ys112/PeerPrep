@@ -1,7 +1,7 @@
 // References: https://github.com/yjs/y-codemirror.next, https://liveblocks.io/docs/get-started/yjs-codemirror-react
 import * as Y from "yjs";
 // @ts-ignore
-import { yCollab } from "y-codemirror.next";
+import { yCollab, Awareness } from "y-codemirror.next";
 import { EditorView, basicSetup } from "codemirror";
 import { keymap, lineNumbers } from "@codemirror/view";
 import { defaultKeymap } from "@codemirror/commands";
@@ -35,14 +35,21 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
     "C++": cpp(),
   };
   const languages: string[] = ["Javascript", "Java", "Python", "C++"];
-  const [language, setLanguage] = useState<string>(languages[0]!);
-  const [currView, setCurrView] = useState<EditorView>();
+  const [language, setLanguage] = useState<string>("Javascript");
+  const languageRef = useRef(language);
   const viewRef = useRef<EditorView | null>(null);
+  const providerRef = useRef<HocuspocusProvider | null>(null);
   const languageCompartment = new Compartment();
 
   const onSetLanguage = (curr_language: string) => {
-    setLanguage(curr_language);
+    if (providerRef.current) {
+      providerRef.current.setAwarenessField("language", curr_language);
+    }
+  };
 
+  const updateLanguage = (curr_language: string) => {
+    setLanguage(curr_language);
+    languageRef.current = curr_language;
     if (viewRef.current) {
       viewRef.current.dispatch({
         effects: languageCompartment.reconfigure(language_map[curr_language]!),
@@ -75,6 +82,8 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
       },
     });
 
+    providerRef.current = provider;
+
     const yText = ydoc.getText("codemirror");
     const undoManager = new Y.UndoManager(yText);
 
@@ -82,6 +91,28 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
       name: userStorage.getUser()?.username,
       color: "#30bced",
       colorLight: "#30bced33",
+    });
+
+    providerRef.current.setAwarenessField("language", "Javascript");
+
+    // updatedLanguages reflect the change for both the current client
+    // and the other client. We need to distinguish which side the change
+    // is from and update the language correspondingly.
+    provider.awareness?.on("change", (changes: Awareness.Change) => {
+      const updatedLanguages = provider.awareness!.getStates();
+      for (const [clientID, state] of updatedLanguages.entries()) {
+        if (clientID === provider.awareness!.clientID) {
+          if (state.language && state.language !== languageRef.current) {
+            updateLanguage(state.language);
+            return;
+          }
+        } else {
+          if (state.language && state.language !== languageRef.current) {
+            updateLanguage(state.language);
+            return;
+          }
+        }
+      }
     });
 
     const fixedHeightEditor = EditorView.theme({

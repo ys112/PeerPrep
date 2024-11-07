@@ -1,5 +1,4 @@
 import { Button, Menu, Text } from "@mantine/core";
-import { useState } from "react";
 
 interface Props {
   languages: string[];
