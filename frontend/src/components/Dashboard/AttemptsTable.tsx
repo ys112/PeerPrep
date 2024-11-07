@@ -17,7 +17,6 @@ export function AttemptsTable(props: Props) {
     if (attempts === null || questions === null) return null;
 
     return {
-      head: ['Question Title'],
       body: attemptsToRows(),
     };
 
