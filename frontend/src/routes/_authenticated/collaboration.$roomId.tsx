@@ -8,6 +8,7 @@ import {
   Badge,
   Group,
   Button,
+  Menu,
 } from "@mantine/core";
 import { IconX, IconLoader } from "@tabler/icons-react";
 import {
@@ -16,12 +17,14 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import CodingEditor from "../../components/Collaboration/CodingEditor";
+import LanguageSelection from "../../components/Collaboration/LanguageSelection";
 import { UserRoomCreatedData } from "@common/shared-types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../api";
 import { notifications } from "@mantine/notifications";
 import { AxiosError } from "axios";
 import { stringToHexColor } from "../../components/Questions/QuestionsTable";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/collaboration/$roomId")({
   component: Collaboration,
@@ -104,9 +107,7 @@ export function Collaboration() {
       ) : isSuccess ? (
         <Grid w="100%">
           <Grid.Col span={{ base: 12, xs: 8 }}>
-            <Paper shadow="md" p="lg" h="80vh" withBorder>
-              <CodingEditor isOpen={userRoomData.isOpen} roomId={roomId} />
-            </Paper>
+            <CodingEditor isOpen={userRoomData.isOpen} roomId={roomId} />
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, xs: 4 }}>
