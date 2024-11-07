@@ -1,9 +1,12 @@
-import { User } from '@common/shared-types/dist';
+import { ExtractedUser } from '@common/shared-types/dist';
 import { Divider, Group, Loader, Paper, Stack, Title } from "@mantine/core";
+import { roomClient } from '../../api/room';
 import { userStorage } from "../../utils/userStorage";
 
 export function Dashboard() {
-  let user: User = userStorage.getUser()!;
+  let user: ExtractedUser = userStorage.getUser()!
+
+	roomClient.getAttempts(user.id).then(console.log)
 
   return <Stack>
 		<Title order={1} ta='center' >Welcome, {user.username}</Title>
