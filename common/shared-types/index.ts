@@ -130,3 +130,10 @@ export enum MessageType {
   MATCH_REQUEST_FAILED = "MATCH_REQUEST_FAILED",
   AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED",
 }
+
+// [Attempt]
+export const attemptSchema = z.object({
+  questionId: z.string().min(1),
+});
+
+export type Attempt = z.infer<typeof attemptSchema>;
