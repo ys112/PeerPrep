@@ -28,4 +28,5 @@ async function getAttempts(userId: string): Promise<Attempt[]> {
 
 export const roomClient = {
   getRoom,
+  getAttempts,
 };
