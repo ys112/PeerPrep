@@ -1,35 +1,58 @@
-import { Attempt, ExtractedUser } from '@common/shared-types';
+import { Attempt, ExtractedUser, Question } from '@common/shared-types';
 import { Loader, Table, TableData } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import { questionClient } from '../../api/questions';
 import { roomClient } from '../../api/room';
 
 interface Props {
   user: ExtractedUser;
 }
 
-function attemptsToRows(attempts: Attempt[] | null) {
-  if (attempts === null) return []
-
-  return attempts.map(attempt => [attempt.questionId])
-}
-
 export function AttemptsTable(props: Props) {
   let [attempts, setAttempts] = useState<Attempt[] | null>(null);
+  let [questions, setQuestions] = useState<Question[] | null>(null);
 
-  const tableData: TableData = {
-    head: ['Question'],
-    body: attemptsToRows(attempts),
-  };
+  let tableData: TableData | null = makeTableData()
+  function makeTableData(): TableData | null {
+    if (attempts === null || questions === null) return null;
+
+    return {
+      head: ['Question Title'],
+      body: attemptsToRows(),
+    };
+
+    function attemptsToRows(): string[][] {
+      function questionIdToTitle(id: string) {
+        let matchingQuestions = questions!.filter((question) => question.id === id);
+
+        if (matchingQuestions.length < 1) return "Unknown Question"
+
+        return matchingQuestions[0]!.title;
+      }
+
+      return attempts!.map(attempt => {
+        return [questionIdToTitle(attempt.questionId)]
+      })
+    }
+  }
+
 
   useEffect(() => {
-    roomClient.getAttempts(props.user.id).then((loadedAttempts) => {
-      setAttempts(loadedAttempts)
-      console.log(loadedAttempts)
-    })
+    roomClient.getAttempts(props.user.id)
+      .then((loadedAttempts: Attempt[]) => {
+        setAttempts(loadedAttempts)
+        console.log(loadedAttempts)
+      })
+
+    questionClient.getQuestions()
+      .then((questions: Question[]) => {
+        setQuestions(questions)
+        console.log(questions)
+      })
   }, [props.user])
 
   // [UI]
-  if (attempts === null) {
+  if (tableData === null) {
     return <Loader mx='auto' color='lime' />;
   }
 
