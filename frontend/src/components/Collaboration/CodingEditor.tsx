@@ -17,9 +17,10 @@ import { userStorage } from "../../utils/userStorage";
 interface Props {
   roomId: string;
   isOpen: boolean;
+  onCodeChange: (code: string) => void;
 }
 
-export default function CodingEditor({ roomId, isOpen }: Props) {
+export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
   const elementRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -49,6 +50,10 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
 
     const yText = ydoc.getText("codemirror");
     const undoManager = new Y.UndoManager(yText);
+
+    yText.observe(() => {
+      onCodeChange(yText.toString());
+    });
 
     provider.setAwarenessField("user", {
       name: userStorage.getUser()?.username,

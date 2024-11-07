@@ -20,6 +20,7 @@ Unless otherwise specified, commands should be run in the service root.
 - `VITE_MATCH_SERVICE_API_URL`: The URL to the matching service websocket.
 - `VITE_COLLABORATION_SERVICE_WS_URL`: The URL to the collaboration service websocket.
 - `VITE_COLLABORATION_SERVICE_API_URL`: The URL to the collaboration service.
+- `VITE_AI_SERVICE_API_URL`: The URL to the AI copilot service.
 
 For more details on how `.env` works in Vite:
 <https://vitejs.dev/guide/env-and-mode>
