@@ -4,8 +4,7 @@ import * as Y from "yjs";
 import { yCollab } from "y-codemirror.next";
 
 import { EditorView, basicSetup } from "codemirror";
-import { keymap, lineNumbers } from "@codemirror/view";
-import { defaultKeymap } from "@codemirror/commands";
+import { autocompletion } from "@codemirror/autocomplete";
 import { EditorState } from "@codemirror/state";
 import { javascript } from "@codemirror/lang-javascript";
 import { useEffect, useRef } from "react";
@@ -68,12 +67,11 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
     const state = EditorState.create({
       doc: yText.toString(),
       extensions: [
-        //TODO add more languages and do basic setup
-        [keymap.of(defaultKeymap)],
-        lineNumbers(),
+        basicSetup,
+        autocompletion(),
         javascript(),
         fixedHeightEditor,
-        EditorState.readOnly.of(!isOpen), // Disable editing when room closed
+        EditorState.readOnly.of(!isOpen),
         yCollab(yText, provider.awareness, { undoManager }),
       ],
     });
