@@ -82,7 +82,7 @@ router.post('/', requireApiKey, async (req: Request, res: Response) => {
 })
 
 // GET history for user with specified ID
-router.get('/hist/:userId', async (req: Request, res: Response) => {
+router.get('/hist/:userId', requireApiKey, async (req: Request, res: Response) => {
   let userId: string = req.params.userId
 
   let attempts: Attempt[] = await roomController.getAttempts(userId);
