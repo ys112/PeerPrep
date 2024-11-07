@@ -39,15 +39,16 @@ export function AttemptsTable(props: Props) {
 
   useEffect(() => {
     roomClient.getAttempts(props.user.id)
-      .then((loadedAttempts: Attempt[]) => {
-        setAttempts(loadedAttempts)
-        console.log(loadedAttempts)
+      .then((fetchedAttempts: Attempt[]) => {
+        // Reverse sort, docs are presumably appended
+        setAttempts(fetchedAttempts.reverse())
+        console.log(fetchedAttempts)
       })
 
     questionClient.getQuestions()
-      .then((questions: Question[]) => {
-        setQuestions(questions)
-        console.log(questions)
+      .then((fetchedQuestions: Question[]) => {
+        setQuestions(fetchedQuestions)
+        console.log(fetchedQuestions)
       })
   }, [props.user])
 
