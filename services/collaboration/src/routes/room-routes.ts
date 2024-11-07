@@ -1,12 +1,13 @@
 import {
+  Attempt,
   ExtractedUser,
   userMatchDoneDataSchema,
-  userRoomCreatedDataSchema,
+  userRoomCreatedDataSchema
 } from '@common/shared-types'
 import { getApiKey } from '@common/utils'
 import { NextFunction, Request, Response, Router } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { createRoom, getRoom } from '../controller/room-controller'
+import roomController, { createRoom, getRoom } from '../controller/room-controller'
 import { verifyUser } from '../utils/verifyToken'
 
 const router = Router()
@@ -78,6 +79,16 @@ router.post('/', requireApiKey, async (req: Request, res: Response) => {
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json("Error when creating room:\n' + err")
   }
+})
+
+// GET history for user with specified ID
+router.get('/hist/:userId', requireApiKey, async (req: Request, res: Response) => {
+  let userId: string = req.params.userId
+
+  let attempts: Attempt[] = await roomController.getAttempts(userId);
+
+  res.status(StatusCodes.OK)
+  res.json(attempts)
 })
 
 export default router
