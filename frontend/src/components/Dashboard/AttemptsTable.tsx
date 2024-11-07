@@ -1,5 +1,5 @@
 import { Attempt, ExtractedUser } from '@common/shared-types';
-import { Loader, Text } from '@mantine/core';
+import { Loader, Table, TableData } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { roomClient } from '../../api/room';
 
@@ -7,8 +7,19 @@ interface Props {
   user: ExtractedUser;
 }
 
+function attemptsToRows(attempts: Attempt[] | null) {
+  if (attempts === null) return []
+
+  return attempts.map(attempt => [attempt.questionId])
+}
+
 export function AttemptsTable(props: Props) {
   let [attempts, setAttempts] = useState<Attempt[] | null>(null);
+
+  const tableData: TableData = {
+    head: ['Question'],
+    body: attemptsToRows(attempts),
+  };
 
   useEffect(() => {
     roomClient.getAttempts(props.user.id).then((loadedAttempts) => {
@@ -22,5 +33,5 @@ export function AttemptsTable(props: Props) {
     return <Loader mx='auto' color='lime' />;
   }
 
-  return <Text>{ JSON.stringify(attempts) }</Text>
+  return <Table data={tableData} />;
 }
