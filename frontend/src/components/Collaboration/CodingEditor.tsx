@@ -96,7 +96,7 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
       colorLight: "#30bced33",
     });
 
-    providerRef.current.setAwarenessField("language", "Javascript");
+    // providerRef.current.setAwarenessField("language", "Javascript");
 
     // updatedLanguages reflect the change for both the current client
     // and the other client. We need to distinguish which side the change
