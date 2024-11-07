@@ -35,20 +35,12 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
   };
   const languages: string[] = ["Javascript", "Java", "Python", "C++"];
   const [language, setLanguage] = useState<string>("Javascript");
-  const languageRef = useRef(language);
-  const viewRef = useRef<EditorView | null>(null);
-  const providerRef = useRef<HocuspocusProvider | null>(null);
   const languageCompartment = new Compartment();
+  const viewRef = useRef<EditorView | null>(null);
 
   const onSetLanguage = (curr_language: string) => {
-    if (providerRef.current) {
-      providerRef.current.setAwarenessField("language", curr_language);
-    }
-  };
-
-  const updateLanguage = (curr_language: string) => {
     setLanguage(curr_language);
-    languageRef.current = curr_language;
+
     if (viewRef.current) {
       viewRef.current.dispatch({
         effects: languageCompartment.reconfigure(language_map[curr_language]!),
@@ -81,8 +73,6 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
       },
     });
 
-    providerRef.current = provider;
-
     const yText = ydoc.getText("codemirror");
     const undoManager = new Y.UndoManager(yText);
 
@@ -94,28 +84,6 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
       name: userStorage.getUser()?.username,
       color: "#30bced",
       colorLight: "#30bced33",
-    });
-
-    // providerRef.current.setAwarenessField("language", "Javascript");
-
-    // updatedLanguages reflect the change for both the current client
-    // and the other client. We need to distinguish which side the change
-    // is from and update the language correspondingly.
-    provider.awareness?.on("change", (changes: Awareness.Change) => {
-      const updatedLanguages = provider.awareness!.getStates();
-      for (const [clientID, state] of updatedLanguages.entries()) {
-        if (clientID === provider.awareness!.clientID) {
-          if (state.language && state.language !== languageRef.current) {
-            updateLanguage(state.language);
-            return;
-          }
-        } else {
-          if (state.language && state.language !== languageRef.current) {
-            updateLanguage(state.language);
-            return;
-          }
-        }
-      }
     });
 
     const fixedHeightEditor = EditorView.theme({
