@@ -14,11 +14,11 @@
     "dev:matching-service": "pnpm -F @services/matching-service dev",
     "dev:collaboration-service": "pnpm -F @services/collaboration-service dev",
     "dev:chat-service": "pnpm -F @services/chat-service dev",
-    "dev": "pnpm run --stream /dev:.*/",
+    "dev": "pnpm run --stream --workspace-concurrency=Infinity /dev:.*/",
     "build:frontend": "pnpm -F frontend build",
-    "build": "pnpm run --stream /build:.*/",
     "build:services": "pnpm run -F @services/* build",
-    "build:common": "pnpm run -F @common/* build"
+    "build:common": "pnpm run -F @common/* build",
+    "build": "pnpm run --stream --workspace-concurrency=Infinity /build:.*/"
   },
   "keywords": [],
   "author": "",
