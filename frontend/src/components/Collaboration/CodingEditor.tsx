@@ -42,6 +42,12 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
 
   const onSetLanguage = (curr_language: string) => {
     setLanguage(curr_language);
+
+    if (viewRef.current) {
+      viewRef.current.dispatch({
+        effects: languageCompartment.reconfigure(language_map[curr_language]!),
+      });
+    }
   };
 
   useEffect(() => {
@@ -109,15 +115,6 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
       view?.destroy();
     };
   }, [roomId, isOpen]);
-
-  useEffect(() => {
-    if (viewRef.current) {
-      console.log(language_map[language]);
-      viewRef.current.dispatch({
-        effects: languageCompartment.reconfigure(language_map[language]!),
-      });
-    }
-  }, [language]);
 
   return (
     <Paper shadow="md" p="lg" h="80vh" withBorder>
