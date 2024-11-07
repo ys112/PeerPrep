@@ -3,8 +3,6 @@ import * as Y from "yjs";
 // @ts-ignore
 import { yCollab, Awareness } from "y-codemirror.next";
 import { EditorView, basicSetup } from "codemirror";
-import { keymap, lineNumbers } from "@codemirror/view";
-import { defaultKeymap } from "@codemirror/commands";
 import { EditorState, Compartment } from "@codemirror/state";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
@@ -24,9 +22,10 @@ import { LanguageSupport } from "@codemirror/language";
 interface Props {
   roomId: string;
   isOpen: boolean;
+  onCodeChange: (code: string) => void;
 }
 
-export default function CodingEditor({ roomId, isOpen }: Props) {
+export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
   const elementRef = useRef<HTMLDivElement | null>(null);
   const language_map: Record<string, LanguageSupport> = {
     Javascript: javascript(),
@@ -86,6 +85,10 @@ export default function CodingEditor({ roomId, isOpen }: Props) {
 
     const yText = ydoc.getText("codemirror");
     const undoManager = new Y.UndoManager(yText);
+
+    yText.observe(() => {
+      onCodeChange(yText.toString());
+    });
 
     provider.setAwarenessField("user", {
       name: userStorage.getUser()?.username,

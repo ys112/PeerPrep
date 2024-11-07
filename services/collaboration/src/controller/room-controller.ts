@@ -1,10 +1,12 @@
 import {
+  Attempt,
+  ExtractedUser,
   UserMatchDoneData,
   UserRoomCreatedData,
-  ExtractedUser,
 } from '@common/shared-types'
-import { db } from '../db/clients'
 import { getQuestion, pickQuestion } from '../api/question'
+import { db } from '../db/clients'
+import model from '../db/model'
 
 /**
  * Create a room based on the user match done data. Called by matching service when match is done.
@@ -138,3 +140,12 @@ export async function closeRoom(roomId: string) {
   }
   console.log('Room closed successfully')
 }
+
+async function getAttempts(userId: string): Promise<Attempt[]> {
+  return model.getAttempts(userId);
+}
+
+let roomController = {
+  getAttempts
+};
+export default roomController;

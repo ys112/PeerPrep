@@ -1,27 +1,29 @@
+import { UserRoomCreatedData } from "@common/shared-types";
+import { useCopilotChat, useCopilotReadable } from "@copilotkit/react-core";
+import { CopilotPopup } from "@copilotkit/react-ui";
+import "@copilotkit/react-ui/styles.css";
 import {
+  Avatar,
+  Badge,
+  Button,
+  Grid,
+  Group,
   Paper,
   Stack,
   Text,
   Title,
-  Grid,
-  Avatar,
-  Badge,
-  Group,
-  Button,
 } from "@mantine/core";
-import { IconX, IconLoader } from "@tabler/icons-react";
-
+import { notifications } from "@mantine/notifications";
+import { IconBrandOpenai, IconLoader, IconX } from "@tabler/icons-react";
 import {
   createFileRoute,
-  useRouterState,
   useNavigate,
   useParams,
+  useRouterState,
 } from "@tanstack/react-router";
 import CodingEditor from "../../components/Collaboration/CodingEditor";
-import { UserRoomCreatedData } from "@common/shared-types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../api";
-import { notifications } from "@mantine/notifications";
 import { AxiosError } from "axios";
 import { stringToHexColor } from "../../components/Questions/QuestionsTable";
 import { useEffect, useState } from "react";
@@ -29,12 +31,18 @@ import { initializeChatSocket } from "../../socket/chat";
 import { Socket } from "socket.io-client";
 import { userStorage } from "../../utils/userStorage";
 import Chat from "../../components/Collaboration/Chat";
+import { leetCodePrompt } from "../../components/Copilot/prompts";
+import "./collaboration.css";
 
 export const Route = createFileRoute("/_authenticated/collaboration/$roomId")({
   component: Collaboration,
 });
 
 export function Collaboration() {
+  const [code, setCode] = useState<string>("");
+
+  useCopilotChat({ initialMessages: [] });
+
   // Get room data from router state
   const locationState = useRouterState({
     select: (state) => state.location.state,
@@ -88,6 +96,20 @@ export function Collaboration() {
     initialData: locationState.userRoomData as UserRoomCreatedData,
   });
 
+  const onCodeChange = (newCode: string) => {
+    setCode(newCode);
+  };
+
+  useCopilotReadable({
+    description: "Question given",
+    value: userRoomData?.question.title + userRoomData?.question.description,
+  });
+
+  useCopilotReadable({
+    description: "Code written by user",
+    value: code,
+  });
+
   const exitRoom = () => {
     navigate({
       to: "/matching",
@@ -96,6 +118,16 @@ export function Collaboration() {
 
   return (
     <Stack align="center" h="80vh">
+      <CopilotPopup
+        labels={{
+          title: "Peerprep Sensei",
+          initial: "Hi, PeerPrep Sensei here. Need any help?",
+        }}
+        instructions={leetCodePrompt}
+        clickOutsideToClose={false}
+        icons={{ openIcon: <IconBrandOpenai /> }}
+      />
+
       <Title ta="center">Collaboration</Title>
       {isLoading ? (
         <Paper shadow="md" withBorder p="lg">
@@ -111,7 +143,11 @@ export function Collaboration() {
       ) : isSuccess ? (
         <Grid w="100%">
           <Grid.Col span={{ base: 12, xs: 8 }}>
-            <CodingEditor isOpen={userRoomData.isOpen} roomId={roomId} />
+            <CodingEditor
+              isOpen={userRoomData.isOpen}
+              roomId={roomId}
+              onCodeChange={onCodeChange}
+            />
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, xs: 4 }}>
