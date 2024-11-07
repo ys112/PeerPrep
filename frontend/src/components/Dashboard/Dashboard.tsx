@@ -1,12 +1,10 @@
 import { ExtractedUser } from '@common/shared-types/dist';
-import { Divider, Group, Loader, Paper, Stack, Title } from "@mantine/core";
-import { roomClient } from '../../api/room';
+import { Divider, Group, Paper, Stack, Title } from "@mantine/core";
 import { userStorage } from "../../utils/userStorage";
+import { AttemptsTable } from './AttemptsTable';
 
 export function Dashboard() {
   let user: ExtractedUser = userStorage.getUser()!
-
-	roomClient.getAttempts(user.id).then(console.log)
 
   return <Stack>
 		<Title order={1} ta='center' >Welcome, {user.username}</Title>
@@ -14,8 +12,8 @@ export function Dashboard() {
 			<Paper w={{ base: '100%', lg: '50%' }} mx='auto' p='md' withBorder radius='md' shadow='md'>
 				<Stack>
 					<Title order={2}>History</Title>
-					<Divider></Divider>
-					<Loader mx='auto' color='lime' />
+					<Divider />
+					<AttemptsTable user={user} />
 				</Stack>
 			</Paper>
 		</Group>
