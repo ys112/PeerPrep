@@ -1,32 +1,33 @@
+import { UserRoomCreatedData } from "@common/shared-types";
+import { useCopilotChat, useCopilotReadable } from "@copilotkit/react-core";
+import { CopilotPopup } from "@copilotkit/react-ui";
+import "@copilotkit/react-ui/styles.css";
 import {
+  Avatar,
+  Badge,
+  Button,
+  Grid,
+  Group,
   Paper,
   Stack,
   Text,
   Title,
-  Grid,
-  Avatar,
-  Badge,
-  Group,
-  Button,
 } from "@mantine/core";
-import { IconX, IconLoader } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { IconBrandOpenai, IconLoader, IconX } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
-  useRouterState,
   useNavigate,
+  useRouterState,
 } from "@tanstack/react-router";
-import CodingEditor from "../../components/Collaboration/CodingEditor";
-import { UserRoomCreatedData } from "@common/shared-types";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "../../api";
-import { notifications } from "@mantine/notifications";
 import { AxiosError } from "axios";
-import { stringToHexColor } from "../../components/Questions/QuestionsTable";
-import { useCopilotChat, useCopilotReadable } from "@copilotkit/react-core";
-import { CopilotPopup } from "@copilotkit/react-ui";
 import { useState } from "react";
+import { api } from "../../api";
+import Chat from "../../components/Collaboration/Chat";
+import CodingEditor from "../../components/Collaboration/CodingEditor";
 import { leetCodePrompt } from "../../components/Copilot/prompts";
-import "@copilotkit/react-ui/styles.css";
+import { stringToHexColor } from "../../components/Questions/QuestionsTable";
 import "./collaboration.css";
 
 export const Route = createFileRoute("/_authenticated/collaboration/$roomId")({
@@ -44,12 +45,6 @@ export function Collaboration() {
   });
   const { roomId } = Route.useParams();
   const navigate = useNavigate();
-
-  const exitRoom = () => {
-    navigate({
-      to: "/matching",
-    });
-  };
 
   const {
     data: userRoomData,
@@ -111,8 +106,14 @@ export function Collaboration() {
     value: code,
   });
 
+  const exitRoom = () => {
+    navigate({
+      to: "/matching",
+    });
+  };
+
   return (
-    <Stack align="center">
+    <Stack align="center" h="80vh">
       <CopilotPopup
         labels={{
           title: "Peerprep Sensei",
@@ -120,6 +121,7 @@ export function Collaboration() {
         }}
         instructions={leetCodePrompt}
         clickOutsideToClose={false}
+        icons={{ openIcon: <IconBrandOpenai /> }}
       />
 
       <Title ta="center">Collaboration</Title>
@@ -147,8 +149,8 @@ export function Collaboration() {
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, xs: 4 }}>
-            <Stack h="80vh" justify="space-between">
-              <Paper w="auto" shadow="md" p="lg" h="75vh" withBorder>
+            <Stack>
+              <Paper w="auto" shadow="md" p="lg" withBorder>
                 <Stack gap={10}>
                   <Title c="black" order={3}>
                     {userRoomData.question.title}
@@ -168,7 +170,7 @@ export function Collaboration() {
                   <Text c="black">{userRoomData.question.description}</Text>
                 </Stack>
               </Paper>
-
+              <Chat w="auto" shadow="md" p="lg" withBorder />
               <Button color="black" w="10vw" onClick={exitRoom}>
                 Exit Room
               </Button>

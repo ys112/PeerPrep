@@ -43,7 +43,7 @@ services:
   redis:
     image: redis:alpine
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
       interval: 1s
       timeout: 3s
       retries: 5
@@ -98,6 +98,20 @@ services:
     networks:
       - demo-network
 
+  chat-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: chat-service
+    environment:
+      PORT: 3005
+    ports:
+      - 3005:3005
+    expose:
+      - 3005
+    networks:
+      - demo-network
+
   ai-service:
     build:
       context: .
@@ -113,8 +127,6 @@ services:
       - 3007:3007
     expose:
       - 3007
-    networks:
-      - demo-network
 
   frontend:
     build:
@@ -127,6 +139,7 @@ services:
         VITE_MATCH_SERVICE_API_URL: ws://localhost:3003
         VITE_COLLABORATION_SERVICE_WS_URL: ws://localhost:3004
         VITE_COLLABORATION_SERVICE_API_URL: http://localhost:3004
+        VITE_CHAT_SERVICE_WS_URL: ws://localhost:3005
         VITE_AI_SERVICE_API_URL: http://localhost:3007
     ports:
       - 3000:3000
