@@ -1,4 +1,5 @@
-import { UserRoomCreatedData } from "@common/shared-types";
+import { Attempt, UserRoomCreatedData } from "@common/shared-types";
+import { AxiosResponse } from 'axios';
 import { createAuthAxiosInstance } from "./axios";
 
 const roomAxios = createAuthAxiosInstance(
@@ -17,6 +18,13 @@ const getRoom = async (roomId: string): Promise<UserRoomCreatedData> => {
     throw error;
   }
 };
+
+async function getAttempts(userId: string): Promise<Attempt[]> {
+  // Response contains data, status etc
+  let response: AxiosResponse = await roomAxios.get(`${ROOM_API_URL}/hist/${userId}`);
+  let json: unknown = response.data as unknown;
+  return json as Attempt[];
+}
 
 export const roomClient = {
   getRoom,
