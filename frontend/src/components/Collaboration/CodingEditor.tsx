@@ -1,23 +1,21 @@
 // References: https://github.com/yjs/y-codemirror.next, https://liveblocks.io/docs/get-started/yjs-codemirror-react
-import * as Y from "yjs";
-// @ts-ignore
-import { yCollab, Awareness } from "y-codemirror.next";
-import { EditorView, basicSetup } from "codemirror";
-import { EditorState, Compartment } from "@codemirror/state";
 import { autocompletion } from "@codemirror/autocomplete";
+import { cpp } from "@codemirror/lang-cpp";
+import { java } from "@codemirror/lang-java";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { java } from "@codemirror/lang-java";
-import { cpp } from "@codemirror/lang-cpp";
-import { Paper, Stack } from "@mantine/core";
-import { useEffect, useRef } from "react";
+import { LanguageSupport } from "@codemirror/language";
+import { Compartment, EditorState } from "@codemirror/state";
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { accessTokenStorage } from "../../utils/accessTokenStorage";
+import { Paper, Stack } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { EditorView, basicSetup } from "codemirror";
+import { useEffect, useRef, useState } from "react";
+import { yCollab } from "y-codemirror.next";
+import * as Y from "yjs";
+import { accessTokenStorage } from "../../utils/accessTokenStorage";
 import { userStorage } from "../../utils/userStorage";
 import LanguageSelection from "./LanguageSelection";
-import { useState } from "react";
-import { LanguageSupport } from "@codemirror/language";
 
 interface Props {
   roomId: string;
