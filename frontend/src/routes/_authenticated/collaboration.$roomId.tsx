@@ -15,23 +15,19 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconBrandOpenai, IconLoader, IconX } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
   useNavigate,
-  useParams,
-  useRouterState,
+  useRouterState
 } from "@tanstack/react-router";
-import CodingEditor from "../../components/Collaboration/CodingEditor";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../api";
 import { AxiosError } from "axios";
-import { stringToHexColor } from "../../components/Questions/QuestionsTable";
-import { useEffect, useState } from "react";
-import { initializeChatSocket } from "../../socket/chat";
-import { Socket } from "socket.io-client";
-import { userStorage } from "../../utils/userStorage";
+import { useState } from "react";
+import { api } from "../../api";
 import Chat from "../../components/Collaboration/Chat";
+import CodingEditor from "../../components/Collaboration/CodingEditor";
 import { leetCodePrompt } from "../../components/Copilot/prompts";
+import { stringToHexColor } from "../../components/Questions/QuestionsTable";
 import "./collaboration.css";
 
 export const Route = createFileRoute("/_authenticated/collaboration/$roomId")({
