@@ -1,5 +1,5 @@
 import { Attempt, ExtractedUser, Question } from '@common/shared-types';
-import { Loader, Table, TableData } from '@mantine/core';
+import { Loader, Table, TableData, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { questionClient } from '../../api/questions';
 import { roomClient } from '../../api/room';
@@ -35,7 +35,6 @@ export function AttemptsTable(props: Props) {
     }
   }
 
-
   useEffect(() => {
     roomClient.getAttempts(props.user.id)
       .then((fetchedAttempts: Attempt[]) => {
@@ -54,6 +53,10 @@ export function AttemptsTable(props: Props) {
   // [UI]
   if (tableData === null) {
     return <Loader mx='auto' color='lime' />;
+  }
+
+  if (tableData.body!.length <= 0) {
+    return <Text>You have not collaborated with others yet.</Text>
   }
 
   return <Table data={tableData} />;
