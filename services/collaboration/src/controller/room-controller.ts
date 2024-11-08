@@ -26,17 +26,19 @@ export async function createRoom(
   }
 
   // Create a room
+  //TODO the state managed in Firebase is not typed
   const response = await db.add({
     userMatchDoneData,
     questionId: question.id,
     isOpen: true,
+    createdAt: Date.now()
   })
   if (!response) {
     throw new Error('Error creating room')
   }
 
   // Construct the room data with the question and users matched
-  const newRoomData = {
+  const newRoomData: UserRoomCreatedData = {
     id: response.id,
     question: question,
     userMatchDoneData,
