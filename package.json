@@ -13,6 +13,7 @@
     "dev:user-service": "pnpm -F @services/user-service dev",
     "dev:matching-service": "pnpm -F @services/matching-service dev",
     "dev:collaboration-service": "pnpm -F @services/collaboration-service dev",
+    "dev:ai-service": "pnpm -F @services/ai-service dev",
     "dev:chat-service": "pnpm -F @services/chat-service dev",
     "dev": "pnpm run --stream --workspace-concurrency=Infinity /dev:.*/",
     "build:frontend": "pnpm -F frontend build",

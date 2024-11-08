@@ -112,6 +112,22 @@ services:
     networks:
       - demo-network
 
+  ai-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ai-service
+    environment:
+      USER_SERVICE_URL: http://user-service:3002
+      GOOGLE_AI_API_KEY_PATH: /run/secrets/google_ai_api_key
+      PORT: 3007
+    secrets:
+      - google_ai_api_key
+    ports:
+      - 3007:3007
+    expose:
+      - 3007
+
   frontend:
     build:
       context: .
@@ -124,6 +140,7 @@ services:
         VITE_COLLABORATION_SERVICE_WS_URL: ws://localhost:3004
         VITE_COLLABORATION_SERVICE_API_URL: http://localhost:3004
         VITE_CHAT_SERVICE_WS_URL: ws://localhost:3005
+        VITE_AI_SERVICE_API_URL: http://localhost:3007
     ports:
       - 3000:3000
     expose:
@@ -146,3 +163,5 @@ secrets:
     file: ./jwt_secret.txt
   service_api_key:
     file: ./service_api_key.txt
+  google_ai_api_key:
+    file: ./google_ai_api_key.txt

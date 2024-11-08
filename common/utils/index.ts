@@ -33,3 +33,4 @@ function readFromEnvPath(variableName: string): string {
 
 export const getApiKey = () => readFromEnvPath("SERVICE_API_KEY_PATH");
 export const getJwtSecret = () => readFromEnvPath("JWT_SECRET_PATH");
+export const getGoogleAIApiKey = () => readFromEnvPath("GOOGLE_AI_API_KEY_PATH");
