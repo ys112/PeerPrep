@@ -9,7 +9,7 @@ export function Dashboard() {
   return <Stack>
 		<Title order={1} ta='center' >Welcome, {user.username}</Title>
 		<Group>
-			<Paper w={{ base: '100%', lg: '50%' }} mx='auto' p='md' withBorder radius='md' shadow='md'>
+			<Paper w={{ base: '100%', lg: '75%', xl: '50%' }} mx='auto' p='md' withBorder radius='md' shadow='md'>
 				<Stack>
 					<Title order={2}>Collab History</Title>
 					<AttemptsTable user={user} />
