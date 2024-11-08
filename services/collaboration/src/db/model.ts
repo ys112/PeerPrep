@@ -15,7 +15,8 @@ function docSnapshotToAttempt(docSnapshot: DocumentSnapshot): Attempt {
   let doc: any = docSnapshot.data();
 
 	return {
-    questionId: doc.questionId
+    questionId: doc.questionId,
+    createdAt: doc.createdAt,
   };
 }
 

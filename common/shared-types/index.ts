@@ -134,6 +134,7 @@ export enum MessageType {
 // [Attempt]
 export const attemptSchema = z.object({
   questionId: z.string().min(1),
+  createdAt: z.number(),
 });
 
 export type Attempt = z.infer<typeof attemptSchema>;
