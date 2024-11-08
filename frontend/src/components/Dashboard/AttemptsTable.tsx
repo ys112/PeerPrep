@@ -33,18 +33,25 @@ function makeTableRows(attempts: Attempt[] | null, questions: Question[] | null)
     let prettyTimestamp: string = epochToTimestamp(attempt.createdAt);
 
     let isCodeAvailable: boolean = attempt.code !== undefined;
-    let codeFilename: string = `${questionTitle.replace(" ", "_")}_${attempt.createdAt}.txt`.toLowerCase();
+    let codeFilename: string = `${questionTitle.replaceAll(" ", "_")}_${attempt.createdAt}.txt`.toLowerCase();
 
     return <Table.Tr key={attempt.questionId}>
       <Table.Td fw="bold">
         {questionTitle}
       </Table.Td>
-      <Table.Td>
+      <Table.Td ta='end'>
         {prettyTimestamp}
       </Table.Td>
-      <Table.Td>
+      <Table.Td
+        style={{
+        // Minimum column width
+        'width': '1%',
+        'white-space': 'nowrap',
+      }}>
         {isCodeAvailable && <ActionIcon
           color='lime'
+          title="Download your attempt's code"
+          display='block' // Don't align to baseline, don't leave space below for descenders
           onClick={() => downloadCode(attempt.code, codeFilename)}
         >
           <IconDownload />
