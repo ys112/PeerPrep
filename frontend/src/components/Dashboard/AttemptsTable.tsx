@@ -1,7 +1,8 @@
 import { Attempt, ExtractedUser, Question } from '@common/shared-types';
-import { Loader, Table, TableData, Text } from '@mantine/core';
+import { ActionIcon, Loader, Table, Text } from '@mantine/core';
+import { IconDownload } from '@tabler/icons-react';
 import { DateTime } from 'luxon';
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { questionClient } from '../../api/questions';
 import { roomClient } from '../../api/room';
 
@@ -9,20 +10,47 @@ interface Props {
   user: ExtractedUser;
 }
 
-function makeTableData(attempts: Attempt[] | null, questions: Question[] | null): TableData | null {
+function downloadCode(code: string, filename: string) {
+  let blob: Blob = new Blob([code], { type: 'text/plain' });
+
+  // We need this hacky way for browser compatibility
+  let link: HTMLAnchorElement = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+
+function makeTableRows(attempts: Attempt[] | null, questions: Question[] | null): ReactElement[] | null {
   if (attempts === null || questions === null) return null;
 
-  return {
-    body: attemptsToRows(attempts, questions),
-  };
-}
-function attemptsToRows(attempts: Attempt[], questions: Question[]): string[][] {
   // Sort descending
   let sortedAttempts: Attempt[] = attempts!.sort((a, b) => b.createdAt - a.createdAt);
   return sortedAttempts.map((attempt) => {
     let questionTitle: string = questionIdToTitle(attempt.questionId, questions);
     let prettyTimestamp: string = epochToTimestamp(attempt.createdAt);
-    return [questionTitle, prettyTimestamp];
+
+    let isCodeAvailable: boolean = attempt.code !== undefined;
+    let codeFilename: string = `${questionTitle.replace(" ", "_")}_${attempt.createdAt}.txt`.toLowerCase();
+
+    return <Table.Tr key={attempt.questionId}>
+      <Table.Td fw="bold">
+        {questionTitle}
+      </Table.Td>
+      <Table.Td>
+        {prettyTimestamp}
+      </Table.Td>
+      <Table.Td>
+        {isCodeAvailable && <ActionIcon
+          color='lime'
+          onClick={() => downloadCode(attempt.code, codeFilename)}
+        >
+          <IconDownload />
+        </ActionIcon>}
+      </Table.Td>
+    </Table.Tr>;
   })
 }
 function questionIdToTitle(id: string, questions: Question[]): string {
@@ -44,8 +72,6 @@ export function AttemptsTable(props: Props) {
   let [attempts, setAttempts] = useState<Attempt[] | null>(null);
   let [questions, setQuestions] = useState<Question[] | null>(null);
 
-  let tableData: TableData | null = makeTableData(attempts, questions);
-
   useEffect(() => {
     roomClient.getAttempts(props.user.id)
       .then((fetchedAttempts: Attempt[]) => {
@@ -60,14 +86,18 @@ export function AttemptsTable(props: Props) {
       });
   }, [props.user]);
 
+  let rows: ReactElement[] | null = makeTableRows(attempts, questions);
+
   // [UI]
-  if (tableData === null) {
+  if (rows === null) {
     return <Loader mx='auto' color='lime' />;
   }
 
-  if (tableData.body!.length <= 0) {
+  if (rows.length <= 0) {
     return <Text>You have not collaborated with others yet.</Text>;
   }
 
-  return <Table data={tableData} />;
+  return <Table highlightOnHover stickyHeader stickyHeaderOffset={60}>
+    <Table.Tbody>{rows}</Table.Tbody>
+  </Table>;
 }

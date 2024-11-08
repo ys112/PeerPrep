@@ -17,6 +17,7 @@ function docSnapshotToAttempt(docSnapshot: DocumentSnapshot): Attempt {
 	return {
     questionId: doc.questionId,
     createdAt: doc.createdAt,
+    code: doc.code,
   };
 }
 
