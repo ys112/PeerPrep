@@ -4,11 +4,11 @@ import * as Y from "yjs";
 import { yCollab, Awareness } from "y-codemirror.next";
 import { EditorView, basicSetup } from "codemirror";
 import { EditorState, Compartment } from "@codemirror/state";
+import { autocompletion } from "@codemirror/autocomplete";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
 import { cpp } from "@codemirror/lang-cpp";
-import { autocompletion } from "@codemirror/autocomplete";
 import { Paper, Stack } from "@mantine/core";
 import { useEffect, useRef } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
@@ -35,7 +35,7 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
   };
   const languages: string[] = ["Javascript", "Java", "Python", "C++"];
   const [language, setLanguage] = useState<string>("Javascript");
-  const languageCompartment = new Compartment();
+  const languageCompartment = useRef(new Compartment()).current;
   const viewRef = useRef<EditorView | null>(null);
 
   const onSetLanguage = (curr_language: string) => {
