@@ -1,17 +1,23 @@
 // References: https://github.com/yjs/y-codemirror.next, https://liveblocks.io/docs/get-started/yjs-codemirror-react
 import * as Y from "yjs";
 // @ts-ignore
-import { yCollab } from "y-codemirror.next";
-
+import { yCollab, Awareness } from "y-codemirror.next";
 import { EditorView, basicSetup } from "codemirror";
+import { EditorState, Compartment } from "@codemirror/state";
 import { autocompletion } from "@codemirror/autocomplete";
-import { EditorState } from "@codemirror/state";
 import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
+import { java } from "@codemirror/lang-java";
+import { cpp } from "@codemirror/lang-cpp";
+import { Paper, Stack } from "@mantine/core";
 import { useEffect, useRef } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { accessTokenStorage } from "../../utils/accessTokenStorage";
 import { notifications } from "@mantine/notifications";
 import { userStorage } from "../../utils/userStorage";
+import LanguageSelection from "./LanguageSelection";
+import { useState } from "react";
+import { LanguageSupport } from "@codemirror/language";
 
 interface Props {
   roomId: string;
@@ -21,6 +27,26 @@ interface Props {
 
 export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
   const elementRef = useRef<HTMLDivElement | null>(null);
+  const language_map: Record<string, LanguageSupport> = {
+    Javascript: javascript(),
+    Java: java(),
+    Python: python(),
+    "C++": cpp(),
+  };
+  const languages: string[] = ["Javascript", "Java", "Python", "C++"];
+  const [language, setLanguage] = useState<string>("Javascript");
+  const languageCompartment = useRef(new Compartment()).current;
+  const viewRef = useRef<EditorView | null>(null);
+
+  const onSetLanguage = (curr_language: string) => {
+    setLanguage(curr_language);
+
+    if (viewRef.current) {
+      viewRef.current.dispatch({
+        effects: languageCompartment.reconfigure(language_map[curr_language]!),
+      });
+    }
+  };
 
   useEffect(() => {
     let ydoc: Y.Doc;
@@ -64,12 +90,13 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
       "&": { height: "100%" },
       ".cm-scroller": { overflow: "auto" },
     });
+
     const state = EditorState.create({
       doc: yText.toString(),
       extensions: [
         basicSetup,
+        languageCompartment.of(language_map[language]!),
         autocompletion(),
-        javascript(),
         fixedHeightEditor,
         EditorState.readOnly.of(!isOpen),
         yCollab(yText, provider.awareness, { undoManager }),
@@ -81,6 +108,8 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
       parent: elementRef.current!,
     });
 
+    viewRef.current = view;
+
     return () => {
       console.log("Editor unmounted");
       ydoc?.destroy();
@@ -90,14 +119,23 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
   }, [roomId, isOpen]);
 
   return (
-    <div
-      ref={elementRef}
-      style={{
-        height: "100%",
-        width: "100%",
-        border: "1px solid #000",
-        margin: "0 auto",
-      }}
-    />
+    <Paper shadow="md" p="lg" h="80vh" withBorder>
+      <Stack h="100%">
+        <LanguageSelection
+          onSetLanguage={onSetLanguage}
+          language={language}
+          languages={languages}
+        />
+        <div
+          ref={elementRef}
+          style={{
+            height: "100%",
+            width: "100%",
+            border: "1px solid #000",
+            margin: "0 auto",
+          }}
+        />
+      </Stack>
+    </Paper>
   );
 }

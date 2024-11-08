@@ -15,19 +15,23 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconBrandOpenai, IconLoader, IconX } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
   useNavigate,
+  useParams,
   useRouterState,
 } from "@tanstack/react-router";
-import { AxiosError } from "axios";
-import { useState } from "react";
-import { api } from "../../api";
-import Chat from "../../components/Collaboration/Chat";
 import CodingEditor from "../../components/Collaboration/CodingEditor";
-import { leetCodePrompt } from "../../components/Copilot/prompts";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "../../api";
+import { AxiosError } from "axios";
 import { stringToHexColor } from "../../components/Questions/QuestionsTable";
+import { useEffect, useState } from "react";
+import { initializeChatSocket } from "../../socket/chat";
+import { Socket } from "socket.io-client";
+import { userStorage } from "../../utils/userStorage";
+import Chat from "../../components/Collaboration/Chat";
+import { leetCodePrompt } from "../../components/Copilot/prompts";
 import "./collaboration.css";
 
 export const Route = createFileRoute("/_authenticated/collaboration/$roomId")({
@@ -139,13 +143,11 @@ export function Collaboration() {
       ) : isSuccess ? (
         <Grid w="100%">
           <Grid.Col span={{ base: 12, xs: 8 }}>
-            <Paper shadow="md" p="lg" h="80vh" withBorder>
-              <CodingEditor
-                isOpen={userRoomData.isOpen}
-                roomId={roomId}
-                onCodeChange={onCodeChange}
-              />
-            </Paper>
+            <CodingEditor
+              isOpen={userRoomData.isOpen}
+              roomId={roomId}
+              onCodeChange={onCodeChange}
+            />
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, xs: 4 }}>
