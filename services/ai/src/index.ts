@@ -49,7 +49,7 @@ app.use(
   })
 )
 
-app.use('/', (req, res) => {
+app.use('/', async (req, res) => {
   logger.info('Received request')
   const userToken = req.headers.authorization
   if (userToken === undefined || !userToken.startsWith('Bearer ')) {
@@ -57,7 +57,7 @@ app.use('/', (req, res) => {
     return
   }
 
-  const verifyResponse = verifyUser(userToken.split('Bearer ')[1])
+  const verifyResponse = await verifyUser(userToken.split('Bearer ')[1])
 
   if (verifyResponse === null) {
     res.status(401).send()

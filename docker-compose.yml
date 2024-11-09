@@ -127,6 +127,8 @@ services:
       - 3007:3007
     expose:
       - 3007
+    networks:
+      - demo-network
 
   frontend:
     build:
