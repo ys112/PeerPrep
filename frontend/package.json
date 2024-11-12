@@ -8,7 +8,7 @@
     "dev": "vite --port=3000",
     "build": "vite build",
     "preview": "vite preview --port=3000",
-    "start": "serve dist -p 3000"
+    "start": "serve -s dist -p 3000"
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.57.15",
