@@ -42,9 +42,9 @@ async function createHocuspocusServer(port: number) {
         },
       }
     },
-    async onDisconnect(data) {
-      if (data.clientsCount == 0) {
-        closeRoom(data.documentName)
+    async onDisconnect(payload) {
+      if (payload.clientsCount <= 0) {
+        closeRoom(payload)
       }
     },
     extensions: [

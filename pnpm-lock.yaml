@@ -52,14 +52,11 @@ importers:
   frontend:
     dependencies:
       '@codemirror/autocomplete':
-<<<<<<< HEAD
-=======
-        specifier: ^6.18.1
-        version: 6.18.1(@codemirror/language@6.10.3)(@codemirror/state@6.4.1)(@codemirror/view@6.34.1)(@lezer/common@1.2.3)
-      '@codemirror/commands':
->>>>>>> main
         specifier: ^6.7.1
         version: 6.18.1(@codemirror/language@6.10.3)(@codemirror/state@6.4.1)(@codemirror/view@6.34.1)(@lezer/common@1.2.3)
+      '@codemirror/commands':
+        specifier: ^6.7.1
+        version: 6.7.1
       '@codemirror/lang-cpp':
         specifier: ^6.0.2
         version: 6.0.2
@@ -123,6 +120,9 @@ importers:
       codemirror:
         specifier: ^6.0.1
         version: 6.0.1(@lezer/common@1.2.3)
+      luxon:
+        specifier: ^3.5.0
+        version: 3.5.0
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -154,6 +154,9 @@ importers:
       '@tanstack/router-plugin':
         specifier: ^1.57.15
         version: 1.58.12(vite@5.4.8(@types/node@22.7.4)(sugarss@4.0.1(postcss@8.4.47)))
+      '@types/luxon':
+        specifier: ^3.4.2
+        version: 3.4.2
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.11
@@ -2827,6 +2830,9 @@ packages:
 
   '@types/long@4.0.2':
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
+
+  '@types/luxon@3.4.2':
+    resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}
 
   '@types/mdast@3.0.15':
     resolution: {integrity: sha512-LnwD+mUEfxWMa1QpDraczIn6k0Ee3SMicuYSSzS6ZYl2gKS09EClnJYGd8Du6rfc5r/GZEk5o1mRb8TaTj03sQ==}
@@ -9202,6 +9208,8 @@ snapshots:
 
   '@types/long@4.0.2':
     optional: true
+
+  '@types/luxon@3.4.2': {}
 
   '@types/mdast@3.0.15':
     dependencies:

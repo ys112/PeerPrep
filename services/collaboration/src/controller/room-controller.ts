@@ -3,10 +3,10 @@ import {
   ExtractedUser,
   UserMatchDoneData,
   UserRoomCreatedData,
-} from '@common/shared-types'
-import { getQuestion, pickQuestion } from '../api/question'
-import { db } from '../db/clients'
-import model from '../db/model'
+} from '@common/shared-types';
+import { getQuestion, pickQuestion } from '../api/question';
+import { db } from '../db/clients';
+import model from '../db/model';
 
 /**
  * Create a room based on the user match done data. Called by matching service when match is done.
@@ -26,17 +26,19 @@ export async function createRoom(
   }
 
   // Create a room
+  //TODO the state managed in Firebase is not typed
   const response = await db.add({
     userMatchDoneData,
     questionId: question.id,
     isOpen: true,
+    createdAt: Date.now()
   })
   if (!response) {
     throw new Error('Error creating room')
   }
 
   // Construct the room data with the question and users matched
-  const newRoomData = {
+  const newRoomData: UserRoomCreatedData = {
     id: response.id,
     question: question,
     userMatchDoneData,
@@ -133,11 +135,19 @@ export async function verifyRoomOpen(roomId: string): Promise<boolean> {
  * Close the room
  * @param roomId
  */
-export async function closeRoom(roomId: string) {
-  const response = await db.doc(roomId).update({ isOpen: false })
-  if (!response) {
-    throw new Error('Error closing room')
-  }
+export async function closeRoom(onDisconnectPayload: any) {
+  const { Doc, Text } = await import('yjs')
+
+  let yDoc: InstanceType<typeof Doc> = onDisconnectPayload.document
+  let roomId: string = onDisconnectPayload.documentName
+
+  let yText: InstanceType<typeof Text> = yDoc.getText("codemirror")
+  let code: string = yText.toString()
+
+  await db.doc(roomId).update({
+    isOpen: false,
+    code,
+  })
   console.log('Room closed successfully')
 }
 

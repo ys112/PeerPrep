@@ -13,6 +13,7 @@
   "devDependencies": {
     "@tanstack/router-devtools": "^1.57.15",
     "@tanstack/router-plugin": "^1.57.15",
+    "@types/luxon": "^3.4.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
@@ -27,9 +28,9 @@
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.7.1",
+    "@codemirror/commands": "^6.7.1",
     "@codemirror/lang-cpp": "^6.0.2",
     "@codemirror/lang-java": "^6.0.1",
-    "@codemirror/commands": "^6.7.1",
     "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/lang-python": "^6.1.6",
     "@codemirror/language": "^6.6.1",
@@ -49,6 +50,7 @@
     "@tanstack/react-router": "^1.57.15",
     "axios": "^1.7.7",
     "codemirror": "^6.0.1",
+    "luxon": "^3.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "serve": "^14.2.4",
