@@ -25,7 +25,10 @@ export default function LanguageSelection({
       </Menu.Target>
       <Menu.Dropdown>
         {languages.map((curr_language) => (
-          <Menu.Item onClick={() => onSetLanguage(curr_language)}>
+          <Menu.Item
+            onClick={() => onSetLanguage(curr_language)}
+            key={curr_language}
+          >
             <Text
               fw={language === curr_language ? 700 : 300}
               style={{ fontSize: "15px" }}
