@@ -1,7 +1,7 @@
 // References: https://github.com/yjs/y-codemirror.next, https://liveblocks.io/docs/get-started/yjs-codemirror-react
 import { autocompletion } from "@codemirror/autocomplete";
-import { cpp } from "@codemirror/lang-cpp";
-import { java } from "@codemirror/lang-java";
+import { cpp, cppLanguage } from "@codemirror/lang-cpp";
+import { java, javaLanguage } from "@codemirror/lang-java";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { LanguageSupport } from "@codemirror/language";
@@ -16,6 +16,7 @@ import * as Y from "yjs";
 import { accessTokenStorage } from "../../utils/accessTokenStorage";
 import { userStorage } from "../../utils/userStorage";
 import LanguageSelection from "./LanguageSelection";
+import { javaAutocomplete, cppAutocomplete } from "../../utils/languageSupport";
 
 interface Props {
   roomId: string;
@@ -94,6 +95,13 @@ export default function CodingEditor({ roomId, isOpen, onCodeChange }: Props) {
       extensions: [
         basicSetup,
         languageCompartment.of(language_map[language]!),
+        javaLanguage.data.of({
+          autocomplete: javaAutocomplete,
+        }),
+
+        cppLanguage.data.of({
+          autocomplete: cppAutocomplete,
+        }),
         autocompletion(),
         fixedHeightEditor,
         EditorState.readOnly.of(!isOpen),
