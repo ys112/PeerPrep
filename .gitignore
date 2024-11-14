@@ -1,9 +1,13 @@
-**/node_modules
-**/dist
+**/.env.local
+**/.env.*.local
+**/.firebase/**/*.json
+jwt_secret.txt
+service_api_key.txt
+google_ai_api_key.txt
 
-**/.vscode/*
-!**/.vscode/extensions.json
+**/node_modules/
+**/dist/
 
-.env
-.firebase/*.json
-service-account.json
+**/.DS_Store
+**/.vscode/
+**/.idea/

@@ -7,25 +7,29 @@ import {
   NavLink,
   Stack,
   Text,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import {
   IconDashboard,
+  IconHeartHandshake,
   IconLogout,
   IconQuestionMark,
-} from '@tabler/icons-react';
+  IconUsers,
+} from "@tabler/icons-react";
 import {
   createFileRoute,
   Link,
   Outlet,
   redirect,
   useRouter,
-} from '@tanstack/react-router';
-import { userStorage } from '../utils/userStorage';
-import { api } from '../api';
-import { accessTokenStorage } from '../utils/accessTokenStorage';
+} from "@tanstack/react-router";
+import { api } from "../api";
+import { accessTokenStorage } from "../utils/accessTokenStorage";
+import { userStorage } from "../utils/userStorage";
+import logo from "../assets/logo.svg";
+import { CopilotKit } from "@copilotkit/react-core";
 
-export const Route = createFileRoute('/_authenticated')({
+export const Route = createFileRoute("/_authenticated")({
   component: Auth,
   loader: async () => {
     try {
@@ -35,7 +39,7 @@ export const Route = createFileRoute('/_authenticated')({
 
       return { user };
     } catch (error) {
-      throw redirect({ to: '/login' });
+      throw redirect({ to: "/login" });
     }
   },
 });
@@ -49,50 +53,64 @@ function Auth() {
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 300, breakpoint: 'sm' }}
-      padding='md'
+      navbar={{ width: 300, breakpoint: "sm" }}
+      padding="md"
     >
       <AppShell.Header>
-        <Group h='100%' px='md' justify='space-between'>
-          <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
-          {/* Change this to logo when we have one */}
-          <Text fw='bold'>PeerPrep</Text>
+        <Group h="100%" px="md">
+          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+          <Group p="0" m="0">
+            <img
+              style={{ width: "55px", padding: 0 }}
+              src={logo}
+              alt="PeerPrep"
+            />
+            <Text fw="bold" ml="0" pl="0">
+              PeerPrep
+            </Text>
+          </Group>
         </Group>
       </AppShell.Header>
 
-      <AppShell.Navbar p='md'>
+      <AppShell.Navbar p="md">
         <AppShell.Section>
           <NavLink
-            label='Dashboard'
+            label="Dashboard"
             leftSection={<IconDashboard />}
             component={Link}
-            to='/'
+            to="/"
           />
           <NavLink
-            label='Questions'
+            label="Matching"
+            leftSection={<IconUsers />}
+            component={Link}
+            to="/matching"
+          />
+          <NavLink
+            label="Questions"
             leftSection={<IconQuestionMark />}
             component={Link}
-            to='/questions'
+            to="/questions"
           />
         </AppShell.Section>
-        <AppShell.Section mt='auto'>
+        <AppShell.Section mt="auto">
           <Stack>
             <Group>
-              <Avatar radius='xl' size='md' />
+              <Avatar radius="xl" size="md" />
               <Stack gap={0}>
-                <Text fw='bold'>{user?.username}</Text>
+                <Text fw="bold">{user?.username}</Text>
                 <Text>{user?.email}</Text>
               </Stack>
             </Group>
             <Button
-              w='100%'
-              variant='light'
-              color='red'
+              w="100%"
+              variant="light"
+              color="red"
               leftSection={<IconLogout />}
               onClick={() => {
                 accessTokenStorage.removeAccessToken();
                 userStorage.removeUser();
-                router.navigate({ to: '/login' });
+                router.navigate({ to: "/login" });
               }}
             >
               Log Out
@@ -100,10 +118,17 @@ function Auth() {
           </Stack>
         </AppShell.Section>
       </AppShell.Navbar>
-
-      <AppShell.Main>
-        <Outlet />
-      </AppShell.Main>
+      <CopilotKit
+        runtimeUrl={import.meta.env.VITE_AI_SERVICE_API_URL}
+        showDevConsole={false}
+        headers={{
+          Authorization: `Bearer ${accessTokenStorage.getAccessToken()}`,
+        }}
+      >
+        <AppShell.Main>
+          <Outlet />
+        </AppShell.Main>
+      </CopilotKit>
     </AppShell>
   );
 }

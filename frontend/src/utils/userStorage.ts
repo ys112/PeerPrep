@@ -1,14 +1,14 @@
-import { User } from "@common/shared-types";
+import { ExtractedUser } from "@common/shared-types";
 
 const USER_KEY = "user";
 
-const getUser = (): User | undefined => {
+const getUser = (): ExtractedUser | undefined => {
   const user = localStorage.getItem(USER_KEY);
   if (!user) return undefined;
   return JSON.parse(user);
 };
 
-const setUser = (user: User) => {
+const setUser = (user: ExtractedUser) => {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 };
 

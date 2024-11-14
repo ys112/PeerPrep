@@ -1,15 +1,9 @@
-import dotenv from 'dotenv'
-if (process.env.NODE_ENV) {
-  dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
-} else {
-  dotenv.config({ path: '.env' })
-}
-import { Request, Response } from 'express'
-import { db } from '../db/clients'
+import { ExtractedUser, SensitiveUser, loginFormSchema } from '@common/shared-types'
+import { getJwtSecret } from '@common/utils'
 import bcrypt from 'bcrypt'
+import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
-import { SensitiveUser, loginFormSchema, ExtractedUser } from '@common/shared-types'
-import { jwtSecret } from '../utils/jwt-secret'
+import { db } from '../db/clients'
 
 interface VerifyRequest extends Request {
   user?: ExtractedUser
@@ -36,7 +30,7 @@ export async function handleLogin(req: Request, res: Response) {
       return res.status(401).json({ message: 'Wrong email and/or password' })
     }
 
-    const accessToken = jwt.sign({ id: userDoc.id }, jwtSecret, {
+    const accessToken = jwt.sign({ id: userDoc.id }, getJwtSecret(), {
       expiresIn: '1d',
     })
 
